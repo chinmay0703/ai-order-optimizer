@@ -1,6 +1,6 @@
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; }
-body { margin: 0; overflow: hidden; background: #FFFFFF; }
+body { margin: 0; overflow: hidden; background: #F5F7F8; }
 /* default the whole app to ~90% zoom so small screens see more and it never looks zoomed-in.
    IMPORTANT: keep #root at a plain full height (NO 1/0.9 compensation). Coupling the height to the zoom
    makes #root overflow the viewport, which body:hidden then CLIPS — so the last section becomes unreachable.

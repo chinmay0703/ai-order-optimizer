@@ -16,7 +16,7 @@ export const C = {
   grey800: '#4C5056', grey900: '#303236',
   tangerine: '#FE7C39', rose: '#D93954', burgundy: '#A32020', maroon: '#602320',   // extended PwC hues for data series
   cream: '#F5F7F8', panelBg: '#EEEFF1', white: '#FFFFFF',
-  canvas: '#FFFFFF',                                 // page background — white (pwc.com); light-grey / peach panels for sections
+  canvas: '#F5F7F8',                                 // page background — PwC off-white (grey-50) so white cards stand out
   ink: '#2D2D2D', slate: '#2D2D2D', muted: '#5C616A',
   rule: '#DFE3E6', border: '#DFE3E6', rowLine: '#EEEFF1', headBg: '#F5F7F8',   // rowLine=divider · headBg=table header
   // ── semantic (text-safe inks: each ≥ 4.5:1 on white AND on its own tint) ──
@@ -26,7 +26,7 @@ export const C = {
   // ── brand solids (fills, bars, markers, large type — not small text) ──
   brandRed: '#E0301E', crimson: '#E0301E', amberBright: '#FE7C39',
   deepRed: '#A32020', teal: '#1B7346',
-  inkWarm: '#2D2D2D', mutedWarm: '#5C616A', pageWarm: '#FFFFFF', track: '#EEEFF1', allocGray: '#5C616A',
+  inkWarm: '#2D2D2D', mutedWarm: '#5C616A', pageWarm: '#F5F7F8', track: '#EEEFF1', allocGray: '#5C616A',
   // ── back-compat aliases ─────
   navyP: '#F5F7F8', grayP: '#EEEFF1', codeBg: '#303236',
 };
