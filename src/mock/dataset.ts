@@ -62,7 +62,7 @@ export const OE_PARAM_DEFS = [
 const ADDON = 0.35, NORM_X = 1.2, KEEP = 0.65;
 
 // ───────────────────────── distributors (10) ─────────────────────────
-export type Channel = 'Non-PACE' | 'Retail';
+export type Channel = 'Non-PACE' | 'Hub & Spoke' | 'AFH' | 'Retail';
 export interface Distributor {
   code: string;          // 10-char zero-padded DB code
   name: string;
@@ -79,21 +79,23 @@ export interface Distributor {
 }
 const DB_SEED: [string, string, Channel, number, number, string][] = [
   // DUMMY distributor names (Greek-letter placeholders) — not real businesses or brands
-  ['Alpha Distributors', 'Pune', 'Non-PACE', 1, 600, '17 FT Container'],
-  ['Beta Traders', 'Pimpri', 'Non-PACE', 2, 600, '17 FT Container'],
+  ['Alpha Distributors', 'Pune', 'Retail', 1, 600, '17 FT Container'],
+  ['Beta Traders', 'Pimpri', 'AFH', 2, 600, '17 FT Container'],
   ['Gamma Enterprises', 'Chakan', 'Non-PACE', 2, 600, '17 FT Container'],
   ['Delta Agencies', 'Hadapsar', 'Non-PACE', 3, 800, '19-20 FT Container'],
-  ['Epsilon Trading Co', 'Lonavala', 'Non-PACE', 1, 600, '17 FT Container'],
+  ['Epsilon Trading Co', 'Lonavala', 'AFH', 1, 600, '17 FT Container'],
   ['Zeta Retail Supply', 'Kothrud', 'Retail', 1, 800, '19-20 FT Container'],
   ['Eta Consumer Goods', 'Wakad', 'Retail', 2, 600, '17 FT Container'],
-  ['Theta Marketing', 'Baramati', 'Retail', 3, 300, 'ACE Container'],
-  ['Iota Wholesale', 'Satara', 'Retail', 2, 300, 'ACE Container'],
-  ['Kappa Supply', 'Karad', 'Retail', 3, 300, 'ACE Container'],
+  ['Theta Marketing', 'Baramati', 'Hub & Spoke', 3, 300, 'ACE Container'],
+  ['Iota Wholesale', 'Satara', 'Hub & Spoke', 2, 300, 'ACE Container'],
+  ['Kappa Supply', 'Karad', 'Hub & Spoke', 3, 300, 'ACE Container'],
 ];
+// the cascade order: the SMALLEST-reservation channel runs first and its unused stock flows up toward Retail
+const CHANNEL_RUN: Record<Channel, number> = { 'Non-PACE': 1, 'Hub & Spoke': 2, 'AFH': 3, 'Retail': 4 };
 export const DISTRIBUTORS: Distributor[] = DB_SEED.map(([name, city, channel, tier, cap, tt], i) => ({
   code: String(710001 + i).padStart(10, '0'),
   name, city, channel, tier,
-  run: channel === 'Non-PACE' ? 1 : 2,
+  run: CHANNEL_RUN[channel],
   truckCap: cap, truckType: tt,
   transship: tt === 'ACE Container',
   cluster: tt === 'ACE Container' ? 'CL-PUN-01' : null,
@@ -187,10 +189,21 @@ export const findRz = (q: unknown) => {
 
 // ───────────────────────── runs (cascade) ─────────────────────────
 export interface RunDef { run: number; channel: Channel; pct: number; band: string; bandDesc: string; label: string }
+// every reg-zsku is reserved into ALL FOUR channels (all MRP bands); each run's pool = its own earmark + whatever the
+// previous run left over (unallocated + trimmed-back stock). Run order = reverse reservation priority: Non-PACE first …
+// Retail last (Retail also takes the rounding remainder, so 100% of the stock is earmarked).
 export const RUNS: RunDef[] = [
-  { run: 1, channel: 'Non-PACE', pct: 55, band: '1+2', bandDesc: 'fast + medium movers', label: 'Run 1 · Non-PACE' },
-  { run: 2, channel: 'Retail', pct: 45, band: '1+2+3', bandDesc: 'all movers incl. leftover', label: 'Run 2 · Retail' },
+  { run: 1, channel: 'Non-PACE', pct: 12, band: '1+2+3', bandDesc: 'every reg-zsku · all MRP bands', label: 'Run 1 · Non-PACE' },
+  { run: 2, channel: 'Hub & Spoke', pct: 16, band: '1+2+3', bandDesc: 'every reg-zsku · all MRP bands + run-1 leftover', label: 'Run 2 · Hub & Spoke' },
+  { run: 3, channel: 'AFH', pct: 28, band: '1+2+3', bandDesc: 'every reg-zsku · all MRP bands + run-2 leftover', label: 'Run 3 · AFH (Away From Home)' },
+  { run: 4, channel: 'Retail', pct: 44, band: '1+2+3', bandDesc: 'every reg-zsku · all MRP bands + run-3 leftover', label: 'Run 4 · Retail' },
 ];
+/** the stock earmarked to a run for one reg-zsku (the last run takes the rounding remainder) */
+export const earmarkOf = (z: RegZsku, runNo: number): number => {
+  const shares = RUNS.map((r) => Math.floor((z.cfaStock * r.pct) / 100));
+  shares[shares.length - 1] = z.cfaStock - shares.slice(0, -1).reduce((x, y) => x + y, 0);
+  return shares[RUNS.findIndex((r) => r.run === runNo)] ?? 0;
+};
 
 // ───────────────────────── demand (SOQ) + norms ─────────────────────────
 // SCARCE reg-zskus have little stock → fair share, substitutes and a <50% DB. DB #7 (Deccan) leans on them.
@@ -222,7 +235,6 @@ for (const z of REG_ZSKUS) {
   const tot = DEMAND.filter((x) => x.rz === z.rz).reduce((s, x) => s + x.soq, 0);
   z.cfaStock = SCARCE.has(z.rz) ? Math.round(tot * 0.28) : Math.round(Math.max(40, tot) * (0.95 + R.next() * 0.7) * (z.isFiller ? 1.8 : 1));
 }
-REG_ZSKUS[36].cfaStock = 0;   // one reg-zsku fully out of stock (shows "no stock" reasons)
 
 // ───────────────────────── allocation ─────────────────────────
 export interface SubPick { forRz: string; subRz: string; cases: number }
@@ -270,8 +282,10 @@ export interface Lane {
 }
 export interface RunResult {
   run: RunDef;
-  reserved: Record<string, number>;   // rz → pool reserved for this run
-  leftover: Record<string, number>;   // rz → pool left after this run
+  earmark: Record<string, number>;    // rz → stock earmarked to THIS channel
+  carriedIn: Record<string, number>;  // rz → leftover carried in from the previous run
+  reserved: Record<string, number>;   // rz → pool available to this run (earmark + carried in)
+  leftover: Record<string, number>;   // rz → pool left after this run (carries to the next run)
   lanes: Lane[];
 }
 
@@ -303,10 +317,11 @@ function waterFill(pool: number, items: { key: string; demand: number; weight: n
 }
 
 let orderSeq = 4500231100, truckSeq = 1;
-function buildRun(run: RunDef, poolIn: Record<string, number>): RunResult {
+function buildRun(run: RunDef, carriedIn: Record<string, number>): RunResult {
   const dbs = DISTRIBUTORS.filter((d) => d.run === run.run);
   const reserved: Record<string, number> = {};
-  for (const z of REG_ZSKUS) reserved[z.rz] = run.run === 1 ? Math.floor(z.cfaStock * run.pct / 100) : poolIn[z.rz];
+  const earmark: Record<string, number> = {};
+  for (const z of REG_ZSKUS) { earmark[z.rz] = earmarkOf(z, run.run); reserved[z.rz] = earmark[z.rz] + (carriedIn[z.rz] ?? 0); }
   const pool = { ...reserved };
   const lanes: Lane[] = dbs.map((db) => ({
     db, run: run.run, lines: [], soq: 0, orig: 0, sub: 0, filler: 0, planned: 0, shipped: 0, trucks: 0, fillPct: 0,
@@ -356,8 +371,8 @@ function buildRun(run: RunDef, poolIn: Record<string, number>): RunResult {
       const cand = REG_ZSKUS.filter((z) => z.category === want.category && z.mrp === want.mrp && z.rz !== x.rz && pool[z.rz] > 0)
         .sort((a, b) => pool[b.rz] - pool[a.rz])[0];
       if (!cand || addonLeft <= 0) continue;
-      let room = Infinity;   // Retail (run 2) grants are also capped by the substitute line's 1.2×Norm room; Non-PACE has no cap
-      if (lane.db.channel === 'Retail') {
+      let room = Infinity;   // every channel except Non-PACE is also capped by the substitute line's 1.2×Norm room
+      if (lane.db.channel !== 'Non-PACE') {
         const sl = lane.lines.find((l) => l.rz === cand.rz);
         const norm = sl && sl.norm ? sl.norm : Math.round(cand.unitsPerCase / 4 + 20);
         const onhand = sl && sl.norm ? sl.dbStock : Math.round(norm * 0.4);
@@ -428,7 +443,7 @@ function buildRun(run: RunDef, poolIn: Record<string, number>): RunResult {
     }
     for (const x of lane.lines) pool[x.rz] += (x.orig - x.shipOrig) + (x.sub - x.shipSub) + (x.filler - x.shipFil);
   }
-  return { run, reserved, leftover: pool, lanes };
+  return { run, earmark, carriedIn: { ...carriedIn }, reserved, leftover: pool, lanes };
 }
 
 // trim `cases` off a lane: filler first, then substitute, then original from the lowest-priority lines
@@ -442,15 +457,17 @@ function trimLane(lane: Lane, cases: number) {
   }
 }
 
-const run1 = buildRun(RUNS[0], {});
-const run2 = buildRun(RUNS[1], (() => {   // run 2 gets its 45% plus everything run 1 left behind
-  const p: Record<string, number> = {};
-  for (const z of REG_ZSKUS) p[z.rz] = Math.floor(z.cfaStock * RUNS[1].pct / 100) + Math.max(0, run1.leftover[z.rz]);
-  for (const z of REG_ZSKUS) p[z.rz] = Math.min(p[z.rz], z.cfaStock - (run1.reserved[z.rz] - run1.leftover[z.rz]));
-  return p;
-})());
-export const RUN_RESULTS: RunResult[] = [run1, run2];
-export const LANES: Lane[] = [...run1.lanes, ...run2.lanes];
+// the cascade: each run's leftover (unallocated + trimmed-back stock) is carried into the next run
+export const RUN_RESULTS: RunResult[] = [];
+{
+  let carry: Record<string, number> = {};
+  for (const run of RUNS) {
+    const res = buildRun(run, carry);
+    RUN_RESULTS.push(res);
+    carry = { ...res.leftover };
+  }
+}
+export const LANES: Lane[] = RUN_RESULTS.flatMap((r) => r.lanes);
 export const laneByDb = new Map(LANES.map((l) => [l.db.code, l]));
 
 // ───────────────────────── cluster primary (transshipment) ─────────────────────────

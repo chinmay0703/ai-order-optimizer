@@ -512,7 +512,7 @@ function checks(date: string): Check[] {
     { id: 'DBM-01', table: 'db_master', category: 'Completeness', severity: 'medium', phase: 'pre', title: 'Customer name present', total: DISTRIBUTORS.length },
     { id: 'DBM-02', table: 'db_master', category: 'Completeness', severity: 'medium', phase: 'pre', title: 'GSTIN present', total: DISTRIBUTORS.length },
     { id: 'DBM-03', table: 'db_master', category: 'Completeness', severity: 'low', phase: 'pre', title: 'Sales office assigned', total: DISTRIBUTORS.length },
-    { id: 'DBM-04', table: 'db_master', category: 'Range', severity: 'medium', phase: 'pre', title: 'Channel is Non-PACE or Retail', total: DISTRIBUTORS.length },
+    { id: 'DBM-04', table: 'db_master', category: 'Range', severity: 'medium', phase: 'pre', title: 'Channel is one of Non-PACE · Hub & Spoke · AFH · Retail', total: DISTRIBUTORS.length },
     { id: 'TIR-01', table: 'db_tier_master', category: 'Integrity', severity: 'medium', phase: 'pre', title: 'Every SOQ distributor has a tier (else the default tier 4)', total: DISTRIBUTORS.length },
     { id: 'TIR-02', table: 'db_tier_master', category: 'Range', severity: 'low', phase: 'pre', title: 'Tier is between 1 and 4', total: DISTRIBUTORS.length },
     { id: 'TRK-01', table: 'truck_type_master', category: 'Integrity', severity: 'high', phase: 'pre', title: 'Every DB lane has a truck type with capacity > 0', total: DISTRIBUTORS.length },

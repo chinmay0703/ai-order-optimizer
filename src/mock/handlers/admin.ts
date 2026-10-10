@@ -255,7 +255,7 @@ const STREET = ['MG Road', 'Old Mumbai Highway', 'Talegaon Chakan Road', 'Solapu
 const VEH: Record<string, string> = { '19-20 FT Container': 'S5', '17 FT Container': 'C8', 'ACE Container': 'A1' };
 const dbIdx = (d: Distributor) => DISTRIBUTORS.indexOf(d);
 const pdpOf = (d: Distributor) => {
-  const f = d.channel === 'Non-PACE'
+  const f = d.channel === 'Non-PACE' || d.channel === 'Hub & Spoke'
     ? (d.tier === 1 ? ['Daily', 1] : d.tier === 2 ? ['Thrice a week', 2] : ['Twice a week', 3])
     : (d.tier === 1 ? ['Thrice a week', 2] : d.tier === 2 ? ['Twice a week', 3] : ['Weekly', 7]);
   return { freq: f[0] as string, rf: f[1] as number, today: d.tier <= 2 };

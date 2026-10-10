@@ -348,7 +348,7 @@ export default function ReservationRunsPage({ date, initialTab }: { date?: strin
       <Typography variant="h5" sx={{ mb: 0.5 }}>Reservation Runs · {d.runs.length}-run cascade</Typography>
       <PageIntro>
         The CFA stock is reserved per channel (each band's share) and allocated in {d.runs.length} sequential channel runs
-        (reservation % descending) — all three MRP bands of a channel ship in ONE truck per DB. Leftover stock cascades per
+        (smallest reservation first: Non-PACE → Hub &amp; Spoke → AFH → Retail) — all three MRP bands of a channel ship in ONE truck per DB. Leftover stock cascades per
         band to the next channel; any surplus after the last run stays unallocated.
       </PageIntro>
 

@@ -416,8 +416,11 @@ get('/api/v1/filtered_soq/dropped', (ctx) => {
 
 // ───────── /reservation/prefilter — pre-processing stages A → E ─────────
 const CHANNEL_MAP: Record<string, { cust: string; sap: string; sub: string }> = {
-  'Non-PACE': { cust: 'Distributor', sap: '10 · General Trade', sub: 'D07 · Non-PACE' },
-  Retail: { cust: 'Distributor', sap: '20 · Modern Retail', sub: 'D12 · Retail' },
+  // the app's channel taxonomy: SAL/SAN → Non-PACE (any D-code); SAH + D83 → Hub & Spoke, D82 → AFH, D81 → Retail
+  'Non-PACE': { cust: 'SAL', sap: '10 · General Trade', sub: 'D81 · Retail (SAL → Non-PACE)' },
+  'Hub & Spoke': { cust: 'SAH', sap: '10 · General Trade', sub: 'D83 · Hub & Spoke' },
+  AFH: { cust: 'SAH', sap: '30 · Away From Home', sub: 'D82 · Away From Home' },
+  Retail: { cust: 'SAH', sap: '20 · Retail', sub: 'D81 · Retail' },
 };
 function intakeOf(gs: Group[]) {
   const scoped = gs.filter((g) => g.d.cfa === CFA || g.d.cfa === ALT_CFA);

@@ -33,15 +33,11 @@ const DrilldownPage = lazy(() => import('./features/or_engine/DrilldownPage'));
 const SubstitutionSequencePage = lazy(() => import('./features/or_engine/SubstitutionSequencePage'));
 const FillerSequencePage = lazy(() => import('./features/or_engine/FillerSequencePage'));
 const CfaDbPage = lazy(() => import('./features/or_engine/CfaDbPage'));
-const FinalOrderPage = lazy(() => import('./features/or_engine/FinalOrderPage'));
-const CfaRegzskuSummaryPage = lazy(() => import('./features/or_engine/CfaRegzskuSummaryPage'));
-const FinalOrderReportPage = lazy(() => import('./features/validate/FinalOrderReportPage'));
 const UatReportV2Page = lazy(() => import('./features/validate/UatReportV2Page'));
 const OrderJourneyPage = lazy(() => import('./features/validate/OrderJourneyPage'));
 const ClusterPrimaryPage = lazy(() => import('./features/or_engine/ClusterPrimaryPage'));
 const SapOrdersPage = lazy(() => import('./features/or_engine/SapOrdersPage'));
 const OrderStatusPage = lazy(() => import('./features/or_engine/OrderStatusPage'));
-const S3HandoffPage = lazy(() => import('./features/or_engine/S3HandoffPage'));
 const SchemaPage = lazy(() => import('./features/or_engine/SchemaPage'));
 const DataTestsPage = lazy(() => import('./features/qa/DataTestsPage'));
 const RcaPage = lazy(() => import('./features/or_engine/RcaPage'));
@@ -73,6 +69,7 @@ function AuthedApp({ user }: { user: AuthUser }) {
     }
     const saved = localStorage.getItem('aoo.page');
     if (saved === 'uatreport') return 'uatreportv2';   // the original UAT Report page was retired → its successor
+    if (saved && ['finalorder', 'cfaregzsku', 'finalorderreport', 's3out'].includes(saved)) return 'home';   // removed pages
     return (saved as Page) || 'home';
   });
   useEffect(() => { localStorage.setItem('aoo.page', page); }, [page]);
@@ -193,18 +190,15 @@ function AuthedApp({ user }: { user: AuthUser }) {
         {page === 'resruns' && <Suspense fallback={<PageFallback />}><ReservationRunsPage date={date} /></Suspense>}
         <KeepAlive active={page === 'rlmapproval'}><ReservationRunsPage date={date} initialTab="rlmptl" /></KeepAlive>
         <KeepAlive active={page === 'seccfashift'}><ReservationRunsPage date={date} initialTab="seccfa" /></KeepAlive>
-        <KeepAlive active={page === 'cfaregzsku'}><CfaRegzskuSummaryPage date={date} cfa={cfa} /></KeepAlive>
         <KeepAlive active={page === 'cfares'}><CfaStockReservationPage date={date} cfa={cfa} /></KeepAlive>
         <KeepAlive active={page === 'drilldown'}><DrilldownPage date={date} cfa={cfa} /></KeepAlive>
         <KeepAlive active={page === 'subseq'}><SubstitutionSequencePage date={date} cfa={cfa} /></KeepAlive>
         <KeepAlive active={page === 'fillerseq'}><FillerSequencePage date={date} cfa={cfa} /></KeepAlive>
         <KeepAlive active={page === 'cfadb'}><CfaDbPage date={date} /></KeepAlive>
         <KeepAlive active={page === 'clusterprimary'}><ClusterPrimaryPage date={date} cfa={cfa} /></KeepAlive>
-        <KeepAlive active={page === 'finalorder'}><FinalOrderPage date={date} /></KeepAlive>
         <KeepAlive active={page === 'saporders'}><SapOrdersPage date={date} /></KeepAlive>
         {/* NOT kept alive: Order Status is a heavy server-paginated table — unmount on leave, refetch fresh on return. */}
         {page === 'orderstatus' && <Suspense fallback={<PageFallback />}><OrderStatusPage date={date} /></Suspense>}
-        <KeepAlive active={page === 's3out'}><S3HandoffPage date={date} /></KeepAlive>
         <KeepAlive active={page === 'datatests'}><DataTestsPage date={date} /></KeepAlive>
         <KeepAlive active={page === 'rca'}><RcaPage date={date} /></KeepAlive>
         <KeepAlive active={page === 'trucktrim'}><TruckTrimsPage date={date} cfa={cfa} /></KeepAlive>
@@ -212,7 +206,6 @@ function AuthedApp({ user }: { user: AuthUser }) {
         <KeepAlive active={page === 'filteredsoq'}><FilteredSoqPage date={date} cfa={cfa} /></KeepAlive>
         <KeepAlive active={page === 'resprefilter'}><ReservationPrefilterPage runProp={preRun} tabProp={preTab} date={date} cfa={cfa} /></KeepAlive>
         <KeepAlive active={page === 'masters'}><MastersPage /></KeepAlive>
-        <KeepAlive active={page === 'finalorderreport'}><FinalOrderReportPage date={date} cfa={cfa} /></KeepAlive>
         <KeepAlive active={page === 'uatreportv2'}><UatReportV2Page date={date} cfa={cfa} /></KeepAlive>
         <KeepAlive active={page === 'orderjourney'}><OrderJourneyPage date={date} cfa={cfa} /></KeepAlive>
         <KeepAlive active={page === 'flow'}><StoryPage onNav={setPage} /></KeepAlive>

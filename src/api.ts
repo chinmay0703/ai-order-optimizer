@@ -71,7 +71,6 @@ export const api = {
   regZskuDescriptions: () => get('/reg_zsku_descriptions'),   // reg-zsku -> old_material_description (one per reg-zsku, from region_sku_master)
   regZskuBrandCategories: () => get('/reg_zsku_brand_categories'),   // reg-zsku -> brand category (brand_material_master ⋈ region_sku_master)
   distributorNames: () => get('/distributor_names'),          // db code -> Customer Name (served off db_master; nothing stored)
-  s3OrderLineItems: (date?: string) => get(wd('/s3_order_line_items', date)),   // S3 hand-off — order_line_items parquet read back from S3
   table: (name: string, limit = 25, offset = 0, q = '') =>
     get(`/tables/${encodeURIComponent(name)}?limit=${limit}&offset=${offset}${q ? `&q=${encodeURIComponent(q)}` : ''}`),
   tableXlsxUrl: (name: string, q = '') =>   // WHOLE table (all rows matching q) as .xlsx — server-side, no 1000-row cap
@@ -115,26 +114,11 @@ export const api = {
   // Final Order — the shipped order per CFA × DB × reg-zsku (table JSON); + the .xlsx download URL (same endpoint)
   clusterPrimary: (date?: string, cfa?: string) => get(wd('/cluster_primary' + (cfa ? `?cfa=${encodeURIComponent(cfa)}` : ''), date)),   // transshipment cluster primary-truck build + trim
   clusterPrimaryTrucks: (date?: string, cfa?: string) => get(wd('/cluster_primary_trucks' + (cfa ? `?cfa=${encodeURIComponent(cfa)}` : ''), date)),   // the FINAL cluster primary truck(s): combined reg-zsku + SKU level
-  finalOrder: (date?: string) => get(wd('/final_order', date)),
-  finalOrderXlsxUrl: (date?: string) => withTok(BASE + wd('/final_order?format=xlsx', date)),
-  cfaRegzskuSummary: (date?: string) => get(wd('/cfa_regzsku_summary', date)),   // CFA×Reg-ZSKU SO-created roll-up (Inventory · SOQ · AOQ)
   // SIT page — the full 32-col final-allocation report, live. CFA-scoped + PAGINATED server-side (cfa/q/sort/limit/offset);
   // KPIs + total + filtered are computed over the whole cfa-scoped set, `rows` is the requested page slice.
 
   // Reporting-Format validation sheet — one row per CFA × DB (every SOQ distributor incl. pre-engine drops). Screen
   // scopes to the header CFA + paginated; the Excel download OMITS cfa on purpose so it exports EVERY CFA.
-  finalOrderReport: (o: { date?: string; cfa?: string; q?: string; sort?: number; dir?: 'asc' | 'desc'; limit?: number; offset?: number } = {}) => {
-    const p = new URLSearchParams();
-    if (o.cfa) p.set('cfa', o.cfa);
-    if (o.q && o.q.trim()) p.set('q', o.q.trim());
-    if (o.sort != null && o.sort >= 0) { p.set('sort', String(o.sort)); p.set('dir', o.dir ?? 'asc'); }
-    if (o.limit != null) p.set('limit', String(o.limit));
-    if (o.offset != null) p.set('offset', String(o.offset));
-    const qs = p.toString();
-    return get(wd(`/final_order_report${qs ? `?${qs}` : ''}`, o.date));
-  },
-  // Excel = the FULL sheet for ALL CFAs (cfa deliberately omitted) — the on-screen table stays CFA-scoped for reading
-  finalOrderReportXlsxUrl: (date?: string) => withTok(BASE + wd('/final_order_report?format=xlsx', date)),
   // Allocation Report (shown as "Allocation Report"; backend path /uat_report_v2 kept) — the original UAT Report page was retired
   uatReportV2: (o: { date?: string; cfa?: string; q?: string; sort?: number; dir?: 'asc' | 'desc'; limit?: number; offset?: number } = {}) => {
     const p = new URLSearchParams();

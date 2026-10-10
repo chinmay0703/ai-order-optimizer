@@ -1,6 +1,5 @@
 // validate.ts — the REPORT pages + the RCA drill-through, all derived from dataset.ts so they agree with every engine page:
-//   GET /api/v1/final_order_report     Reporting Format — one row per CFA × DB (cfa / q / sort / dir / limit / offset; ?format=xlsx = ALL rows)
-//   GET /api/v1/uat_report_v2          Allocation Report — one row per CFA × DB × reg-zsku × truck × SKU-batch (same contract)
+//   GET /api/v1/uat_report_v2          Allocation Report — one row per CFA × DB × reg-zsku × truck × SKU-batch (cfa / q / sort / dir / limit / offset; ?format=xlsx = ALL rows)
 //   GET /api/v1/order_journey_trucks   the physical trucks per DB + the owner-centric SKU lines each carried + the clusters
 //   GET /api/v1/rca/index · /rca/db/:dbid · /rca/regzsku/:z · /rca/cfa/:cfa   the end-to-end allocation stories
 //
@@ -186,40 +185,6 @@ function pageOf(ctx: Ctx, cols: string[], all: Cell[][]) {
   return { rows: rows.slice(offset, offset + limit), filtered: rows.length, limit, offset };
 }
 const forXlsx = (rows: Cell[][]) => rows.map((r) => r.map((v) => (v === '' ? null : v)));
-
-// ═════════ Reporting Format — one row per CFA × DB ═════════
-const FO_COLS = [
-  'SOQ Date', 'CFA', 'DB Code', 'DB Name', 'Customer Type', 'PDP Flag', 'Input to engine', 'Engine Input Reason',
-  'Tier', 'Run', 'SOQ Lines', 'SOQ (cs)', 'Norm (cs)', 'DB Stock (cs)',
-  'Original Allocated', 'Filler Allocated', 'Substitution Allocated', 'Total Allocated (before truck fill)', 'Original Fill Rate',
-  'Truck-fill Trim (cs)', 'Primary Trim (cs)', 'Final Allocated (after truck fill)', 'Fill Rate (AOQ / SOQ)',
-  'Truck Type', 'Truck Capacity (cs)', 'Trucks Shipped', 'Truck Fill Rate', 'Shipment Type', 'Cluster Code',
-  'SO Flag Remarks', 'Remarks',
-];
-function foRow(date: string, lane: Lane): Cell[] {
-  const db = lane.db, dl = demandLines(lane);
-  const held = trucksOf(lane).find((t) => t.held && lane.dropped);
-  const truckTrim = lane.dropped ? lane.planned : Math.max(0, lane.planned - lane.shipped - lane.clusterTrim);
-  return [
-    soqDate(date), CFA, db.code, db.name, db.channel, pdpOf(lane), 'Yes', inputReason(lane),
-    db.tier, lane.run, dl.length, lane.soq, sumBy(dl, (x) => x.norm), sumBy(dl, (x) => x.dbStock),
-    lane.orig, lane.filler, lane.sub, lane.planned, lane.origFillPct,
-    truckTrim, lane.clusterTrim, lane.shipped, lane.combinedFillPct,
-    db.truckType, db.truckCap, lane.trucks, held ? held.fill : lane.fillPct, shipTypeOf(lane), db.cluster ?? null,
-    lane.soFlag, remarkOf(lane),
-  ];
-}
-const foAll = (date: string) => LANES.slice().sort((a, b) => a.db.code.localeCompare(b.db.code)).map((l) => foRow(date, l));
-
-get('/api/v1/final_order_report', (ctx) => {
-  const all = foAll(ctx.date);
-  if (ctx.query.get('format') === 'xlsx') return xlsxTable(`reporting_format_${ctx.date}.xlsx`, FO_COLS, forXlsx(all), 'Reporting Format');
-  const scoped = inScope(ctx) ? all : [];
-  const lanes = inScope(ctx) ? LANES : [];
-  const pg = pageOf(ctx, FO_COLS, scoped);
-  return { date: ctx.date, cfa: ctx.query.get('cfa') || null, cols: FO_COLS, rows: pg.rows, total: scoped.length,
-    filtered: pg.filtered, limit: pg.limit, offset: pg.offset, kpi: kpiOf(lanes) };
-});
 
 // ═════════ Allocation Report — CFA × DB × reg-zsku × truck × SKU-batch ═════════
 // (the Order Journey page reads these headers BY NAME — keep them exact)
@@ -436,7 +401,7 @@ get('/api/v1/rca/db/:dbid', (ctx) => {
   const ct = clusterTrimOf(lane);
   return {
     found: true, date: ctx.date, db: d.code, cfa: CFA,
-    identity: { name: d.name, city: d.city, customer_type: d.channel, channel_code: d.channel === 'Retail' ? 'RTL' : 'NPC',
+    identity: { name: d.name, city: d.city, customer_type: d.channel, channel_code: ({ 'Non-PACE': 'NPC', 'Hub & Spoke': 'HNS', AFH: 'AFH', Retail: 'RTL' } as Record<string, string>)[d.channel] ?? 'NPC',
       sub_channel: d.salesOffice === 'Pune City' ? 'Urban' : 'Rural', gstin: d.gstin, sales_office: d.salesOffice },
     run: { no: lane.run, channel: run.run.channel, tier: d.tier },
     order_id: orders.length ? orders.join(', ')

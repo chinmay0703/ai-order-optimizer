@@ -30,8 +30,6 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import AppsIcon from '@mui/icons-material/Apps';
 import RuleIcon from '@mui/icons-material/Rule';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
-import ReplayIcon from '@mui/icons-material/Replay';
 
 export type Page = 'home' | 'run' | 'flow' | 'pdp' | 'soq' | 'filteredsoq' | 'combined' | 'dbmaster' | 'cfainv' | 'cfastock' | 'dbstock' | 'subs' | 'fillers' | 'masters' | 'resruns' | 'cfaregzsku' | 'cfares' | 'resprefilter' | 'drilldown' | 'subseq' | 'fillerseq' | 'cfadb' | 'clusterprimary' | 'rca' | 'trucktrim' | 'cfawalk' | 'finalorder' | 'saporders' | 'orderstatus' | 'datatests' | 'schema' | 's3out' | 'finalorderreport' | 'uatreportv2' | 'orderjourney' | 'rlmapproval' | 'seccfashift' | 'oeparams' | 'users';
 
@@ -61,14 +59,12 @@ const FALLBACK_RUNS: RunOpt[] = [
 export const HOME: Item = { key: 'home', label: 'Home', sub: 'all pages · what each one does', icon: <AppsIcon /> };
 const RUN: Item = { key: 'run', label: 'Run', sub: 'run the engine · by date', icon: <PlayCircleOutlineIcon /> };
 const FLOW: Item = { key: 'flow', label: 'How it works', sub: 'process story', icon: <SchemaIcon /> };
-const FINALORDERREPORT: Item = { key: 'finalorderreport', label: 'Final Order · Distributor level', sub: 'one row per CFA × DB · every SOQ DB · download', icon: <SummarizeIcon /> };
 const UATREPORTV2: Item = { key: 'uatreportv2', label: 'Allocation Report', sub: 'reg-zsku × DB × truck · download', icon: <FactCheckIcon /> };
 const ORDERJOURNEY: Item = { key: 'orderjourney', label: 'Order Journey', sub: 'end-to-end · distributor → truck → reg-zsku → batch', icon: <AccountTreeIcon /> };
 const FILTEREDSOQ: Item = { key: 'filteredsoq', label: 'Filtered SOQ', sub: 'demand gate · (PDP/below) & 65%', icon: <FilterAltIcon /> };
 const PREPROC: Item = { key: 'resprefilter', label: 'Pre-processing', sub: 'reserve → run-by-run (workflow)', icon: <TuneIcon /> };
 const MASTERS: Item = { key: 'masters', label: 'Data', sub: 'every table, sample data', icon: <StorageIcon /> };
 const RESRUNS: Item = { key: 'resruns', label: 'Allocation Summary', sub: 'cascade · CFA × truck × DB', icon: <ViewListIcon /> };
-const CFAREGZSKU: Item = { key: 'cfaregzsku', label: 'CFA × Reg-ZSKU', sub: 'SO created · Inventory · SOQ · AOQ', icon: <SummarizeIcon /> };
 const CFARES: Item = { key: 'cfares', label: 'CFA Stock Reservation', sub: 'step 1 · reserve · MRP validation', icon: <Inventory2Icon /> };
 const DRILLDOWN: Item = { key: 'drilldown', label: 'Step-1 Fair Share', sub: 'per reg-zsku · Step 1 (v2) + 2', icon: <AccountTreeIcon /> };   // was 'Water-Fill' (retired Step-1 logic)
 const SUBSEQ: Item = { key: 'subseq', label: 'Substitution Sequence', sub: 'step 2 · New-score order', icon: <FormatListNumberedIcon /> };
@@ -77,10 +73,8 @@ const CFADB: Item = { key: 'cfadb', label: 'CFA × DB', sub: 'combined · per DB
 const CLUSTER: Item = { key: 'clusterprimary', label: 'Cluster Truck Fill', sub: 'transshipment · combine → full trucks → trim', icon: <LocalShippingIcon /> };
 const RCA: Item = { key: 'rca', label: 'Allocation Trace', sub: 'search DB / reg-zsku / CFA · end-to-end story', icon: <ManageSearchIcon /> };
 const TRUCKTRIM: Item = { key: 'trucktrim', label: 'Truck Trims', sub: 'trimmed / dropped by truck rule', icon: <ContentCutIcon /> };
-const FINALORDER: Item = { key: 'finalorder', label: 'Final Order · Reg-ZSKU level', sub: 'shipped order · one row per CFA × DB × reg-zsku · download', icon: <ReceiptLongIcon /> };
 const SAPORDERS: Item = { key: 'saporders', label: 'SAP Orders', sub: 'the orders table · SO_CREATION hand-off · download', icon: <Inventory2Icon /> };
 const ORDERSTATUS: Item = { key: 'orderstatus', label: 'Order Status', sub: 'SAP status write-back · de_sap.order_status · per date', icon: <FactCheckIcon /> };
-const S3OUT: Item = { key: 's3out', label: 'S3 Hand-off', sub: 'order_line_items in S3 · per date', icon: <StorageIcon /> };
 const DATATESTS: Item = { key: 'datatests', label: 'Data QA', sub: '~100 live checks · masters & feeds · per date', icon: <FactCheckIcon /> };
 const CFAWALK: Item = { key: 'cfawalk', label: 'CFA Walkthrough', sub: 'one CFA · per run', icon: <FactCheckIcon /> };
 // APPROVALS — open the Allocation Summary page directly at its RLM tab (rlmptl / seccfa)
@@ -99,20 +93,15 @@ export const MENU_SECTIONS: MenuSection[] = [
   { title: 'Engine · Steps 1–3 & truck rule', blurb: 'water-fill → substitute → filler → truck fill → trims', items: [DRILLDOWN, SUBSEQ, FILLERSEQ, CLUSTER, TRUCKTRIM] },
   { title: 'Allocation roll-ups', blurb: 'per channel run · per DB', items: [RESRUNS, CFADB] },
   { title: 'Approvals', blurb: 'RLM holds · truck sign-off · 2nd-CFA shift', items: [RLMAPPROVAL, SECCFASHIFT] },
-  { title: 'Output & hand-off', blurb: 'the order → SAP → S3', items: [SAPORDERS, ORDERSTATUS, S3OUT] },
-  { title: 'Reports', blurb: 'the shipped order · per reg-zsku · QA checks · end-to-end trace', items: [UATREPORTV2, FINALORDER, CFAREGZSKU, FINALORDERREPORT, DATATESTS, RCA, ORDERJOURNEY] },
+  { title: 'Output & hand-off', blurb: 'the order → SAP', items: [SAPORDERS, ORDERSTATUS] },
+  { title: 'Reports', blurb: 'allocation report · QA checks · end-to-end trace', items: [UATREPORTV2, DATATESTS, RCA, ORDERJOURNEY] },
 ];
 
 // NON-clickable showcase items (planned phases) — rendered on the sidebar AND the Home page (below Reports), never
 // routed. Kept as a separate list from MENU_SECTIONS since these have no Page/route behind them.
 export interface ShowItem { label: string; sub: string; icon: ReactNode; href?: string; }
 export interface ShowSection { title: string; blurb: string; items: ShowItem[]; }
-export const SHOWCASE_SECTIONS: ShowSection[] = [
-  { title: 'Runs 1.2 & 2', blurb: 'planned phases · not yet live', items: [
-    { label: 'Run 1.2 · 2nd RLM Shift', sub: 'planned · not yet live', icon: <PublishedWithChangesIcon /> },
-    { label: 'Run 2 · Reallocation', sub: 'planned · not yet live', icon: <ReplayIcon /> },
-  ] },
-];
+export const SHOWCASE_SECTIONS: ShowSection[] = [];   // no planned-phase placeholders in this build
 
 interface SidebarProps {
   page: Page; onNav: (p: Page) => void;
