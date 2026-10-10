@@ -1,5 +1,6 @@
-import { useEffect, useState, lazy, Suspense } from 'react';
-import { Box, LinearProgress } from '@mui/material';
+import { useCallback, useEffect, useRef, useState, lazy, Suspense } from 'react';
+import { Box, LinearProgress, Tooltip } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import StorageIcon from '@mui/icons-material/Storage';
 import { api } from './api';
@@ -9,7 +10,7 @@ import { RegZskuDescProvider } from './shared/RegZskuDesc';
 import { BrandCategoryProvider } from './shared/BrandCategory';
 import { DistributorNameProvider } from './shared/DistributorName';
 import { RUN_DONE_EVENT } from './shared/servedLookup';
-import Sidebar, { type Page } from './shared/layout/Sidebar';
+import Sidebar, { type Page, HOME, USERS, MENU_SECTIONS } from './shared/layout/Sidebar';
 import { MOBILE_NAV_H, useIsMobile } from './theme/responsive';
 import MobileNav from './shared/layout/MobileNav';
 import AppHeader from './shared/layout/AppHeader';
@@ -58,21 +59,96 @@ export default function App() {
   return <AuthedApp user={user} />;
 }
 
-// Every view reads live from the FastAPI backend (Postgres). No static JSON anywhere.
+// ── page history: every page has its own URL (#/<page>) and browser history entry, so the browser's Back / Forward
+//    buttons (and the in-app Back button) move between visited pages. Hash URLs work on any static host (GitHub Pages).
+const PAGE_LABEL: Record<string, string> = Object.fromEntries(
+  [HOME, USERS, ...MENU_SECTIONS.flatMap((s) => s.items)].map((i) => [i.key, i.label]));
+const REMOVED_PAGES = ['finalorder', 'cfaregzsku', 'finalorderreport', 's3out'];
+const normalisePage = (k: string | null | undefined): Page | null => {
+  if (!k) return null;
+  if (k === 'uatreport') return 'uatreportv2';            // the original UAT Report page was retired → its successor
+  if (REMOVED_PAGES.includes(k)) return 'home';
+  return (k in PAGE_LABEL ? k : null) as Page | null;
+};
+const pageFromHash = (): Page | null => normalisePage(/^#\/([a-z0-9]+)$/i.exec(window.location.hash)?.[1]);
+interface NavState { aooPage: Page; aooIdx: number; aooPrev?: Page }
+const navStateOf = (): NavState | null => {
+  const st = window.history.state as NavState | null;
+  return st && typeof st.aooIdx === 'number' && st.aooPage ? st : null;
+};
+
+/** The in-app Back button — steps back through the browser history (same as the browser's own Back). */
+function BackButton({ onClick, to }: { onClick: () => void; to?: string }) {
+  const label = to ? `Back to ${to}` : 'Back';
+  return (
+    <Tooltip title={label} arrow>
+      <Box component="button" type="button" onClick={onClick} aria-label={label}
+        sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 0.6, flexShrink: 0,
+          height: { xs: 40, sm: 32 }, minWidth: { xs: 40, sm: 0 }, px: { xs: 1, sm: 1.25 }, pr: { sm: 1.5 },
+          fontFamily: 'inherit', fontSize: 13, fontWeight: 700, color: '#000', cursor: 'pointer',
+          bgcolor: '#FFFFFF', border: '1px solid #CBD1D6', borderRadius: '8px', boxShadow: '0 1px 2px rgba(0,0,0,0.06)',
+          transition: 'background-color .15s, border-color .15s',
+          '&:hover': { bgcolor: '#FFF5ED', borderColor: '#E8652C' },
+          '&:active': { bgcolor: '#FFE8D4' },
+          '&:focus-visible': { outline: '2px solid #E8652C', outlineOffset: '2px' } }}>
+        <ArrowBackIcon sx={{ fontSize: 17 }} />
+        <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Back</Box>
+      </Box>
+    </Tooltip>
+  );
+}
+
+// Every view reads its data through api.ts (answered in-browser from the sample dataset).
 function AuthedApp({ user }: { user: AuthUser }) {
   // remember the open page across refresh — restore it on load (default Home), persist on every nav
-  const [page, setPage] = useState<Page>(() => {
-    // a fresh SIGN-IN always lands on Home; a refresh restores wherever the user was
+  const [page, setPageState] = useState<Page>(() => {
+    // a fresh SIGN-IN always lands on Home; otherwise the URL (#/page) wins, then the last page from this browser
     if (sessionStorage.getItem('aoo.justLoggedIn')) {
       sessionStorage.removeItem('aoo.justLoggedIn');
       return 'home';
     }
-    const saved = localStorage.getItem('aoo.page');
-    if (saved === 'uatreport') return 'uatreportv2';   // the original UAT Report page was retired → its successor
-    if (saved && ['finalorder', 'cfaregzsku', 'finalorderreport', 's3out'].includes(saved)) return 'home';   // removed pages
-    return (saved as Page) || 'home';
+    return pageFromHash() ?? normalisePage(localStorage.getItem('aoo.page')) ?? 'home';
   });
   useEffect(() => { localStorage.setItem('aoo.page', page); }, [page]);
+  // history depth + the page we came from (for the Back button's label); survives a refresh via history.state
+  const pageRef = useRef(page);
+  const navRef = useRef<{ idx: number; prev?: Page }>((() => {
+    const st = navStateOf();
+    return st && st.aooPage === page ? { idx: st.aooIdx, prev: st.aooPrev } : { idx: 0 };
+  })());
+  const [nav, setNav] = useState(navRef.current);
+  useEffect(() => {   // make the current entry carry the page (first load / refresh) so Back can return to it
+    const st = navStateOf();
+    if (!st || st.aooPage !== pageRef.current || window.location.hash !== `#/${pageRef.current}`) {
+      window.history.replaceState({ aooPage: pageRef.current, aooIdx: navRef.current.idx, aooPrev: navRef.current.prev } as NavState,
+        '', `#/${pageRef.current}`);
+    }
+  }, []);
+  /** Navigate to a page → a NEW browser-history entry (so the browser's Back returns here). */
+  const setPage = useCallback((p: Page) => {
+    const cur = pageRef.current;
+    if (cur === p) return;
+    const next = { idx: navRef.current.idx + 1, prev: cur };
+    window.history.pushState({ aooPage: p, aooIdx: next.idx, aooPrev: cur } as NavState, '', `#/${p}`);
+    pageRef.current = p; navRef.current = next;
+    setNav(next); setPageState(p);
+  }, []);
+  // browser Back / Forward (or an edited #/page URL) → show that page without adding history
+  useEffect(() => {
+    const onPop = (e: PopStateEvent) => {
+      const st = (e.state as NavState | null);
+      const p = (st && st.aooPage) || pageFromHash() || 'home';
+      const next = { idx: st && typeof st.aooIdx === 'number' ? st.aooIdx : 0, prev: st?.aooPrev };
+      pageRef.current = p; navRef.current = next;
+      setNav(next); setPageState(p);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+  const goBack = useCallback(() => {
+    if (navRef.current.idx > 0) window.history.back(); else setPage('home');
+  }, [setPage]);
+  const backTo = nav.idx > 0 && nav.prev ? PAGE_LABEL[nav.prev] : 'Home';
   // left sidebar collapse — remembered across refresh; the hamburger in the header toggles it (frees width for wide pages / drawers)
   const isMobile = useIsMobile();
   // Desktop remembers the collapse preference; mobile always starts with the Drawer shut so the page owns the screen.
@@ -152,6 +228,8 @@ function AuthedApp({ user }: { user: AuthUser }) {
         <Box sx={{ position: 'sticky', top: 0, zIndex: 20, background: '#FFF5ED', color: '#2D2D2D',
           px: { xs: 1, sm: 2.5 }, py: { xs: 0.5, sm: 0.9 }, display: 'flex', gap: { xs: 0.6, sm: 1.25 }, alignItems: 'center', flexWrap: 'wrap',
           borderBottom: '1px solid #FFCDA8', boxShadow: '0 2px 8px -6px rgba(0,0,0,0.25)' }}>
+          <BackButton onClick={goBack} to={backTo} />
+          <Box aria-hidden sx={{ width: '1px', height: 22, bgcolor: '#FFCDA8', mx: { xs: 0.25, sm: 0.5 }, display: { xs: 'none', sm: 'block' } }} />
           <Box component="span" sx={{ fontWeight: 800, fontSize: 11, letterSpacing: '.09em', textTransform: 'uppercase',
             color: '#000', display: { xs: 'none', sm: 'inline' } }}><span style={{ color: '#E8652C' }}>▶</span>&nbsp;Run&nbsp;context</Box>
 
@@ -177,6 +255,11 @@ function AuthedApp({ user }: { user: AuthUser }) {
         )}
         {/* Home + Run stay OUTSIDE the refresh key. Home has no date; Run must NOT remount on the date its own onRan
             just set (that would wipe the just-finished run's results). Both are wrapped in KeepAlive like everything else. */}
+        {page === 'home' && nav.idx > 0 && (
+          <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2.5, md: 4 }, pt: 2.5, mb: -1.5 }}>
+            <BackButton onClick={goBack} to={backTo} />
+          </Box>
+        )}
         <KeepAlive active={page === 'home'}><HomePage onNav={setPage} /></KeepAlive>
         <KeepAlive active={page === 'run'}><RunPage viewDate={date} canRun={!!canRun} onRan={(ranDate) => { setDate(ranDate); loadDates(); setParamNonce((n) => n + 1); window.dispatchEvent(new Event(RUN_DONE_EVENT)); }} /></KeepAlive>
         {/* Every OTHER page is keyed on (run date + run nonce): selecting a NEW header date OR completing a re-run
