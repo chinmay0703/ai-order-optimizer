@@ -7,25 +7,25 @@
 
 export const C = {
   // ── PwC palette — taken from pwc.com's live design tokens (--syc-*), 2025 "So You Can" identity ──
-  // structure: charcoal ink + black; accent: PwC orange (solid #FD5108 for fills / large type, #C52B09 for small text)
+  // structure: charcoal ink + black; accent: PwC orange (solid #FD5108 for fills / large type, #CC3D07 for small text)
   navy: '#2D2D2D', navyDark: '#000000',              // (token names kept for back-compat: "navy" = PwC body-text charcoal)
-  gold: '#C52B09', goldLight: '#FFAA72',             // orange700 (text-safe accent) · orange300 (accent on dark)
+  gold: '#CC3D07', goldLight: '#FFAA72',             // bright PwC orange-red (text-safe accent, 4.6:1 on the canvas) · orange300 (accent on dark)
   orange: '#FD5108', orange50: '#FFF5ED', orange100: '#FFE8D4', orange200: '#FFCDA8', orange300: '#FFAA72',
-  orange400: '#FE7C39', orange700: '#C52B09', orangeGradient: 'linear-gradient(90deg, #FE8303, #FD5108)',
+  orange400: '#FE7C39', orange700: '#CC3D07', orangeGradient: 'linear-gradient(90deg, #FE8303, #FD5108)',
   grey50: '#F5F7F8', grey100: '#EEEFF1', grey200: '#DFE3E6', grey300: '#CBD1D6', grey500: '#A1A8B3', grey700: '#787E8A',
   grey800: '#4C5056', grey900: '#303236',
-  tangerine: '#FE7C39', rose: '#D93954', burgundy: '#A32020', maroon: '#602320',   // extended PwC hues for data series
+  tangerine: '#FE7C39', rose: '#D93954', burgundy: '#D02818', maroon: '#602320',   // extended PwC hues for data series
   cream: '#F5F7F8', panelBg: '#EEEFF1', white: '#FFFFFF',
   canvas: '#F5F7F8',                                 // page background — PwC off-white (grey-50) so white cards stand out
   ink: '#2D2D2D', slate: '#2D2D2D', muted: '#5C616A',
   rule: '#DFE3E6', border: '#DFE3E6', rowLine: '#EEEFF1', headBg: '#F5F7F8',   // rowLine=divider · headBg=table header
   // ── semantic (text-safe inks: each ≥ 4.5:1 on white AND on its own tint) ──
-  success: '#1B7346', green: '#1B7346', successLight: '#E7F3E7', greenP: '#E7F3E7',
-  warnText: '#C52B09', amber: '#C52B09', warnLight: '#FFF5ED', amberP: '#FFF5ED',   // PwC orange700 on orange50 (5.3:1)
-  alertRed: '#A32020', red: '#A32020', redP: '#FCEAE8',                              // PwC burgundy on a pink tint (6.5:1)
+  success: '#017E35', green: '#017E35', successLight: '#E6F7EC', greenP: '#E6F7EC',
+  warnText: '#8A5A00', amber: '#8A5A00', warnLight: '#FFF6CC', amberP: '#FFF6CC',   // PwC yellow family: dark gold on pale yellow (5.6:1)
+  alertRed: '#D02818', red: '#D02818', redP: '#FCEAE8',                              // bright PwC red on a pink tint (4.5:1)
   // ── brand solids (fills, bars, markers, large type — not small text) ──
-  brandRed: '#E0301E', crimson: '#E0301E', amberBright: '#FE7C39',
-  deepRed: '#A32020', teal: '#1B7346',
+  brandRed: '#E0301E', crimson: '#E0301E', amberBright: '#FFB600',
+  deepRed: '#D02818', teal: '#017E35',
   inkWarm: '#2D2D2D', mutedWarm: '#5C616A', pageWarm: '#F5F7F8', track: '#EEEFF1', allocGray: '#5C616A',
   // ── back-compat aliases ─────
   navyP: '#F5F7F8', grayP: '#EEEFF1', codeBg: '#303236',
@@ -48,7 +48,7 @@ export const SHADOW = {
 /** Status tint-pairs — pale bg + saturated fg, plus a solid marker + hairline border. */
 export const status = {
   success: { bg: C.successLight, fg: C.success, solid: C.success, border: C.rule },
-  warning: { bg: C.warnLight, fg: C.warnText, solid: C.gold, border: C.rule },
+  warning: { bg: C.warnLight, fg: C.warnText, solid: C.amberBright, border: C.rule },
   error: { bg: C.redP, fg: C.alertRed, solid: C.alertRed, border: C.rule },
 };
 

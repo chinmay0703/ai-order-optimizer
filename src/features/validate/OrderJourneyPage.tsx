@@ -34,10 +34,10 @@ interface Dist {
 
 const ST: Record<Status, { label: string; note: string; accent: string; pale: string }> = {
   SO: { label: 'SO Created', note: 'direct order · shipped', accent: C.success, pale: C.greenP },
-  Transship: { label: 'Transshipment', note: 'ships via a cluster primary truck', accent: C.navy, pale: C.navyP },
+  Transship: { label: 'Transshipment', note: 'ships via a cluster primary truck', accent: '#D04A02', pale: C.navyP },
   Mixed: { label: 'SO + RLM · held', note: 'a sibling truck is pending RLM', accent: C.gold, pale: C.amberP },
   RLM: { label: 'RLM Truck', note: 'held for truck approval', accent: C.warnText, pale: C.amberP },
-  Shift: { label: '2nd-CFA Shift', note: 'shifted to a secondary CFA', accent: C.navy, pale: C.navyP },
+  Shift: { label: '2nd-CFA Shift', note: 'shifted to a secondary CFA', accent: '#D04A02', pale: C.navyP },
   NoStock: { label: 'No CFA stock', note: 'entered the engine, nothing to allocate', accent: C.muted, pale: C.panelBg },
   Dropped: { label: 'Dropped < 65%', note: 'truck fill floor not met', accent: C.alertRed, pale: C.redP },
   Before: { label: 'Dropped before engine', note: 'combined SOQ ≤ 65% / no demand', accent: C.muted, pale: C.panelBg },
@@ -152,7 +152,7 @@ function groupDists(cols: string[], rows: Cell[][]): Dist[] {
 
 /* ── atoms (module-level = stable identity; the search input keeps focus while typing) ── */
 const Eyebrow = ({ children }: { children: React.ReactNode }) => (
-  <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.11em', textTransform: 'uppercase', color: C.gold }}>{children}</Box>
+  <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.11em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35 }}>{children}</Box>
 );
 const Chip = ({ s }: { s: Status }) => (
   <Box component="span" sx={{ fontSize: 9.5, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase', px: 0.9, py: '2px', borderRadius: 999, whiteSpace: 'nowrap', bgcolor: ST[s].pale, color: ST[s].accent }}>{ST[s].label}</Box>
@@ -251,7 +251,7 @@ export default function OrderJourneyPage({ date, cfa }: { date?: string; cfa?: s
           const Step = ({ n, title, children }: { n: number; title: string; children: React.ReactNode }) => (
             <Box sx={{ display: 'flex', gap: 1.25, alignItems: 'stretch', flexWrap: 'wrap' }}>
               <Box sx={{ width: 150, flexShrink: 0, alignSelf: 'center' }}>
-                <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: C.gold }}>Step {n}</Box>
+                <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35 }}>Step {n}</Box>
                 <Box sx={{ fontSize: 12.5, fontWeight: 700, color: C.navy }}>{title}</Box>
               </Box>
               <Box sx={{ flex: 1, display: 'flex', gap: 0.75, flexWrap: 'wrap', alignItems: 'stretch' }}>{children}</Box>

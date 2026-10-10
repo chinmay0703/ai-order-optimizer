@@ -69,7 +69,7 @@ function DbListPopup({ cfa, eyebrow, title, intro, cols, rows, onClose }: {
   return (
     <Dialog open onClose={onClose} maxWidth="md" fullWidth PaperProps={{ sx: { borderRadius: `${RADIUS.md}px`, border: `1px solid ${C.rule}` } }}>
       <Box sx={{ px: 2.5, pt: 2, pb: 1.25, borderBottom: `1px solid ${C.rule}` }}>
-        <Typography sx={{ fontSize: 10.5, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: C.gold }}>{eyebrow} · CFA {cfa}</Typography>
+        <Typography sx={{ fontSize: 10.5, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35 }}>{eyebrow} · CFA {cfa}</Typography>
         <Typography sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 20, color: C.navy }}>{title}</Typography>
         <Typography sx={{ fontSize: 12.5, color: C.slate, mt: 0.5 }}>{intro}</Typography>
       </Box>
@@ -115,7 +115,8 @@ const IDLE_POLL_MS = 4000;
 // today as dd-mm-yyyy — the run date every run is stamped with (the backend's run_day, IST)
 const todayLabel = () => { const d = new Date(); return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`; };   // how often an idle Run page checks whether a run started elsewhere (API / cron / another user)
 const SOURCE_LABEL: Record<string, string> = { api: 'started via API', cron: 'started by the daily schedule', manual: 'started from the UI' };
-const RUN_HUES = ['#2D2D2D', '#C52B09', '#1B7346', '#E0301E', '#5C616A', '#2D2D2D'];
+// the classic PwC logo hues, light → deep in cascade order (Non-PACE yellow … Retail red) — bars only, no text on them
+const RUN_HUES = ['#FFB600', '#EB8C00', '#FD5108', '#E0301E', '#E669A2', '#D02818'];
 
 /* ---- Pipeline Run Audit: a slim run HEADER + PER-CFA per-stage detail, from GET /api/production/audit ---- */
 interface CfaStage {   // one (cfa, stage) checkpoint; cfa='ALL' = a shared/whole-run stage
@@ -146,10 +147,10 @@ const CFA_LABELS: Record<string, string> = {
 };
 // calm status palette — only a small DOT carries colour (green ok · gold partial/running · red fail · grey idle)
 const ST_TONE: Record<string, { dot: string; fg: string; bg: string }> = {
-  SUCCESS: { dot: '#1B7346', fg: '#1E7E4B', bg: '#E7F3E7' },
-  RUNNING: { dot: '#C52B09', fg: '#C52B09', bg: '#FFE8D4' },
-  FAILED: { dot: '#E0301E', fg: '#A32020', bg: '#FBEAEA' },
-  PARTIAL: { dot: '#C52B09', fg: '#C52B09', bg: '#FFE8D4' },
+  SUCCESS: { dot: '#017E35', fg: '#017E35', bg: '#E6F7EC' },
+  RUNNING: { dot: '#CC3D07', fg: '#CC3D07', bg: '#FFE8D4' },
+  FAILED: { dot: '#E0301E', fg: '#D02818', bg: '#FBEAEA' },
+  PARTIAL: { dot: '#CC3D07', fg: '#CC3D07', bg: '#FFE8D4' },
   SKIPPED: { dot: '#CBD1D6', fg: '#5C616A', bg: '#F5F7F8' },
   PENDING: { dot: '#CBD1D6', fg: '#A1A8B3', bg: '#F5F7F8' },
 };
@@ -426,7 +427,7 @@ function FunnelTable({ summary, cfas }: { summary: Record<string, PerCfa>; cfas:
         The small line under a count is the number of <b>trucks</b> behind it.
       </PageIntro>
 
-      <Typography sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: C.gold, mb: 0.5 }}>① Before RLM · engine decision</Typography>
+      <Typography sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35, mb: 0.5 }}>① Before RLM · engine decision</Typography>
       <Table head={[['CFA'], ['S3 SOQ DBs'], ['Filtered'], ['PDP'], ['Non-PDP'], ['Sent for SO creation', C.green], ['Sent for RLM approval', C.gold], ['2nd CFA', C.gold], ['Dropped', C.alertRed]]}
         rows={cfas.map((c) => { const s = summary[c]; if (!s) return null; return (
           <tr key={c}>
@@ -476,7 +477,7 @@ function FunnelTable({ summary, cfas }: { summary: Record<string, PerCfa>; cfas:
           borderRadius: `${RADIUS.sm}px`, '&:hover .after-chev': { color: C.navy }, '&:focus-visible': { outline: `2px solid ${C.gold}`, outlineOffset: 2 } }}>
         <Box component="span" className="after-chev" aria-hidden sx={{ display: 'inline-block', color: C.gold, fontWeight: 800, fontSize: 12,
           transform: afterOpen ? 'rotate(90deg)' : 'none', transition: 'transform .15s' }}>▸</Box>
-        <Typography sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: C.gold }}>② After RLM rollup · RLM outcome</Typography>
+        <Typography sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35 }}>② After RLM rollup · RLM outcome</Typography>
         <Typography sx={{ fontSize: 11.5, fontWeight: 700, color: !anyRlm ? C.muted : anyPending ? C.warnText : C.green }}>
           {!anyRlm ? 'no RLM trucks in this run — same as above' : anyPending ? (anyRolled ? 'rollup done for some CFAs · others still pending (runs at 15:30)' : 'RLM decision pending — the rollup runs at 15:30') : 'RLM rollup complete'}
         </Typography>
@@ -626,6 +627,9 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
   const [err, setErr] = useState<string | null>(null);
   const [schemaErr, setSchemaErr] = useState<StepEv | null>(null);   // structured "an S3 master's columns changed" error
   const [steps, setSteps] = useState<StepEv[]>([]);   // live pipeline progress (SSE)
+  // the log panel is collapsible: it opens by itself while a run streams and folds up once the run has finished
+  const [logOpen, setLogOpen] = useState(false);
+  useEffect(() => { setLogOpen(running); }, [running]);
   const [audit, setAudit] = useState<AuditRow | null>(null);   // the pipeline run-audit for the header date (slim header + per-CFA stages)
   const [auditLoading, setAuditLoading] = useState(true);      // audit fetch in-flight → show a loading card, never a blank gap
   // `d` omitted (live run) → the backend's latest run; `d` = the header run_date → THAT run's audit (keyed on run_date, like /last_run_summary)
@@ -773,7 +777,7 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
 
   return (
     <Box sx={{ p: { xs: 1.5, sm: 2.5, md: 4 }, maxWidth: 1120, mx: 'auto', fontFamily: SANS }}>
-      <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold }}>Production · run the engine</Typography>
+      <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>Production · run the engine</Typography>
       <Typography sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: 30, mb: 0.5, lineHeight: 1.1 }}>Run the allocation engine</Typography>
       <PageIntro>
         Enter a <b>run date</b> (the SOQ snapshot to allocate) and click <b>Run pipeline</b> — it runs every CFA with
@@ -788,10 +792,10 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
           <PdartDatePicker label="Run date (SOQ snapshot)" value={date} onChange={setDate} disabled={running} />
           <Button onClick={run} disabled={!canRun || runDisabled || running || !date.trim()} variant="contained"
             title={!canRun ? 'You do not have run access — ask an admin to grant it' : undefined}
-            startIcon={!canRun || runDisabled ? <LockOutlinedIcon /> : running ? <CircularProgress size={16} sx={{ color: '#000' }} /> : <PlayArrowIcon />}
-            // pwc.com CTA: soft PwC orange with black text (11:1)
-            sx={{ bgcolor: C.orange300, color: '#000', fontWeight: 700, px: 3, py: 1, textTransform: 'none', fontSize: 15, boxShadow: 'none',
-              '&:hover': { bgcolor: C.orange400, boxShadow: 'none' } }}>
+            startIcon={!canRun || runDisabled ? <LockOutlinedIcon /> : running ? <CircularProgress size={16} sx={{ color: '#fff' }} /> : <PlayArrowIcon />}
+            // vivid green "go" button (same intensity as the PwC logo colours) with white text (5.2:1)
+            sx={{ bgcolor: C.green, color: '#fff', fontWeight: 700, px: 3, py: 1, textTransform: 'none', fontSize: 15, boxShadow: 'none',
+              '&:hover': { bgcolor: '#01602B', boxShadow: 'none' } }}>
             {!canRun ? 'No run access' : runDisabled ? 'Today’s run complete' : running ? 'Running…' : 'Run pipeline'}
           </Button>
           <Typography sx={{ fontSize: 12, color: C.muted, alignSelf: 'center', maxWidth: 360, lineHeight: 1.4 }}>
@@ -887,17 +891,20 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
             ...(running ? { animation: 'aooTop 3s linear infinite' } : {}) }} />
           {/* faint rotating aurora + soft corner glows (green/gold on white) */}
           {running && <Box aria-hidden sx={{ position: 'absolute', top: '-45%', left: '-12%', width: '124%', height: '190%', zIndex: 0, pointerEvents: 'none', opacity: 0.10, filter: 'blur(50px)',
-            background: 'conic-gradient(from 0deg, rgba(33,163,102,0), rgba(33,163,102,0.6), rgba(253,81,8,0.5), rgba(33,163,102,0))',
+            background: 'conic-gradient(from 0deg, rgba(2,151,64,0), rgba(2,151,64,0.6), rgba(253,81,8,0.5), rgba(2,151,64,0))',
             animation: 'aooSpin 10s linear infinite' }} />}
           <Box aria-hidden sx={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
-            background: 'radial-gradient(500px 180px at 10% -20%, rgba(33,163,102,0.08), transparent 60%), radial-gradient(440px 200px at 100% 120%, rgba(253,81,8,0.07), transparent 60%)' }} />
+            background: 'radial-gradient(500px 180px at 10% -20%, rgba(2,151,64,0.08), transparent 60%), radial-gradient(440px 200px at 100% 120%, rgba(253,81,8,0.07), transparent 60%)' }} />
 
-          {/* header */}
-          <Box sx={{ position: 'relative', zIndex: 2, px: 2.25, pt: 2.25, pb: 1.5 }}>
+          {/* header — click to show / hide the log */}
+          <Box role="button" tabIndex={0} aria-expanded={logOpen} onClick={() => setLogOpen((o) => !o)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setLogOpen((o) => !o); } }}
+            sx={{ position: 'relative', zIndex: 2, px: 2.25, pt: 2.25, pb: 1.5, cursor: 'pointer', outline: 'none',
+              '&:focus-visible': { boxShadow: `inset 0 0 0 2px ${C.orange}` } }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
               <Box sx={{ position: 'relative', width: 10, height: 10, flexShrink: 0 }}>
                 <Box sx={{ position: 'absolute', inset: 0, borderRadius: '50%', bgcolor: running ? C.green : C.muted }} />
-                {running && <Box sx={{ position: 'absolute', inset: 0, borderRadius: '50%', bgcolor: C.green, animation: 'aooPing 1.5s cubic-bezier(0,0,0.2,1) infinite' }} />}
+                {running && <Box sx={{ position: 'absolute', inset: 0, borderRadius: '50%', bgcolor: '#029740', animation: 'aooPing 1.5s cubic-bezier(0,0,0.2,1) infinite' }} />}
               </Box>
               <Typography sx={{ fontWeight: 800, color: C.navy, fontSize: 14.5, letterSpacing: '.01em' }}>
                 {running ? 'Engine running' : 'Run finished'} · <span style={{ fontFamily: MONO, color: C.gold }}>{date}</span>
@@ -905,6 +912,10 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
               </Typography>
               <Box sx={{ flex: 1 }} />
               <Typography sx={{ fontSize: 11.5, color: C.muted, fontFamily: MONO }}>{steps.length} event{steps.length === 1 ? '' : 's'}</Typography>
+              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.25, fontSize: 12, fontWeight: 700, color: C.navy }}>
+                {logOpen ? 'hide log' : 'show log'}
+                <Box component="span" sx={{ display: 'inline-block', transition: 'transform .18s', transform: logOpen ? 'rotate(180deg)' : 'none' }}>▾</Box>
+              </Box>
             </Box>
             <Typography sx={{ fontSize: 12, color: C.muted, mt: 0.5 }}>
               fetch masters + SOQ → scope cfa/db inventory to the SOQ → allocate each CFA
@@ -913,11 +924,12 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
             <Box sx={{ position: 'relative', mt: 1.25, height: 4, borderRadius: 2, overflow: 'hidden', bgcolor: C.grayP }}>
               {running
                 ? <Box sx={{ position: 'absolute', top: 0, bottom: 0, width: '38%', borderRadius: 2, background: `linear-gradient(90deg, transparent, ${C.green}, ${C.gold}, transparent)`, animation: 'aooSweep 1.6s ease-in-out infinite' }} />
-                : <Box sx={{ position: 'absolute', inset: 0, bgcolor: C.green }} />}
+                : <Box sx={{ position: 'absolute', inset: 0, bgcolor: '#029740' }} />}
             </Box>
           </Box>
 
-          {/* stream */}
+          {/* stream (collapsible) */}
+          <Collapse in={logOpen} timeout="auto">
           <Box ref={streamRef} sx={{ position: 'relative', zIndex: 2, maxHeight: 220, overflowY: 'auto', px: 1.25, pb: 1.5,
             '&::-webkit-scrollbar': { width: 8 }, '&::-webkit-scrollbar-thumb': { background: C.border, borderRadius: 8 } }}>
             {steps.map((s, i) => {
@@ -931,7 +943,7 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
               return (
                 <Box key={i} sx={{ display: 'flex', alignItems: 'baseline', gap: 1, px: 1.25, py: 0.5, borderRadius: 1,
                   fontFamily: MONO, fontSize: 12.5,
-                  bgcolor: isLast && running ? 'rgba(33,163,102,0.08)' : 'transparent',
+                  bgcolor: isLast && running ? 'rgba(2,151,64,0.08)' : 'transparent',
                   animation: isLast ? 'aooRowIn 0.35s ease-out' : 'none' }}>
                   <span style={{ color: C.muted, width: 22, textAlign: 'right', flexShrink: 0 }}>{i + 1}</span>
                   <span style={{ color: gc, fontWeight: 800, flexShrink: 0 }}>{glyph}</span>
@@ -945,12 +957,13 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
             {running && steps.length === 0 && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 1.5, py: 1.75, color: C.muted, fontFamily: SANS, fontSize: 13 }}>
                 <Box sx={{ display: 'flex', gap: 0.5 }}>
-                  {[0, 1, 2].map((d) => <Box key={d} sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: C.green, animation: `aooBlink 1s ease-in-out ${d * 0.16}s infinite` }} />)}
+                  {[0, 1, 2].map((d) => <Box key={d} sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#029740', animation: `aooBlink 1s ease-in-out ${d * 0.16}s infinite` }} />)}
                 </Box>
                 Connecting to the pipeline…
               </Box>
             )}
           </Box>
+          </Collapse>
         </Box>
       )}
 
@@ -968,7 +981,7 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
                 bgcolor: '#fff', color: C.slate, border: `1px solid ${C.border}`, borderLeft: `4px solid ${nothingAllocated ? C.gold : C.green}`, boxShadow: SHADOW.lg }}>
                 {/* soft green/gold corner glows on white */}
                 <Box aria-hidden sx={{ position: 'absolute', inset: 0, pointerEvents: 'none',
-                  background: 'radial-gradient(460px 180px at 92% -25%, rgba(33,163,102,0.10), transparent 60%), radial-gradient(380px 190px at 0% 120%, rgba(253,81,8,0.07), transparent 60%)' }} />
+                  background: 'radial-gradient(460px 180px at 92% -25%, rgba(2,151,64,0.10), transparent 60%), radial-gradient(380px 190px at 0% 120%, rgba(253,81,8,0.07), transparent 60%)' }} />
 
                 {/* top row: status + the number */}
                 <Box sx={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'flex-end', gap: 3, flexWrap: 'wrap' }}>
@@ -993,8 +1006,8 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
 
                 {/* bottom row: mini-metrics + outcome split bar */}
                 <Box sx={{ position: 'relative', zIndex: 2, mt: 2.25, pt: 2, borderTop: `1px solid ${C.border}`, display: 'flex', gap: 3, flexWrap: 'wrap', alignItems: 'center' }}>
-                  <HeroMetric label="SKU order lines" value={totals.lines} tone={C.navy} />
-                  <HeroMetric label="Distributors served" value={totals.dbs} tone={C.navy} />
+                  <HeroMetric label="SKU order lines" value={totals.lines} tone={'#D04A02'} />
+                  <HeroMetric label="Distributors served" value={totals.dbs} tone={'#D04A02'} />
                   <HeroMetric label="On hold · RLM" value={held} tone={C.gold} />
                   <Box sx={{ flex: 1, minWidth: 220 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.6 }}>
@@ -1002,7 +1015,7 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
                       <span style={{ fontSize: 11, color: C.slate, fontFamily: MONO }}>{Math.round(cw)}% ships now</span>
                     </Box>
                     <Box sx={{ display: 'flex', height: 9, borderRadius: 999, overflow: 'hidden', bgcolor: C.grayP }}>
-                      {totals.cases > 0 && <Box sx={{ width: `${cw}%`, background: `linear-gradient(90deg,${C.green},#5EE0A0)` }} />}
+                      {totals.cases > 0 && <Box sx={{ width: `${cw}%`, background: `linear-gradient(90deg,${C.green},#FFB600)` }} />}
                       {held > 0 && <Box sx={{ width: `${hw}%`, background: `linear-gradient(90deg,${C.gold},#FFB600)` }} />}
                     </Box>
                     <Box sx={{ display: 'flex', gap: 2, mt: 0.7 }}>
@@ -1034,7 +1047,7 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
           {/* HELD / PENDING — gold, only when something waits on RLM; otherwise an all-clear note */}
           {(totals.soHeld + totals.rlmTruck + totals.rlmSecond) > 0 ? (
             <>
-              <Typography sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.gold, mb: 0.85 }}>On hold · waits on the RLM 15:30 decision</Typography>
+              <Typography sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35, mb: 0.85 }}>On hold · waits on the RLM 15:30 decision</Typography>
               <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', mb: 1.25 }}>
                 <Kpi label="Held · RLM approval" value={nf(totals.rlmTruck)} sub="cases on pending truck(s)" tone={C.gold} />
                 <Kpi label="SO-ready · on hold" value={nf(totals.soHeld)} sub="whole DB held by a pending truck" tone={C.gold} />
@@ -1042,7 +1055,7 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
               </Box>
             </>
           ) : (
-            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, px: 1.5, py: 0.75, mb: 1.5, borderRadius: 999, bgcolor: C.greenP, color: C.green, fontWeight: 700, fontSize: 13 }}>
+            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, px: 1.5, py: 0.75, mb: 1.5, borderRadius: 999, bgcolor: '#A8E3BD', color: '#000', fontWeight: 700, fontSize: 13 }}>
               ✓ All clear — nothing on hold, every allocated case ships.
             </Box>
           )}

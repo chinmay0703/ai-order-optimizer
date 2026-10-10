@@ -139,7 +139,7 @@ export default function SubstitutionSequencePage({ date, cfa = '' }: { date?: st
   // inline component) so reusing it across returns never remounts the search box.
   const header = (
     <>
-      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: C.warnText }}>Step 2 · Substitution</Box>
+      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>Step 2 · Substitution</Box>
       <Typography sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 26, color: C.navy, mt: 0.3 }}>
         {tab === 'truck' ? 'Step-2 Truck Fill — CFA × DB' : 'Substitution Sequence'}
       </Typography>
@@ -163,8 +163,8 @@ export default function SubstitutionSequencePage({ date, cfa = '' }: { date?: st
   const mult = data.norm_multiplier ?? OE_DEFAULTS.NORM_MULTIPLIER;   // LIVE cap multiplier from the backend (oe_parameters); fallback = shared default
   const addonP = Math.round((data.addon_cap_pct ?? OE_DEFAULTS.ADDON_CAP_PCT) * 100);   // LIVE add-on cap % (never hardcode 35)
   const status = (l: Line) => l.sub >= l.newSOQ
-    ? { label: 'Filled', bg: C.successLight, fg: C.success, dashed: false }
-    : l.sub > 0 ? { label: 'Partial', bg: C.warnLight, fg: C.warnText, dashed: false }
+    ? { label: 'Filled', bg: '#A8E3BD', fg: '#000', dashed: false }
+    : l.sub > 0 ? { label: 'Partial', bg: '#FFE3A1', fg: '#000', dashed: false }
       // sub === 0 splits two ways: a line with NO eligible rank in the substitution master at all
       // (l.elig.length === 0 — the same signal the detail table shows as "No substitute rules for this
       // line") vs one that had rules but got nothing allocated. Flag the first distinctly so you can
@@ -202,7 +202,7 @@ export default function SubstitutionSequencePage({ date, cfa = '' }: { date?: st
         {q && <Box onClick={() => setQ('')} title="Clear the search field"
           sx={{ cursor: 'pointer', px: 1.5, py: 0.6, fontSize: 13, fontWeight: 700, borderRadius: `${RADIUS.sm}px`, border: `1px solid ${C.rule}`, bgcolor: '#fff', color: C.muted, '&:hover': { borderColor: C.navy, color: C.navy } }}>✕ Clear</Box>}
         <Box sx={{ fontSize: 12.5, color: C.muted }}>
-          <b style={{ color: C.navy }}>{visible.length}</b>{q.trim() ? ` / ${seq.length}` : ''} lines · <b style={{ color: C.success }}>{totFilled}</b> filled · <b style={{ color: C.warnText }}>{totPartial}</b> partial · <b style={{ color: C.muted }}>{totNone}</b> none
+          <b style={{ color: C.navy }}>{visible.length}</b>{q.trim() ? ` / ${seq.length}` : ''} lines · <b style={{ color: '#000' }}>{totFilled}</b> filled · <b style={{ color: '#000' }}>{totPartial}</b> partial · <b style={{ color: C.muted }}>{totNone}</b> none
         </Box>
         <ExportXlsxButton label="Export Excel" onClick={() => downloadXlsx('substitution_sequence',
           ['DB', 'reg-zsku', 'MRP', 'Tier', 'New score', 'Original', 'SOQ', 'New SOQ', 'Substitute'],
@@ -232,10 +232,10 @@ export default function SubstitutionSequencePage({ date, cfa = '' }: { date?: st
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.45, minWidth: 0 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flexWrap: 'wrap', minWidth: 0 }}>
                   <Box sx={{ px: 0.85, py: 0.3, borderRadius: `${RADIUS.sm}px`, bgcolor: C.grayP, ...mono, fontSize: 12, fontWeight: 800, color: C.slate, flexShrink: 0 }}>#{i + 1}</Box>
-                  <Box sx={{ px: 0.9, py: 0.3, borderRadius: `${RADIUS.sm}px`, bgcolor: C.warnLight, display: 'flex', alignItems: 'baseline', gap: 0.5, flexShrink: 0 }}
+                  <Box sx={{ px: 0.9, py: 0.3, borderRadius: `${RADIUS.sm}px`, bgcolor: '#F2AB75', display: 'flex', alignItems: 'baseline', gap: 0.5, flexShrink: 0 }}
                     title="New score = Tier ÷ [(Stock + Original) ÷ Norm] — the order Step 2 fills these lines in">
-                    <Box component="span" sx={{ fontSize: 9, fontWeight: 800, color: C.warnText, textTransform: 'uppercase', letterSpacing: '.05em', opacity: 0.85 }}>Score</Box>
-                    <Box component="span" sx={{ ...mono, fontSize: 13, fontWeight: 800, color: C.warnText }}>{l.newScore}</Box>
+                    <Box component="span" sx={{ fontSize: 9, fontWeight: 800, color: '#000', textTransform: 'uppercase', letterSpacing: '.05em', opacity: 0.75 }}>Score</Box>
+                    <Box component="span" sx={{ ...mono, fontSize: 13, fontWeight: 800, color: '#000' }}>{l.newScore}</Box>
                   </Box>
                   <Chip label={`T${l.tier}`} size="small" sx={{ height: 19, fontSize: 10.5, fontWeight: 700, flexShrink: 0 }} />
                   <Box sx={{ ...mono, fontWeight: 800, color: C.navy, fontSize: 14.5, whiteSpace: 'nowrap', flexShrink: 0 }}>{l.z}</Box>
@@ -244,7 +244,7 @@ export default function SubstitutionSequencePage({ date, cfa = '' }: { date?: st
                       title="MRP — substitution is CFA × DB × MRP-wise">₹{l.mrp}</Box>
                   )}
                   {categoryOf(l.z) && (
-                    <Box sx={{ px: 0.75, py: 0.2, borderRadius: `${RADIUS.sm}px`, bgcolor: C.successLight, color: C.success, fontWeight: 700, fontSize: 11, whiteSpace: 'nowrap', flexShrink: 0 }}
+                    <Box sx={{ px: 0.75, py: 0.2, borderRadius: `${RADIUS.sm}px`, bgcolor: '#A8E3BD', color: '#000', fontWeight: 700, fontSize: 11, whiteSpace: 'nowrap', flexShrink: 0 }}
                       title="brand category — CFA × DB × MRP × brand_category">{categoryOf(l.z)}</Box>
                   )}
                 </Box>
@@ -292,12 +292,12 @@ export default function SubstitutionSequencePage({ date, cfa = '' }: { date?: st
                       <Box sx={{ display: 'flex', height: 9, borderRadius: 5, overflow: 'hidden', border: `1px solid ${C.rule}`,
                         backgroundImage: `repeating-linear-gradient(45deg, ${C.grayP}, ${C.grayP} 3px, #fff 3px, #fff 5px)` }}
                         title={`Original ${origN} · Substitute ${subN} · Open ${openN}  (of SOQ ${soqN})`}>
-                        <Box sx={{ width: w(origN), bgcolor: C.navy }} />
-                        <Box sx={{ width: w(subN), bgcolor: C.success }} />
+                        <Box sx={{ width: w(origN), bgcolor: '#E8652C' }} />
+                        <Box sx={{ width: w(subN), bgcolor: '#36A462' }} />
                       </Box>
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', columnGap: 1.25, rowGap: 0.25, ...mono, fontSize: 10 }}>
-                        <Box component="span" sx={{ color: C.navy, fontWeight: 700 }}>● Original {origN}</Box>
-                        <Box component="span" sx={{ color: C.success, fontWeight: 700 }}>● Sub {subN}</Box>
+                        <Box component="span" sx={{ color: '#000', fontWeight: 700 }}><span style={{ color: '#E8652C' }}>●</span> Original {origN}</Box>
+                        <Box component="span" sx={{ color: '#000', fontWeight: 700 }}><span style={{ color: '#36A462' }}>●</span> Sub {subN}</Box>
                         <Box component="span" sx={{ color: C.muted, fontWeight: 700 }}>○ Open {openN}</Box>
                       </Box>
                     </>
@@ -309,7 +309,7 @@ export default function SubstitutionSequencePage({ date, cfa = '' }: { date?: st
               {l.subPairs.length > 0 && (
                 <Box sx={{ display: 'flex', gap: 0.6, flexWrap: 'wrap', mb: 1 }}>
                   {l.subPairs.map(([s, q], j) => (
-                    <Chip key={j} size="small" label={`${s} : ${q}`} sx={{ height: 20, fontSize: 11.5, ...mono, bgcolor: C.successLight, color: C.success, fontWeight: 700 }} />
+                    <Chip key={j} size="small" label={`${s} : ${q}`} sx={{ height: 20, fontSize: 11.5, ...mono, bgcolor: '#A8E3BD', color: '#000', fontWeight: 700 }} />
                   ))}
                 </Box>
               )}

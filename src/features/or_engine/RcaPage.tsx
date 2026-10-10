@@ -132,7 +132,7 @@ export default function RcaPage({ date }: { date?: string }) {
   return (
     <Box sx={{ background: C.canvas, minHeight: '100vh', fontFamily: SANS, color: C.slate }}>
       <Box sx={{ maxWidth: 1180, mx: 'auto', px: { xs: 1.5, sm: 2.5, md: 4 }, py: { xs: 2, sm: 2.5, md: 3.5 }, pb: 8 }}>
-        <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: C.gold }}>RCA · end-to-end allocation trace</Box>
+        <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>RCA · end-to-end allocation trace</Box>
         <Box component="h1" sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: 28, m: '6px 0 4px' }}>How did this allocation happen?</Box>
         <PageIntro>
           Search any <b>DB</b>, <b>reg-zsku</b> or <b>CFA</b> and see the whole story — demand, the reserved CFA stock it drew, Step&nbsp;1 → 2 → 3, the trucks, and the final FEFO SKU order, with fill&nbsp;% at every level.

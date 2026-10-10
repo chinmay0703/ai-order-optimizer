@@ -28,9 +28,9 @@ const PHASES: { key: Phase; label: string; blurb: string }[] = [
 ];
 
 const STY: Record<Status, { bg: string; fg: string; label: string }> = {
-  pass:  { bg: '#E9F4EC', fg: '#1B7346', label: 'Passed' },
+  pass:  { bg: '#E6F7EC', fg: '#017E35', label: 'Passed' },
   fail:  { bg: '#F8E9E6', fg: '#E0301E', label: 'Failed' },
-  warn:  { bg: '#FFE8D4', fg: '#C52B09', label: 'Warning' },
+  warn:  { bg: '#FFE8D4', fg: '#CC3D07', label: 'Warning' },
   skip:  { bg: '#F5F7F8', fg: '#5C616A', label: 'Skipped' },
   error: { bg: '#3D1A16', fg: '#FFB4A2', label: 'Error' },
 };
@@ -102,7 +102,7 @@ function ComplexCard({ q }: { q: ComplexQ }) {
 const Shell = ({ children }: { children: React.ReactNode }) => (
   <Box sx={{ background: C.canvas, minHeight: '100vh', fontFamily: SANS, color: C.slate }}>
     <Box sx={{ maxWidth: 1320, mx: 'auto', px: { xs: 1.5, sm: 2.5, md: 4 }, py: { xs: 2, sm: 2.5, md: 3.5 }, pb: 8 }}>
-      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold }}>
+      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>
         Data QA · master &amp; feed validation
       </Box>
       <Box component="h1" sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: 28, m: '6px 0 8px' }}>
@@ -213,7 +213,7 @@ export default function DataTestsPage({ date }: { date?: string }) {
             <Box key={ph.key}>
               {/* PHASE section header — Pre-OR-Run / Post-OR-Run */}
               <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, mb: 1.5, pb: 0.85, borderBottom: `2px solid ${C.navy}`, flexWrap: 'wrap' }}>
-                <Box sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: C.gold }}>
+                <Box sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35 }}>
                   {ph.key === 'pre' ? 'Section 1' : 'Section 2'}
                 </Box>
                 <Box sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 20, color: C.navy }}>{ph.label}</Box>
@@ -275,7 +275,7 @@ export default function DataTestsPage({ date }: { date?: string }) {
       {(data.complex ?? []).length > 0 && (
         <Box sx={{ mt: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, mb: 1.5, pb: 0.85, borderBottom: `2px solid ${C.navy}`, flexWrap: 'wrap' }}>
-            <Box sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: C.gold }}>Section 3</Box>
+            <Box sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35 }}>Section 3</Box>
             <Box sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 20, color: C.navy }}>Complex QA</Box>
             <Box sx={{ fontSize: 12.5, color: C.muted, flex: 1, minWidth: 200 }}>
               Cross-master presence checks that return a full result table (not pass/fail) — read each row directly. Master-scoped, so not tied to the run date.

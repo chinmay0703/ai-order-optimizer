@@ -175,7 +175,7 @@ export default function TruckFillPanel({ date, mode }: { date?: string; mode: Mo
               <Box sx={{ position: 'relative', width: 96, height: 9, borderRadius: 999, bgcolor: C.grayP, overflow: 'hidden', flexShrink: 0 }}
                 title={`Step-1 ${(s1 ?? 0).toFixed(1)}%  +  Step-2 ${s2val.toFixed(1)}%  =  ${tot.toFixed(1)}% of SOQ`}>
                 <Box sx={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: `${s1w}%`, bgcolor: C.navy }} />
-                <Box sx={{ position: 'absolute', top: 0, bottom: 0, left: `${s1w}%`, width: `${s2w}%`, bgcolor: C.success }} />
+                <Box sx={{ position: 'absolute', top: 0, bottom: 0, left: `${s1w}%`, width: `${s2w}%`, bgcolor: '#029740' }} />
               </Box>
               <Box component="span" sx={{ minWidth: 46, fontWeight: 800, color: over ? C.warnText : C.slate }}>{tot.toFixed(1)}%</Box>
             </Box>
@@ -198,7 +198,7 @@ export default function TruckFillPanel({ date, mode }: { date?: string; mode: Mo
       </Box>
 
       <Box sx={{ display: 'flex', gap: 1.25, mb: 1.75 }}>
-        <Kpi label="Lanes (CFA × DB)" val={nf(kpi.n)} fg={C.navy} bar={C.navy} />
+        <Kpi label="Lanes (CFA × DB)" val={nf(kpi.n)} fg={C.navy} bar={'#D04A02'} />
         {mode === 'step2'
           ? <Kpi label="Lanes with substitute" val={nf(kpi.withSub)} fg={C.success} bar={C.success} />
           : <Kpi label="Transshipment lanes" val={nf(kpi.tr)} fg={C.navy} bar={C.gold} />}

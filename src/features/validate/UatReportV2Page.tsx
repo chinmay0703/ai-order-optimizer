@@ -26,7 +26,7 @@ const isNum = (h: string) => !TEXT_COL.test(h);
 const Shell = ({ children }: { children: React.ReactNode }) => (
   <Box sx={{ background: C.canvas, minHeight: '100vh', fontFamily: SANS, color: C.slate }}>
     <Box sx={{ maxWidth: 1560, mx: 'auto', px: { xs: 1.5, sm: 2.5, md: 4 }, py: { xs: 2, sm: 2.5, md: 3.5 }, pb: 8 }}>
-      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold }}>
+      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>
         Reports · Allocation Report · reg-zsku × DB × truck
       </Box>
       <Box component="h1" sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: 28, m: '6px 0 8px' }}>
@@ -150,12 +150,12 @@ export default function UatReportV2Page({ date, cfa }: { date?: string; cfa?: st
       </PageIntro>
 
       <Box sx={{ display: 'flex', gap: 1.5, mb: 2, flexWrap: 'wrap' }}>
-        <Kpi label="Distributors (SOQ)" val={kpi.dbs} fg={C.navy} bar={C.navy} />
+        <Kpi label="Distributors (SOQ)" val={kpi.dbs} fg={C.navy} bar={'#D04A02'} />
         <Kpi label="Input to engine" val={kpi.input_to_engine} fg={C.success} bar={C.success} />
         <Kpi label="Dropped before engine" val={kpi.dropped_before_engine} fg={C.warnText} bar={C.gold} />
         <Kpi label="Shipped (>0)" val={kpi.shipped_dbs} fg={C.success} bar={C.success} />
         <Kpi label="Dropped in engine" val={kpi.dropped_in_engine} fg={C.alertRed} bar={C.alertRed} />
-        <Kpi label="Total shipped" val={kpi.total_shipped} suffix=" cs" fg={C.navy} bar={C.navy} />
+        <Kpi label="Total shipped" val={kpi.total_shipped} suffix=" cs" fg={C.navy} bar={'#D04A02'} />
       </Box>
 
       <Box sx={{ display: 'flex', gap: 1.25, mb: 1.75, flexWrap: 'wrap', alignItems: 'center' }}>

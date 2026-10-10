@@ -54,7 +54,7 @@ const Bar = ({ o, s, f }: { o: number; s: number; f: number }) => {
 const Shell = ({ children }: { children: React.ReactNode }) => (
   <Box sx={{ background: C.canvas, minHeight: '100vh', fontFamily: SANS, color: C.slate }}>
     <Box sx={{ maxWidth: 1280, mx: 'auto', px: { xs: 1.5, sm: 2.5, md: 4 }, py: { xs: 2, sm: 2.5, md: 3.5 }, pb: 8 }}>
-      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold }}>
+      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>
         CFA × DB · combined allocation
       </Box>
       <Box component="h1" sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: 28, m: '6px 0 8px' }}>
@@ -142,11 +142,11 @@ export default function CfaDbPage({ date }: { date?: string }) {
       </PageIntro>
 
       <Box sx={{ display: 'flex', gap: 1.5, mb: 2 }}>
-        <Kpi label="CFA × DB lanes" val={kpi.pairs} fg={C.navy} bar={C.navy} />
+        <Kpi label="CFA × DB lanes" val={kpi.pairs} fg={C.navy} bar={'#D04A02'} />
         <Kpi label="Trucks" val={kpi.trucks} fg={C.navy} bar={C.gold} />
         <Kpi label="SO cases created" val={kpi.soCreated} fg={C.success} bar={C.success} />
         {kpi.rlmHeld > 0 && <Kpi label="On hold · RLM" val={kpi.rlmHeld} fg={C.warnText} bar={C.gold} />}
-        <Kpi label="Fill (SO ÷ SOQ)" val={kpi.fill} suffix="%" fg={C.navy} bar={C.navy} />
+        <Kpi label="Fill (SO ÷ SOQ)" val={kpi.fill} suffix="%" fg={C.navy} bar={'#D04A02'} />
       </Box>
 
       <Box sx={{ display: 'flex', gap: 1.25, mb: 1.75, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -204,7 +204,7 @@ export default function CfaDbPage({ date }: { date?: string }) {
                     {rank > 0
                       ? <Box component="span" title={prioTip}
                           sx={{ display: 'inline-block', px: 0.9, py: 0.2, borderRadius: 999, fontWeight: 800, fontSize: 11.5,
-                            bgcolor: rank === 1 ? '#FFCDA8' : '#F5F7F8', color: rank === 1 ? '#C52B09' : '#2D2D2D' }}>{ordinal(rank)}</Box>
+                            bgcolor: rank === 1 ? '#FFCDA8' : '#F5F7F8', color: rank === 1 ? '#CC3D07' : '#2D2D2D' }}>{ordinal(rank)}</Box>
                       : <span style={{ color: C.muted }}>—</span>}
                   </TableCell>
                   <TableCell><Bar o={o} s={s} f={f} /></TableCell>
@@ -216,7 +216,7 @@ export default function CfaDbPage({ date }: { date?: string }) {
                         <Box sx={{ display: 'flex', gap: 3.5, flexWrap: 'wrap', alignItems: 'center' }}>
                           <Box>
                             <Box sx={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: C.muted, letterSpacing: '.05em' }}>Filler draw rank</Box>
-                            <Box sx={{ fontFamily: SERIF, fontSize: 26, fontWeight: 700, color: rank === 1 ? '#C52B09' : C.navy, lineHeight: 1.15 }}>{ordinal(rank)}{ncfa > 0 ? ` of ${ncfa}` : ''}</Box>
+                            <Box sx={{ fontFamily: SERIF, fontSize: 26, fontWeight: 700, color: rank === 1 ? '#CC3D07' : C.navy, lineHeight: 1.15 }}>{ordinal(rank)}{ncfa > 0 ? ` of ${ncfa}` : ''}</Box>
                             <Box sx={{ fontSize: 11.5, color: C.muted, maxWidth: 250 }}>in CFA {r[D.cfa]}, DBs sorted by priority ↓ — rank 1 draws the shared filler pool first</Box>
                           </Box>
                           {/* priority = tier weight ÷ (Σheld ÷ Σnorm) — same shape as the Step-1 priority score */}
@@ -275,9 +275,9 @@ export default function CfaDbPage({ date }: { date?: string }) {
                 ? `sub-${pct(P.TRUCK_KEEP_PCT)} permitted for transshipment secondary tail (cluster remainder after primary-truck trim)`
                 : (trimmed ? `planned ${f1(plannedFillRaw)}% → shipped ${f1(fillRaw)}% (cluster primary trim)` : undefined);
               const flag = String(r[T.flag]);
-              const flagTone = flag === 'SO_CREATION' ? { bg: C.successLight, fg: C.success }
-                : flag === 'RLM_FOR_SECOND_CFA' ? { bg: C.redP, fg: C.alertRed }
-                : { bg: C.warnLight, fg: C.warnText };
+              const flagTone = flag === 'SO_CREATION' ? { bg: '#A8E3BD', fg: '#000' }
+                : flag === 'RLM_FOR_SECOND_CFA' ? { bg: '#F7BFB5', fg: '#000' }
+                : { bg: '#FFE3A1', fg: '#000' };
               const newLane = i === 0 || r[T.cfa] !== trucks[i - 1][T.cfa] || r[T.db] !== trucks[i - 1][T.db];
               const tracked = isTracked(r[T.db]);
               return (

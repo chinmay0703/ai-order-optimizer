@@ -153,12 +153,12 @@ function AuthedApp({ user }: { user: AuthUser }) {
           px: { xs: 1, sm: 2.5 }, py: { xs: 0.5, sm: 0.9 }, display: 'flex', gap: { xs: 0.6, sm: 1.25 }, alignItems: 'center', flexWrap: 'wrap',
           borderBottom: '1px solid #FFCDA8', boxShadow: '0 2px 8px -6px rgba(0,0,0,0.25)' }}>
           <Box component="span" sx={{ fontWeight: 800, fontSize: 11, letterSpacing: '.09em', textTransform: 'uppercase',
-            color: '#C52B09', display: { xs: 'none', sm: 'inline' } }}>▶&nbsp;Run&nbsp;context</Box>
+            color: '#000', display: { xs: 'none', sm: 'inline' } }}><span style={{ color: '#E8652C' }}>▶</span>&nbsp;Run&nbsp;context</Box>
 
           {/* RUN DATE — themed dropdown (not a native <select>, whose popup is off-theme) */}
           <RunContextSelect label="Run date" title="The run date every page below reads" value={date} options={dates}
-            onChange={setDate} accent="#C52B09" align="left" minMenuWidth={150} emptyText={booting ? 'Loading…' : '—'}
-            icon={<CalendarTodayIcon sx={{ fontSize: 16, color: '#C52B09' }} />} />
+            onChange={setDate} accent="#CC3D07" align="left" minMenuWidth={150} emptyText={booting ? 'Loading…' : '—'}
+            icon={<CalendarTodayIcon sx={{ fontSize: 16, color: '#CC3D07' }} />} />
 
           {dataDate[date] && <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 700,
             fontSize: { xs: 10.5, sm: 12 }, bgcolor: '#FFFFFF', border: '1px solid #FFCDA8', px: { xs: 0.7, sm: 1 }, py: { xs: 0.35, sm: 0.6 },

@@ -41,7 +41,7 @@ function upcomingDays(todayIso: string, n: number) {
 const cell = { py: 0.4, px: 1, fontSize: '0.72rem', whiteSpace: 'nowrap' as const };
 const YesNo = ({ v }: { v: boolean }) => (
   <Chip size="small" label={v ? 'Yes' : 'No'} sx={{ height: 18, fontSize: '0.62rem', fontWeight: 700,
-    bgcolor: v ? '#DCFCE7' : '#F5F7F8', color: v ? '#15803D' : '#5C616A' }} />
+    bgcolor: v ? '#E6F7EC' : '#F5F7F8', color: v ? '#017E35' : '#5C616A' }} />
 );
 
 function Section({ n, title, desc, count, children }: { n: number; title: string; desc: string; count?: string; children: ReactNode }) {
@@ -210,7 +210,7 @@ export default function CfaWalkthroughPage({ date }: { date?: string }) {
                     <Chip size="small" label={x.valid_via}
                       sx={{ height: 18, fontSize: '0.62rem', fontWeight: 700,
                         bgcolor: x.valid_via === 'PDP' ? '#EEEFF1' : x.valid_via === 'below-threshold' ? '#FFE8D4' : '#FEE2E2',
-                        color: x.valid_via === 'PDP' ? '#2D2D2D' : x.valid_via === 'below-threshold' ? '#C52B09' : '#E0301E' }} />
+                        color: x.valid_via === 'PDP' ? '#2D2D2D' : x.valid_via === 'below-threshold' ? '#CC3D07' : '#E0301E' }} />
                   </TableCell>
                 </TableRow>
               ))}
@@ -236,7 +236,7 @@ export default function CfaWalkthroughPage({ date }: { date?: string }) {
                   <TableCell align="right">{fmt(x.stock)}</TableCell>
                   <TableCell align="right">{fmt(x.earmark)}</TableCell>
                   <TableCell align="right" sx={{ fontWeight: 700, color: '#2D2D2D' }}>{fmt(x.cap)}</TableCell>
-                  <TableCell align="right" sx={{ color: '#1B7346' }}>{fmt(x.remaining_after)}</TableCell>
+                  <TableCell align="right" sx={{ color: '#017E35' }}>{fmt(x.remaining_after)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

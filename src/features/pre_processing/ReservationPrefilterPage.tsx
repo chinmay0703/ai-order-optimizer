@@ -25,23 +25,32 @@ interface PP extends ReservationPctMeta { soq_intake: Intake; soq_intake_by_cfa?
 
 const nf = (n: number) => (n ?? 0).toLocaleString();
 // categorical navy-ramp so each run/channel has a stable identity hue (kept on-brand; green/gold stay semantic)
-const RUN_HUES = ['#2D2D2D', '#C52B09', '#1B7346', '#E0301E', '#5C616A', '#2D2D2D'];
-const hueOf = (run: number) => RUN_HUES[(Math.max(1, run) - 1) % RUN_HUES.length];
+// the classic PwC logo hues, light → deep in cascade order: R1 Non-PACE yellow · R2 Hub & Spoke tangerine · R3 AFH orange ·
+// R4 Retail red (+ pink, burgundy for the extra stages). Bright fills carry BLACK text unless the hue is dark; where the hue
+// is used AS text on white, its deeper ink (≥ 4.5:1) is used instead.
+const RUN_HUES = ['#FFB600', '#EB8C00', '#FD5108', '#E0301E', '#E669A2', '#D02818'];
+const RUN_INKS = ['#8A5A00', '#A35400', '#C2410C', '#C02A1A', '#A8306A', '#D02818'];
+const runIdx = (run: number) => (Math.max(1, run) - 1) % RUN_HUES.length;
+const hueOf = (run: number) => RUN_HUES[runIdx(run)];
+const inkOf = (run: number) => RUN_INKS[runIdx(run)];
+const DARK_HUES = new Set(['#E0301E', '#D02818']);
+const textOn = (hue: string) => (DARK_HUES.has(hue) ? '#fff' : '#000');
 
 /* ---------- small primitives ---------- */
 function Kpi({ label, sub, value, tone = C.navy, strong }: { label: string; sub?: string; value: string; tone?: string; strong?: boolean }) {
+  const onTone = RUN_HUES.includes(tone) ? textOn(tone) : '#fff';   // bright logo hues carry black text
   return (
     <Box sx={{ flex: 1, minWidth: 132, border: `1px solid ${strong ? tone : C.border}`, borderRadius: `${RADIUS.md}px`,
       p: 1.5, bgcolor: strong ? tone : C.white, boxShadow: SHADOW.sm }}>
-      <Typography sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 30, color: strong ? '#fff' : tone, lineHeight: 1 }}>{value}</Typography>
-      <Typography sx={{ fontWeight: 700, fontSize: 12, color: strong ? '#fff' : C.navy, mt: 0.4 }}>{label}</Typography>
-      {sub && <Typography sx={{ fontSize: 11, color: strong ? 'rgba(255,255,255,0.85)' : C.muted }}>{sub}</Typography>}
+      <Typography sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 30, color: strong ? onTone : tone, lineHeight: 1 }}>{value}</Typography>
+      <Typography sx={{ fontWeight: 700, fontSize: 12, color: strong ? onTone : C.navy, mt: 0.4 }}>{label}</Typography>
+      {sub && <Typography sx={{ fontSize: 11, color: strong ? onTone : C.muted, opacity: strong ? 0.85 : 1 }}>{sub}</Typography>}
     </Box>
   );
 }
 
 function Callout({ tone, title, children }: { tone: 'navy' | 'green' | 'amber'; title: string; children?: React.ReactNode }) {
-  const T = tone === 'green' ? { bar: C.green, bg: C.greenP, fg: C.green } : tone === 'amber' ? { bar: C.gold, bg: C.amberP, fg: C.warnText } : { bar: C.navy, bg: C.navyP, fg: C.navy };
+  const T = tone === 'green' ? { bar: '#36A462', bg: C.greenP, fg: '#000' } : tone === 'amber' ? { bar: '#F5B82E', bg: C.amberP, fg: '#000' } : { bar: '#D04A02', bg: C.navyP, fg: C.navy };
   return (
     <Box sx={{ borderLeft: `3px solid ${T.bar}`, bgcolor: T.bg, borderRadius: `0 ${RADIUS.sm}px ${RADIUS.sm}px 0`, p: '10px 14px', my: 1.25 }}>
       <Typography sx={{ fontWeight: 700, fontSize: 13, color: T.fg }}>▸ {title}</Typography>
@@ -76,7 +85,7 @@ function TableView({ data, max = 380, monoCol0, tintLast }: { data?: Tbl; max?: 
               const tint = tintLast && ci === r.length - 1;
               const cell = <td key={ci} style={{ ...td, textAlign: num ? 'right' : 'left', fontVariantNumeric: 'tabular-nums',
                 fontFamily: mono ? MONO : SANS, fontWeight: mono || tint ? 700 : 400,
-                color: tint ? hueOf(0) : (mono ? C.navy : C.slate) }}>{c == null || c === '' ? '—' : String(c)}</td>;
+                color: tint ? inkOf(0) : (mono ? C.navy : C.slate) }}>{c == null || c === '' ? '—' : String(c)}</td>;
               if (ci !== rzIdx) return cell;
               const desc = descOf(String(c));
               return (
@@ -164,13 +173,13 @@ function Stage({ letter, hue, eyebrow, title, purpose, children, right }: { lett
   return (
     <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
-        <Box sx={{ width: 38, height: 38, borderRadius: '50%', bgcolor: hue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SERIF, fontWeight: 700, fontSize: 19, boxShadow: SHADOW.sm }}>{letter}</Box>
+        <Box sx={{ width: 38, height: 38, borderRadius: '50%', bgcolor: hue, color: textOn(hue), display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SERIF, fontWeight: 700, fontSize: 19, boxShadow: SHADOW.sm }}>{letter}</Box>
         <Box sx={{ width: 2, flex: 1, bgcolor: C.border, mt: 0.5 }} />
       </Box>
       <Box sx={{ flex: 1, minWidth: 0, border: `1px solid ${C.rule}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm, bgcolor: C.white, p: 2.25, mb: 0.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
           <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold }}>{eyebrow}</Typography>
+            <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35 }}>{eyebrow}</Typography>
             <Typography sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: '1.28rem', color: C.navy, lineHeight: 1.15, mt: 0.2 }}>{title}</Typography>
           </Box>
           {right && <Box sx={{ flexShrink: 0, mt: 0.2 }}>{right}</Box>}
@@ -239,7 +248,7 @@ export default function ReservationPrefilterPage({ date, cfa = '' }: { runProp?:
       {/* the CFA chip is flexShrink:0, so side-by-side it squeezed the title to one word per line on a phone */}
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'flex-start' }, gap: { xs: 1.25, sm: 2 } }}>
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold }}>Pre-processing · before the engine runs</Typography>
+          <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>Pre-processing · before the engine runs</Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Typography sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: { xs: 22, sm: 26, md: 30 }, mb: 0.5, lineHeight: 1.15 }}>Everything that happens before Step&nbsp;1</Typography>
             <IconButton size="small" onClick={() => setHelpOpen(true)} title="How this page works"
@@ -258,7 +267,7 @@ export default function ReservationPrefilterPage({ date, cfa = '' }: { runProp?:
         )}
       </Box>
       <Dialog open={helpOpen} onClose={() => setHelpOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: `${RADIUS.md}px`, overflow: 'hidden', border: `1px solid ${C.goldLight}` } }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #FE7C39 0%, #C52B09 55%, #C52B09 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #FE7C39 0%, #CC3D07 55%, #CC3D07 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
           <HelpOutlineIcon sx={{ fontSize: 20 }} />
           <Box sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 17 }}>How this page works</Box>
           <Box sx={{ flex: 1 }} />
@@ -267,7 +276,7 @@ export default function ReservationPrefilterPage({ date, cfa = '' }: { runProp?:
         <Box sx={{ p: 2.75, color: C.slate, bgcolor: '#FFF5ED', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
           {/* the goal */}
           <Box sx={{ p: '10px 12px', borderRadius: `${RADIUS.sm}px`, bgcolor: '#FFF5ED', border: `1px solid ${C.goldLight}`, borderLeft: `3px solid ${C.gold}` }}>
-            <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.gold, mb: 0.4 }}>🎯 The goal</Box>
+            <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35, mb: 0.4 }}>🎯 The goal</Box>
             <Box sx={{ fontSize: 13, lineHeight: 1.55 }}>The CFA is the central warehouse — stock in <b>cases</b>. Before the engine can allocate it, <b>five pre-processing stages</b> turn raw demand into ready-to-allocate reserved stock.</Box>
           </Box>
 
@@ -373,14 +382,14 @@ export default function ReservationPrefilterPage({ date, cfa = '' }: { runProp?:
       {/* ---------- SUMMARY STRIP (before Stage A) — the filtered-SOQ gate outcome, scoped by the page CFA dropdown ---------- */}
       {fss && (
         <Box sx={{ mb: 3 }}>
-          <Typography sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: C.gold, mb: 0.85 }}>
+          <Typography sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35, mb: 0.85 }}>
             Filtered SOQ · demand-gate outcome · {cfa ? `CFA ${cfa}` : 'all CFAs'}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
             <Kpi label="(DB, CFA) kept" sub="passed the demand gate" value={`${nf(fss.groups_kept)} / ${nf(fss.groups_total)}`} tone={C.green} strong />
             <Kpi label="(DB, CFA) dropped" sub="failed the demand gate" value={nf(fss.groups_dropped)} tone={C.alertRed} />
             <Kpi label="Cluster-rejected" sub="single-distributor clusters (needs ≥2)" value={nf(fss.groups_cluster_rejected ?? 0)} tone={C.warnText} />
-            <Kpi label="SOQ lines kept" sub="lines the engine runs on" value={`${nf(fss.rows_kept)} / ${nf(fss.rows_total)}`} tone={C.navy} />
+            <Kpi label="SOQ lines kept" sub="lines the engine runs on" value={`${nf(fss.rows_kept)} / ${nf(fss.rows_total)}`} tone={'#D04A02'} />
             <Kpi label="DBs in run" sub="distinct kept distributors" value={nf(fss.dbs_kept)} tone={C.gold} />
           </Box>
         </Box>
@@ -390,12 +399,12 @@ export default function ReservationPrefilterPage({ date, cfa = '' }: { runProp?:
       <Stage letter="A" hue={hueOf(1)} eyebrow="Stage A · Filtered SOQ Intake" title="Which distributors are in scope"
         purpose="The demand gate picks the DBs to allocate to — kept when (PDP-due OR below-threshold) AND combined SOQ > 65%. These are the filtered-SOQ DBs the whole engine runs on.">
         <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', mb: 1.5 }}>
-          <Kpi label="PDP-due DBs" sub="delivery due (in scope)" value={nf(si.pdp)} tone={C.navy} />
+          <Kpi label="PDP-due DBs" sub="delivery due (in scope)" value={nf(si.pdp)} tone={'#D04A02'} />
           <Kpi label="Below-threshold DBs" sub="below stock norm (in scope)" value={nf(si.below)} tone={C.gold} />
           <Kpi label="In-scope DBs" sub="passed the demand gate" value={nf(si.final)} tone={C.green} strong />
         </Box>
         <SplitBar segments={[
-          { label: 'PDP-due', value: si.pdp, color: C.navy },
+          { label: 'PDP-due', value: si.pdp, color: '#D04A02' },
           { label: 'Below-threshold', value: si.below, color: C.gold },
         ]} />
         <Callout tone="green" title="Why this is correct">
@@ -441,7 +450,7 @@ export default function ReservationPrefilterPage({ date, cfa = '' }: { runProp?:
             return (
               <Chip key={r.run} onClick={() => setRun(r.run)}
                 label={`R${r.run} · ${r.channel} · ${r.dbs} DB`}
-                sx={{ fontWeight: 700, bgcolor: on ? hueOf(r.run) : C.white, color: on ? '#fff' : (dis ? C.muted : C.navy),
+                sx={{ fontWeight: 700, bgcolor: on ? hueOf(r.run) : C.white, color: on ? textOn(hueOf(r.run)) : (dis ? C.muted : C.navy),
                   border: `1px solid ${dis ? C.border : hueOf(r.run)}`, opacity: dis ? 0.65 : 1,
                   '&:hover': { bgcolor: on ? hueOf(r.run) : C.cream } }} />
             );
@@ -466,7 +475,7 @@ export default function ReservationPrefilterPage({ date, cfa = '' }: { runProp?:
             <thead><tr>{['Run', 'Channel', 'Band 1 (≤₹10)', 'Band 2 (₹11-30)', 'Band 3 (>₹30)'].map((h, i) => <th key={h} style={{ ...th, textAlign: i >= 2 ? 'right' : 'left' }}>{h}</th>)}</tr></thead>
             <tbody>{chForCfa.map((c) => (
               <tr key={c.channel} style={{ background: c.run === run ? C.cream : '#fff' }}>
-                <td style={{ ...td, fontWeight: 700, color: hueOf(c.run) }}>R{c.run}</td>
+                <td style={{ ...td, fontWeight: 700, color: inkOf(c.run) }}>R{c.run}</td>
                 <td style={{ ...td, fontWeight: 700, color: c.dbs === 0 ? C.muted : C.navy }}>{c.channel}</td>
                 {[c.b1, c.b2, c.b3].map((v, i) => (
                   <td key={i} style={{ ...td, textAlign: 'right' }}>
@@ -487,14 +496,14 @@ export default function ReservationPrefilterPage({ date, cfa = '' }: { runProp?:
         {sel ? (
           <Box sx={{ mt: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-              <Chip size="small" label={`Run R${sel.run} · ${sel.channel}`} sx={{ bgcolor: hueOf(sel.run), color: '#fff', fontWeight: 700 }} />
+              <Chip size="small" label={`Run R${sel.run} · ${sel.channel}`} sx={{ bgcolor: hueOf(sel.run), color: textOn(hueOf(sel.run)), fontWeight: 700 }} />
               <Typography sx={{ fontSize: 12.5, color: C.slate }}>CFA stock reserved for this run</Typography>
             </Box>
             <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', mb: 1 }}>
               <Kpi label="Reserved cases" value={nf(sel.cfa_reserved)} tone={hueOf(sel.run)} strong />
-              <Kpi label="Band 1 (≤₹10)" value={nf(sel.cfa_b1)} tone={C.navy} />
-              <Kpi label="Band 2 (₹11-30)" value={nf(sel.cfa_b2)} tone={C.navy} />
-              <Kpi label="Band 3 (>₹30)" value={nf(sel.cfa_b3)} tone={C.navy} />
+              <Kpi label="Band 1 (≤₹10)" value={nf(sel.cfa_b1)} tone={'#D04A02'} />
+              <Kpi label="Band 2 (₹11-30)" value={nf(sel.cfa_b2)} tone={'#D04A02'} />
+              <Kpi label="Band 3 (>₹30)" value={nf(sel.cfa_b3)} tone={'#D04A02'} />
               <Kpi label="reg-zskus reserved" value={nf(cfaForRun?.rows.length ?? 0)} tone={C.gold} />
             </Box>
             <Drawer label={`View per-reg-zsku reservation for ${sel.channel}`} count={cfaForRun?.rows.length ?? 0}>
@@ -519,7 +528,7 @@ export default function ReservationPrefilterPage({ date, cfa = '' }: { runProp?:
         purpose="Before allocation we pre-compute, per DB, the ranked substitutes (matched to the EXACT demanded MRP) and the ranked fillers (any band) the engine may reach for.">
         {sel && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.25 }}>
-            <Chip size="small" label={`Run R${sel.run} · ${sel.channel}`} sx={{ bgcolor: hueOf(sel.run), color: '#fff', fontWeight: 700 }} />
+            <Chip size="small" label={`Run R${sel.run} · ${sel.channel}`} sx={{ bgcolor: hueOf(sel.run), color: textOn(hueOf(sel.run)), fontWeight: 700 }} />
             <Typography sx={{ fontSize: 12.5, color: C.slate }}>substitutes &amp; fillers available under this run</Typography>
           </Box>
         )}
@@ -528,7 +537,7 @@ export default function ReservationPrefilterPage({ date, cfa = '' }: { runProp?:
           <Box sx={{ flex: '1 1 320px', minWidth: 300 }}>
             <Typography sx={{ fontSize: 13, fontWeight: 700, color: C.navy, mb: 0.5 }}>Substitutes · by DB × exact MRP</Typography>
             <Box sx={{ display: 'flex', gap: 1, mb: 0.5 }}>
-              <Kpi label={sel ? 'DBs (this run)' : 'DBs'} value={nf(sel ? sel.sub_dbs : new Set((d.substitutes?.rows ?? []).filter((r) => String(r[1]) === cfa).map((r) => r[0])).size)} tone={C.navy} />
+              <Kpi label={sel ? 'DBs (this run)' : 'DBs'} value={nf(sel ? sel.sub_dbs : new Set((d.substitutes?.rows ?? []).filter((r) => String(r[1]) === cfa).map((r) => r[0])).size)} tone={'#D04A02'} />
               <Kpi label="sub items" value={nf(sel ? sel.sub_items : (d.substitutes?.rows ?? []).filter((r) => String(r[1]) === cfa).reduce((a, r) => a + Number(r[5] || 0), 0))} tone={C.gold} />
             </Box>
             <Callout tone="green" title="Exact-MRP match">A ₹5 demand draws only ₹5 subs, a ₹10 only ₹10 — exact MRP, not the coarse band.</Callout>
@@ -538,7 +547,7 @@ export default function ReservationPrefilterPage({ date, cfa = '' }: { runProp?:
           <Box sx={{ flex: '1 1 320px', minWidth: 300 }}>
             <Typography sx={{ fontSize: 13, fontWeight: 700, color: C.navy, mb: 0.5 }}>Fillers · by DB (any band)</Typography>
             <Box sx={{ display: 'flex', gap: 1, mb: 0.5 }}>
-              <Kpi label={sel ? 'DBs (this run)' : 'DBs'} value={nf(sel ? sel.filler_dbs : new Set((d.fillers?.rows ?? []).filter((r) => String(r[1]) === cfa).map((r) => r[0])).size)} tone={C.navy} />
+              <Kpi label={sel ? 'DBs (this run)' : 'DBs'} value={nf(sel ? sel.filler_dbs : new Set((d.fillers?.rows ?? []).filter((r) => String(r[1]) === cfa).map((r) => r[0])).size)} tone={'#D04A02'} />
               <Kpi label="filler items" value={nf(sel ? sel.filler_items : (d.fillers?.rows ?? []).filter((r) => String(r[1]) === cfa).reduce((a, r) => a + Number(r[4] || 0), 0))} tone={C.gold} />
             </Box>
             <Callout tone="navy" title="Spare-room ride">Ranked items that ride leftover truck space in Step 3 — nothing is consumed here.</Callout>
@@ -554,7 +563,7 @@ export default function ReservationPrefilterPage({ date, cfa = '' }: { runProp?:
           {runs.map((r, i) => (
             <Box key={r.run} sx={{ display: 'flex', alignItems: 'center' }}>
               <Box sx={{ border: `1px solid ${r.dbs === 0 ? C.border : hueOf(r.run)}`, borderRadius: `${RADIUS.sm}px`, px: 1.25, py: 0.75, bgcolor: r.run === run ? C.cream : C.white, opacity: r.dbs === 0 ? 0.65 : 1, minWidth: 108 }}>
-                <Typography sx={{ fontSize: 11, fontWeight: 700, color: hueOf(r.run) }}>R{r.run} · {r.channel}</Typography>
+                <Typography sx={{ fontSize: 11, fontWeight: 700, color: inkOf(r.run) }}>R{r.run} · {r.channel}</Typography>
                 <Typography sx={{ fontSize: 11, color: C.muted }}>reserve <b style={{ color: C.slate }}>{nf(r.cfa_reserved)}</b> cs · {r.dbs} DB</Typography>
               </Box>
               {i < runs.length - 1 && <Box sx={{ color: C.gold, fontSize: 18, fontWeight: 700, px: 0.4 }}>›</Box>}

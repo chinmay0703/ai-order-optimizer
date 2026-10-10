@@ -97,7 +97,7 @@ export default function LoginPage() {
             <Box sx={{ mt: 3, mb: 2.5, textAlign: 'center', fontFamily: FONT, fontSize: 15, fontWeight: 700, letterSpacing: '.08em', color: '#6B7280' }}>Sign in to AI Order Optimizer</Box>
 
             {err && (
-              <Box role="alert" sx={{ mb: 2, px: 1.5, py: 1, borderRadius: '6px', bgcolor: '#FDECEC', color: '#A32020',
+              <Box role="alert" sx={{ mb: 2, px: 1.5, py: 1, borderRadius: '6px', bgcolor: '#FDECEC', color: '#D02818',
                 fontSize: 13, fontWeight: 600, border: '1px solid #F3C7C4' }}>{err}</Box>
             )}
 

@@ -42,7 +42,7 @@ export default function UserManagementPage() {
   return (
     <Box sx={{ background: C.canvas, minHeight: '100vh', fontFamily: SANS, color: C.slate }}>
       <Box sx={{ maxWidth: 1100, mx: 'auto', px: { xs: 1.5, sm: 2.5, md: 4 }, py: { xs: 2, sm: 2.5, md: 3.5 }, pb: 8 }}>
-        <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold }}>Administration</Box>
+        <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>Administration</Box>
         <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1.5, flexWrap: 'wrap', mb: 2 }}>
           <Box component="h1" sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: 28, m: '6px 0 0' }}>User Management</Box>
           <Box sx={{ flex: 1 }} />
@@ -138,7 +138,7 @@ function UserDialog({ editing, onClose, onSaved }: { editing: Exclude<Editing, n
     <Dialog open onClose={onClose} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: `${RADIUS.md}px` } }}>
       <DialogTitle sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy }}>{isNew ? 'Add user' : `Edit ${existing?.username}`}</DialogTitle>
       <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '8px !important' }}>
-        {err && <Box sx={{ px: 1.5, py: 1, borderRadius: `${RADIUS.sm}px`, bgcolor: C.redP, color: C.alertRed, fontSize: 13, fontWeight: 600 }}>{err}</Box>}
+        {err && <Box sx={{ px: 1.5, py: 1, borderRadius: `${RADIUS.sm}px`, bgcolor: '#F7BFB5', color: '#000', fontSize: 13, fontWeight: 600 }}>{err}</Box>}
         <TextField label="Username" value={username} onChange={(e) => setUsername(e.target.value)} size="small" autoFocus fullWidth />
         <TextField label={isNew ? 'Password' : 'New password (leave blank to keep)'} type="password" value={password}
           onChange={(e) => setPassword(e.target.value)} size="small" fullWidth autoComplete="new-password" />
@@ -171,13 +171,13 @@ function DeleteDialog({ row, onClose, onDone }: { row: Row; onClose: () => void;
     <Dialog open onClose={onClose} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: `${RADIUS.md}px` } }}>
       <DialogTitle sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy }}>Delete user</DialogTitle>
       <DialogContent>
-        {err && <Box sx={{ mb: 1.5, px: 1.5, py: 1, borderRadius: `${RADIUS.sm}px`, bgcolor: C.redP, color: C.alertRed, fontSize: 13, fontWeight: 600 }}>{err}</Box>}
+        {err && <Box sx={{ mb: 1.5, px: 1.5, py: 1, borderRadius: `${RADIUS.sm}px`, bgcolor: '#F7BFB5', color: '#000', fontSize: 13, fontWeight: 600 }}>{err}</Box>}
         <Box sx={{ fontSize: 14 }}>Delete <b style={{ fontFamily: MONO, color: C.navy }}>{row.username}</b>? This cannot be undone.</Box>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onClose} sx={{ textTransform: 'none', color: C.muted }}>Cancel</Button>
         <Button onClick={del} disabled={busy} variant="contained"
-          sx={{ textTransform: 'none', fontWeight: 800, bgcolor: C.alertRed, boxShadow: 'none', '&:hover': { bgcolor: '#A32020', boxShadow: 'none' } }}>
+          sx={{ textTransform: 'none', fontWeight: 800, bgcolor: C.alertRed, boxShadow: 'none', '&:hover': { bgcolor: '#D02818', boxShadow: 'none' } }}>
           {busy ? <CircularProgress size={18} sx={{ color: '#fff' }} /> : 'Delete'}
         </Button>
       </DialogActions>

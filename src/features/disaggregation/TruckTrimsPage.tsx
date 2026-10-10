@@ -53,10 +53,10 @@ export default function TruckTrimsPage({ date, cfa = '' }: { date?: string; cfa?
   // The backend emits FOUR truck-trim reasons + a synthetic cluster-primary-trim; CLUSTER_DROP carries a dynamic
   // "(<clustercode>)" suffix, so reasonKey() strips a trailing "(…)" before the lookup / KPI bucketing.
   const REASON: Record<string, { label: string; bg: string; fg: string }> = {
-    'TRUCK_TAIL_CASCADE': { label: 'Tail cascade', bg: C.warnLight, fg: C.warnText },
-    'LANE_DROP_<65%': { label: `Lane drop · <${pct(P.TRUCK_KEEP_PCT)}`, bg: C.redP, fg: C.alertRed },
-    'LANE_DROP_NO_TRUCK': { label: 'Lane drop · no truck', bg: C.redP, fg: C.alertRed },
-    'CLUSTER_DROP_<65%': { label: `Cluster drop · <${pct(P.TRUCK_KEEP_PCT)}`, bg: C.redP, fg: C.alertRed },
+    'TRUCK_TAIL_CASCADE': { label: 'Tail cascade', bg: '#FFE3A1', fg: '#000' },
+    'LANE_DROP_<65%': { label: `Lane drop · <${pct(P.TRUCK_KEEP_PCT)}`, bg: '#F7BFB5', fg: '#000' },
+    'LANE_DROP_NO_TRUCK': { label: 'Lane drop · no truck', bg: '#F7BFB5', fg: '#000' },
+    'CLUSTER_DROP_<65%': { label: `Cluster drop · <${pct(P.TRUCK_KEEP_PCT)}`, bg: '#F7BFB5', fg: '#000' },
     'CLUSTER_PRIMARY_TRIM': { label: 'Cluster primary trim', bg: C.navyP, fg: C.navy },
   };
   const reasonKey = (reason: unknown) => String(reason ?? '').replace(/\s*\(.*\)\s*$/, '').trim();
@@ -106,7 +106,7 @@ export default function TruckTrimsPage({ date, cfa = '' }: { date?: string; cfa?
   const Shell = ({ children }: { children: React.ReactNode }) => (
     <Box sx={{ background: C.canvas, minHeight: '100vh', fontFamily: SANS, color: C.slate }}>
       <Box sx={{ maxWidth: 1180, mx: 'auto', px: { xs: 1.5, sm: 2.5, md: 4 }, py: { xs: 2, sm: 2.5, md: 3.5 }, pb: 8 }}>
-        <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold }}>
+        <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>
           Truck rule · what got trimmed
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -120,7 +120,7 @@ export default function TruckTrimsPage({ date, cfa = '' }: { date?: string; cfa?
           <Box component="span" sx={{ fontSize: 11.5, color: C.muted }}>how it works</Box>
         </Box>
         <Dialog open={helpOpen} onClose={() => setHelpOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: `${RADIUS.md}px`, overflow: 'hidden', border: `1px solid ${C.goldLight}` } }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #FE7C39 0%, #C52B09 55%, #C52B09 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #FE7C39 0%, #CC3D07 55%, #CC3D07 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
             <HelpOutlineIcon sx={{ fontSize: 20 }} />
             <Box sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 17 }}>How this page works</Box>
             <Box sx={{ flex: 1 }} />
@@ -129,7 +129,7 @@ export default function TruckTrimsPage({ date, cfa = '' }: { date?: string; cfa?
           <Box sx={{ p: 2.75, color: C.slate, bgcolor: '#FFF5ED', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
             {/* the goal */}
             <Box sx={{ p: '10px 12px', borderRadius: `${RADIUS.sm}px`, bgcolor: '#FFF5ED', border: `1px solid ${C.goldLight}`, borderLeft: `3px solid ${C.gold}` }}>
-              <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.gold, mb: 0.4 }}>🎯 The goal</Box>
+              <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35, mb: 0.4 }}>🎯 The goal</Box>
               <Box sx={{ fontSize: 13, lineHeight: 1.55 }}>Ship as many <b>balanced trucks</b> as a lane needs. Whatever can&apos;t fit a <b>clean truck</b> is trimmed off — and every case removed is listed here.</Box>
             </Box>
 
@@ -202,7 +202,7 @@ export default function TruckTrimsPage({ date, cfa = '' }: { date?: string; cfa?
       <Box sx={{ display: 'flex', gap: 1.5, mb: 2 }}>
         <Kpi label="Tail trims" val={kpi.tail} bar={C.gold} fg={C.warnText} />
         <Kpi label={`Lane drops (<${pct(P.TRUCK_KEEP_PCT)})`} val={kpi.drop} bar={C.alertRed} fg={C.alertRed} />
-        <Kpi label="Cluster primary trim" val={kpi.cluster} bar={C.navy} fg={C.navy} />
+        <Kpi label="Cluster primary trim" val={kpi.cluster} bar={'#D04A02'} fg={C.navy} />
         <Kpi label="Total removed" val={kpi.total} bar={C.slate} fg={C.slate} />
       </Box>
 
@@ -243,7 +243,7 @@ export default function TruckTrimsPage({ date, cfa = '' }: { date?: string; cfa?
                   <TableCell sx={{ fontSize: 12.5, maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={l.db_name}>{l.db_name || '—'}</TableCell>
                   <TableCell sx={{ fontSize: 12.5, color: C.slate }}>
                     {l.truck_type || '—'}{l.truck_cap ? ` · ${l.truck_cap} cs` : ''}
-                    {l.is_transhipment && <Box component="span" title="Transshipment secondary truck (Cluster Master)" sx={{ ml: 0.6, px: 0.6, py: 0.2, borderRadius: 1, fontSize: 10, fontWeight: 800, bgcolor: '#FFE8D4', color: '#C52B09' }}>▸ secondary{l.cluster ? ` · ${l.cluster}` : ''}</Box>}
+                    {l.is_transhipment && <Box component="span" title="Transshipment secondary truck (Cluster Master)" sx={{ ml: 0.6, px: 0.6, py: 0.2, borderRadius: 1, fontSize: 10, fontWeight: 800, bgcolor: '#FFE8D4', color: '#CC3D07' }}>▸ secondary{l.cluster ? ` · ${l.cluster}` : ''}</Box>}
                   </TableCell>
                   <TableCell sx={num}>{nf(l.skus)}</TableCell>
                   <TableCell sx={{ ...num, fontWeight: 800, color: C.alertRed }}>{nf(l.cases)}</TableCell>

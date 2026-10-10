@@ -48,7 +48,7 @@ export default function LineTable({ lines }: { lines: Line[] }) {
                   {l[4] || ''}
                   {l[5] && <Box component="span" sx={{ color: '#5C616A', fontSize: '0.72rem', ml: 0.5 }}>({l[5]})</Box>}
                 </TableCell>
-                <TableCell align="right" sx={{ color: '#C52B09' }}>
+                <TableCell align="right" sx={{ color: '#CC3D07' }}>
                   {l[6] || ''}
                   {l[7] && <Box component="span" sx={{ color: '#C9A27E', fontSize: '0.72rem', ml: 0.5 }}>({l[7]})</Box>}
                 </TableCell>

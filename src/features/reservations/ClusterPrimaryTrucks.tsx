@@ -23,7 +23,7 @@ const num = { textAlign: 'right' as const, fontVariantNumeric: 'tabular-nums', f
 export default function ClusterPrimaryTrucks({ date, cfa }: { date?: string; cfa?: string }) {
   const P = useOeParams();   // engine thresholds (oe_parameters) — never hardcode 90 / 65
   const descOf = useRegZskuDesc();
-  const fillClr = (p: number) => (p >= P.TRUCK_FILL_TARGET_PCT * 100 ? C.success : p >= P.TRUCK_KEEP_PCT * 100 ? C.warnText : '#A32020');
+  const fillClr = (p: number) => (p >= P.TRUCK_FILL_TARGET_PCT * 100 ? C.success : p >= P.TRUCK_KEEP_PCT * 100 ? C.warnText : '#D02818');
   const [data, setData] = useState<Cluster[] | null>(null);
   const [loading, setLoading] = useState(true);           // NEVER infer "in flight" from data===null: an empty cluster
   const [err, setErr] = useState<string | null>(null);    // list, or a failure, would then spin forever.
@@ -50,7 +50,7 @@ export default function ClusterPrimaryTrucks({ date, cfa }: { date?: string; cfa
 
   return (
     <Box sx={{ mb: 2 }}>
-      <Box sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.gold, mb: 0.5 }}>
+      <Box sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35, mb: 0.5 }}>
         Transshipment · final cluster primary trucks
       </Box>
       <Box sx={{ fontSize: 12.5, color: C.slate, mb: 1, maxWidth: 980, lineHeight: 1.5 }}>
@@ -68,7 +68,7 @@ export default function ClusterPrimaryTrucks({ date, cfa }: { date?: string; cfa
             slotProps={{ transition: { unmountOnExit: true } }}
             sx={{ border: `1px solid ${C.rule}`, borderLeft: `4px solid ${C.success}`, borderRadius: `${RADIUS.sm}px`, boxShadow: SHADOW.sm, mb: 0.6, '&:before': { display: 'none' } }}>
             <AccordionSummary expandIcon={<ChevronRightIcon sx={{ fontSize: 18 }} />}
-              sx={{ flexDirection: 'row-reverse', gap: 1, px: 1.5, bgcolor: '#F6FAF7',
+              sx={{ flexDirection: 'row-reverse', gap: 1, px: 1.5, bgcolor: '#F0FAF3',
                 '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': { transform: 'rotate(90deg)' },
                 '& .MuiAccordionSummary-content': { alignItems: 'center', gap: 1.25, flexWrap: 'wrap', my: 0.8 } }}>
               <LocalShippingIcon sx={{ color: C.success, fontSize: 19 }} />

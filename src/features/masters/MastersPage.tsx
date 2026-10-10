@@ -14,11 +14,11 @@ interface TableData { table: string; group: string; columns: string[]; rows: (st
 
 // group -> pdart tint (pale bg + saturated fg)
 const GROUP_COLOR: Record<string, { bg: string; fg: string }> = {
-  'Masters': { bg: C.amberP, fg: C.amber },
+  'Masters': { bg: '#FFE3A1', fg: '#000' },
   'Orphan Masters': { bg: C.navyP, fg: C.navy },
-  'Transactional': { bg: C.greenP, fg: C.green },
+  'Transactional': { bg: '#A8E3BD', fg: '#000' },
   'Processed': { bg: '#FBE6EA', fg: '#D93954' },   // violet — a deliberately DISTINCT tint for the derived/processed step (filtered SOQ), set apart from amber/green/navy/red
-  'Engine Output': { bg: C.redP, fg: C.red },
+  'Engine Output': { bg: '#F7BFB5', fg: '#000' },
   Other: { bg: C.grayP, fg: C.muted },
 };
 const groupChip = (g: string) => GROUP_COLOR[g] ?? { bg: C.grayP, fg: C.muted };
@@ -73,8 +73,8 @@ function Shell({ children }: { children: React.ReactNode }) {
     <div style={{ background: C.canvas, minHeight: '100vh', fontFamily: SANS, color: C.slate }}>
       <div style={{ maxWidth: 1320, margin: '0 auto', padding: 'clamp(14px, 4vw, 28px) clamp(12px, 4vw, 32px) clamp(92px, 8vw, 92px)' }}>
         <style>{`.mtbl tbody tr:hover td { background: rgba(45,45,45,0.07); }`}</style>
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold }}>
-          Data · live from API
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', background: '#FFAA72', display: 'inline-block', padding: '3px 8px', borderRadius: 2 }}>
+          Data · sample data
         </div>
         <h1 style={{ fontFamily: SANS, fontWeight: 800, color: C.navy, fontSize: 30, letterSpacing: '-.01em', margin: '6px 0 8px' }}>
           Data

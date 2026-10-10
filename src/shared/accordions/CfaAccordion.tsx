@@ -54,12 +54,12 @@ export default function CfaAccordion({ cfa, defaultOpen }: { cfa: Cfa; defaultOp
         {rlmApproval > 0 && (
           <Chip label={`⚠ ${rlmApproval} RLM truck approval`} size="small"
             title={`DBs whose truck is a partial (<${pct(P.TRUCK_FILL_TARGET_PCT)}) load — needs RLM sign-off before the SO is created (RLM_TRUCK_APPROVAL)`}
-            sx={{ height: 22, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#FFE8D4', color: '#C52B09' }} />
+            sx={{ height: 22, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#FFE8D4', color: '#CC3D07' }} />
         )}
         {rlmSecCfa > 0 && (
           <Chip label={`⚠ ${rlmSecCfa} RLM 2nd CFA`} size="small"
             title={`DBs served <${pct(P.SO_CREATION_ORIGINAL_FLOOR_PCT)} by their own demand — the shortfall is routed to a second CFA (RLM_FOR_SECOND_CFA)`}
-            sx={{ height: 22, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#FDECEA', color: '#A32020' }} />
+            sx={{ height: 22, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#FDECEA', color: '#D02818' }} />
         )}
         <Box sx={{ flex: 1, minWidth: 8 }} />
         {/* the numbers as a clean labeled strip */}
@@ -70,7 +70,7 @@ export default function CfaAccordion({ cfa, defaultOpen }: { cfa: Cfa; defaultOp
           <Metric label="SOQ · demand">{fmt(cfa.soq)} cs</Metric>
           <Metric label="Fill" color={fillT.fg}>{fill}%</Metric>
           {atp > 0 && (
-            <Metric label="Stock drawn" color="#1B7346" tip={`CFA stock ${fmt(atp)} → ${fmt(atp - cfa.tot)} remaining after allocation`}>{drawn}%</Metric>
+            <Metric label="Stock drawn" color="#017E35" tip={`CFA stock ${fmt(atp)} → ${fmt(atp - cfa.tot)} remaining after allocation`}>{drawn}%</Metric>
           )}
         </Box>
       </AccordionSummary>

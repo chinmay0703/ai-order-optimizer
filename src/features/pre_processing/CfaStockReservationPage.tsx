@@ -23,7 +23,7 @@ interface ResDetail {
 type Data = { date: string; reservation_detail?: ResDetail[] } & ReservationPctMeta;
 
 const N = (v: number) => (v ?? 0).toLocaleString();
-const C = { navy: '#2D2D2D', gold: '#C52B09', green: '#1B7346', muted: '#5C616A', cream: '#F5F7F8', border: '#DFE3E6', amber: '#C52B09' };
+const C = { navy: '#2D2D2D', gold: '#CC3D07', green: '#017E35', muted: '#5C616A', cream: '#F5F7F8', border: '#DFE3E6', amber: '#CC3D07' };
 const PAGE_SIZE = 100;   // client-side pagination — a large reservation table (thousands of reg-zsku × channel rows) froze the render
 
 type Col = { label: string; align: 'left' | 'right'; key: keyof ResDetail; num?: boolean };
@@ -156,7 +156,7 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
 
   return (
     <Box sx={{ p: { xs: 1.5, sm: 2.5, md: 3 }, maxWidth: 1340, mx: 'auto' }}>
-      <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold, mb: 0.3 }}>Pre-processing · Step 1 · CFA stock reservation</Typography>
+      <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px', mb: 0.3 }}>Pre-processing · Step 1 · CFA stock reservation</Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
         <Typography variant="h5">CFA Stock Reservation · MRP validation</Typography>
         <IconButton size="small" onClick={() => setHelpOpen(true)} title="How this page works"
@@ -167,7 +167,7 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
       </Box>
       <ReservationPctDate meta={d} />
       <Dialog open={helpOpen} onClose={() => setHelpOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '8px', overflow: 'hidden', border: '1px solid #FFB600' } }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #FE7C39 0%, #C52B09 55%, #C52B09 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #FE7C39 0%, #CC3D07 55%, #CC3D07 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
           <HelpOutlineIcon sx={{ fontSize: 20 }} />
           <Box sx={{ fontFamily: "'ITC Charter', Charter, Georgia, serif", fontWeight: 700, fontSize: 17 }}>How this page works</Box>
           <Box sx={{ flex: 1 }} />
@@ -176,7 +176,7 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
         <Box sx={{ p: 2.75, color: '#4C5056', bgcolor: '#FFF5ED', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
           {/* the goal */}
           <Box sx={{ p: '10px 12px', borderRadius: '6px', bgcolor: '#FFF5ED', border: '1px solid #FFCDA8', borderLeft: `3px solid ${C.gold}` }}>
-            <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.gold, mb: 0.4 }}>🎯 The goal</Box>
+            <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35, mb: 0.4 }}>🎯 The goal</Box>
             <Box sx={{ fontSize: 13, lineHeight: 1.55 }}>The <b>first step</b>, before the engine. <b>Every reg-zsku the CFA holds stock of</b> is priced from the actual materials in CFA inventory, then banded &amp; reserved for the engine to draw.</Box>
           </Box>
 
@@ -215,7 +215,7 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
           {/* stat cards — the reservation at a glance */}
           <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', alignItems: 'stretch', mb: 1.75 }}>
             <Stat label="Reserved" value={nReserved} sub="reg-zskus with CFA stock" tone={C.green} strong />
-            <Stat label="Considered" value={uniq.length} sub="filtered SOQ + CFA inv" tone={C.navy} />
+            <Stat label="Considered" value={uniq.length} sub="filtered SOQ + CFA inv" tone={'#D04A02'} />
             <Stat label="No CFA stock" value={nNoStock} sub="priced · nothing to reserve" tone={C.gold}
               help={<Box sx={{ maxWidth: 300 }}>
                 <Box sx={{ fontWeight: 800, mb: 0.6 }}>{nNoStock} priced, 0 CFA stock — two views:</Box>
@@ -235,8 +235,8 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
               Reserved-set composition · {uniq.length} reg-zskus · {rows.length} channel rows
             </Box>
             <SplitBar segments={[
-              { label: 'Demanded (SOQ>0)', value: nDemanded, color: C.navy },
-              { label: 'Feed (SOQ=0)', value: nFeedZero, color: C.gold },
+              { label: 'Demanded (SOQ>0)', value: nDemanded, color: '#D04A02' },
+              { label: 'Feed (SOQ=0)', value: nFeedZero, color: '#E0301E' },
               { label: 'Donor only', value: nDonor, color: C.green },
             ]} />
             <Box sx={{ fontSize: 11.5, color: C.muted, mt: 0.75 }}>
@@ -246,7 +246,7 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
             <Box sx={{ mt: 0.9, display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap', fontSize: 11.5 }}>
               <Box component="span" sx={{ fontWeight: 800, color: C.navy }}>Demanded {nDemanded}</Box>
               <Box component="span" sx={{ color: C.muted }}>reg-zskus (SOQ&gt;0) →</Box>
-              <Box component="span" sx={{ px: 0.85, py: '2px', borderRadius: 999, bgcolor: '#E7F3E7', color: C.green, fontWeight: 800 }}>{nDemStock} have CFA stock</Box>
+              <Box component="span" sx={{ px: 0.85, py: '2px', borderRadius: 999, bgcolor: '#E6F7EC', color: C.green, fontWeight: 800 }}>{nDemStock} have CFA stock</Box>
               <Box component="span" sx={{ px: 0.85, py: '2px', borderRadius: 999, bgcolor: '#FFE8D4', color: C.gold, fontWeight: 800 }}>{nDemNoStock} hold 0 stock</Box>
             </Box>
           </Box>
@@ -286,7 +286,7 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
                     <TableCell>{r.mrp_band || '—'}</TableCell>
                     <TableCell align="right">{N(r.physical_cases)}</TableCell>
                     <TableCell align="right" sx={{ fontWeight: 600, color: C.navy }}>{r.channel ? N(r.reserved_cases) : '—'}</TableCell>
-                    <TableCell align="right" sx={{ color: '#C52B09', fontWeight: 600 }} title="Reservation % for this CFA × channel × band (reserved ≈ physical × this %)">{r.channel ? `${r.reservation_pct}%` : '—'}</TableCell>
+                    <TableCell align="right" sx={{ color: '#CC3D07', fontWeight: 600 }} title="Reservation % for this CFA × channel × band (reserved ≈ physical × this %)">{r.channel ? `${r.reservation_pct}%` : '—'}</TableCell>
                     <TableCell sx={{ color: (r.soq_cases || 0) > 0 ? C.navy : C.muted, fontWeight: (r.soq_cases || 0) > 0 ? 600 : 400 }}>{(r.soq_cases || 0) > 0 ? 'Demanded' : (r.in_soq ? 'Feed (SOQ=0)' : 'Donor only')}</TableCell>
                     <TableCell align="right">{r.in_soq ? N(r.soq_cases) : '—'}</TableCell>
                     <TableCell sx={{ color: r.mrp_note ? C.amber : r.status === 'No CFA stock' ? C.muted : C.green, fontWeight: r.mrp_note ? 700 : 600 }}>{r.mrp_note || r.status}</TableCell>

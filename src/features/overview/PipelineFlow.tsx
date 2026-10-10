@@ -12,10 +12,10 @@ import { useOeParams, pct, type OeParams } from '../../shared/OeParams';
    services.cfa_runner → services.allocation.run per CFA → secondary-CFA shift → RLM rollup), checked against develop.
    Drag the canvas to pan, mouse-wheel or the +/- buttons to zoom, Fit to frame it. */
 const buildDiagram = (P: OeParams) => `flowchart TD
-  classDef s3   fill:#FFE8D4,stroke:#C52B09,color:#8A3A0C;
+  classDef s3   fill:#FFE8D4,stroke:#CC3D07,color:#8A3A0C;
   classDef pg   fill:#F5F7F8,stroke:#2D2D2D,color:#2D2D2D;
-  classDef proc fill:#FFFFFF,stroke:#C52B09,color:#2D2D2D,stroke-width:1.4px;
-  classDef out  fill:#E9F4EC,stroke:#1B7346,color:#14532D;
+  classDef proc fill:#FFFFFF,stroke:#CC3D07,color:#2D2D2D,stroke-width:1.4px;
+  classDef out  fill:#E6F7EC,stroke:#017E35,color:#01602B;
   classDef gate fill:#F5F7F8,stroke:#5C616A,color:#2D2D2D;
 
   RUN{{"0 · RUN · run date = TODAY (IST) · data date = the SOQ date picked<br/>lock the run date · re-read oe_parameters · clear today's outputs + SAP orders"}}:::gate

@@ -148,7 +148,7 @@ const PHASES: Phase[] = [
     ],
   },
   {
-    n: 5, title: 'The reservation cascade', tag: 'run one channel at a time · smallest reservation first', accent: C.navy,
+    n: 5, title: 'The reservation cascade', tag: 'run one channel at a time · smallest reservation first', accent: '#D04A02',
     steps: [
       { title: 'Run order', items: [
         FX('Run 1 Non-PACE → Run 2 Hub & Spoke → Run 3 AFH → Run 4 Retail'),
@@ -209,7 +209,7 @@ const PHASES: Phase[] = [
     ],
   },
   {
-    n: 8, title: 'Output and SO disposition', tag: 'what one run writes, and how each truck is routed', accent: C.navy,
+    n: 8, title: 'Output and SO disposition', tag: 'what one run writes, and how each truck is routed', accent: '#D04A02',
     steps: [
       { title: 'Tables the pages read', items: [
         T('allocation_final — the shipped allocation per DB × reg-zsku (Original + Substitute + Filler + Total + fill %), after the truck trim and the cluster trim (plus 0-allocation rows for every unshipped demand line of a DB that got a truck), and reduced again by the RLM rollup. actual_order_quantity — its FEFO picks per truck (plus Not_Allocated rows).'),
@@ -244,7 +244,7 @@ const PHASES: Phase[] = [
     ],
   },
   {
-    n: 9, title: 'The RLM rollup', tag: 'how the held trucks finally resolve', accent: C.navy,
+    n: 9, title: 'The RLM rollup', tag: 'how the held trucks finally resolve', accent: '#D04A02',
     steps: [
       { title: 'When it runs', items: [
         T('RLM_TRUCK_APPROVAL and RLM_FOR_SECOND_CFA lanes are HELD (no SO) until the daily rollup — 15:31 IST by default, right after the 15:00–15:30 RLM window. The scheduled job is opt-in (RLM_CRON_ENABLED); POST /api/v1/rlm/rollup runs it any time. It goes CFA by CFA over the CFAs of that run (pipeline_run_meta), each with up to 3 attempts on a hard failure; a CFA that fails is skipped and the others still resolve. The time is set in the environment (RLM_ROLLUP_HOUR / MINUTE).'),
@@ -271,7 +271,7 @@ const GUARANTEES: Item[] = [
 
 // ── presentation ─────────────────────────────────────────────────────────
 const toneMap: Record<Tone, { bg: string; bar: string; fg: string }> = {
-  navy: { bg: C.navyP, bar: C.navy, fg: C.navy },
+  navy: { bg: C.navyP, bar: '#D04A02', fg: C.navy },
   green: { bg: C.greenP, bar: C.green, fg: C.green },
   amber: { bg: C.amberP, bar: C.amber, fg: C.amber },
   gold: { bg: C.cream, bar: C.gold, fg: C.warnText },
@@ -303,8 +303,8 @@ function Line({ it }: { it: Item }) {
 // pale-bg + saturated-text tints for emphasised cells (Action / allocation channel) — both colours set directly, high contrast
 const cellTint: Record<Tint, { bg: string; fg: string }> = {
   red: { bg: '#FBEAEA', fg: '#E0301E' },
-  green: { bg: '#E7F3E7', fg: '#1B7346' },
-  amber: { bg: '#FFE8D4', fg: '#C52B09' },
+  green: { bg: '#E6F7EC', fg: '#017E35' },
+  amber: { bg: '#FFE8D4', fg: '#CC3D07' },
   blue: { bg: '#F5F7F8', fg: C.navy },
   violet: { bg: '#F8E9EC', fg: '#9E2A3E' },
 };
@@ -357,23 +357,29 @@ const KPIS = [
   { v: 'FEFO', l: 'SKU / batch output' },
 ];
 
+// pwc.com pastel combination: peach section, soft-orange CTA / step dots with BLACK text, mid orange for arrows and rails
+const PEACH = '#FDF4EE', PEACH_LINE = '#F6DCCB', CTA = '#F2AB75';
+const PASTELS = ['#FBD3B5', '#FFE3A1', '#F7BFB5', '#C9EBD5', '#FBD3B5', '#FFE3A1'];   // pastel tiles, black text
+const ACCENT = '#E8652C';
+const onRamp = (_h: string) => '#000';
+const rampAt = (_i: number) => CTA;   // step / phase number dots: soft orange, black numeral
+
 export default function StoryPage({ onNav }: { onNav?: (p: Page) => void }) {
   const P = useOeParams();
   const [showFlow, setShowFlow] = useState(false);
   return (
     <div style={{ background: C.canvas, minHeight: '100vh', fontFamily: SANS, color: C.slate }}>
-      {/* hero */}
-      <div style={{ background: `linear-gradient(135deg, ${C.navyDark} 0%, ${C.navy} 62%, #4C5056 100%)`,
-        color: '#fff', padding: '38px 32px 30px', borderBottom: `3px solid ${C.gold}` }}>
+      {/* hero — pwc.com pastel section: peach panel, black Charter headline, black text, soft-orange CTA with black text */}
+      <div style={{ background: PEACH, color: '#000', padding: 'clamp(28px, 5vw, 48px) clamp(16px, 4vw, 32px) clamp(24px, 4vw, 40px)',
+        borderBottom: `1px solid ${PEACH_LINE}` }}>
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: C.goldLight }}>
-            How it works
-          </div>
-          {/* product name, with "AI" in gold */}
-          <h1 style={{ fontFamily: SERIF, fontWeight: 700, fontSize: 33, margin: '8px 0 10px', lineHeight: 1.12, textWrap: 'balance', color: '#fff' }}>
-            <b style={{ color: C.gold, fontWeight: 800 }}>AI</b> Order Optimizer, end to end
+          <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 800, letterSpacing: '.12em', textTransform: 'uppercase',
+            color: '#000', background: '#FFAA72', padding: '3px 8px', borderRadius: 2 }}>How it works</span>
+          <h1 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: 'clamp(28px, 4vw, 40px)', letterSpacing: '-1px', margin: '14px 0 12px',
+            lineHeight: 1.1, textWrap: 'balance', color: '#000' }}>
+            AI Order Optimizer, end to end
           </h1>
-          <p style={{ fontSize: 15, lineHeight: 1.6, color: 'rgba(255,255,255,0.88)', maxWidth: 780, margin: 0 }}>
+          <p style={{ fontSize: 15.5, lineHeight: 1.65, color: '#2D2D2D', maxWidth: 820, margin: 0 }}>
             The data team delivers the SOQ (with per-line gate flags), the DB stock, the batch-level CFA inventory, the
             daily run rate and the masters. One run — stamped with today’s date — FILTERS the SOQ to the DBs in scope,
             then, for every CFA in parallel, segregates the DBs by channel, reserves the stock by channel × price band,
@@ -381,30 +387,29 @@ export default function StoryPage({ onNav }: { onNav?: (p: Page) => void }) {
             builds the trucks, turns the result into FEFO picks and orders, and routes each truck to a sales order or
             to RLM.
           </p>
-          {/* KPI strip */}
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 20 }}>
-            {KPIS.map((k) => (
-              <div key={k.l} style={{ background: 'rgba(255,255,255,0.09)', border: '1px solid rgba(255,255,255,0.16)',
-                borderRadius: RADIUS.md, padding: '10px 16px', minWidth: 120 }}>
-                <div style={{ fontFamily: SERIF, fontWeight: 700, fontSize: 22, color: C.goldLight, lineHeight: 1 }}>{k.v}</div>
-                <div style={{ fontSize: 11, letterSpacing: '.04em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.72)', marginTop: 4 }}>{k.l}</div>
+          {/* KPI strip — pastel tiles, black text */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10, marginTop: 24 }}>
+            {KPIS.map((k, i) => (
+              <div key={k.l} style={{ background: PASTELS[i % PASTELS.length], borderRadius: RADIUS.md, padding: '12px 16px' }}>
+                <div style={{ fontFamily: SERIF, fontWeight: 400, fontSize: 28, color: '#000', lineHeight: 1 }}>{k.v}</div>
+                <div style={{ fontSize: 11, letterSpacing: '.05em', textTransform: 'uppercase', color: '#2D2D2D', fontWeight: 700, marginTop: 6 }}>{k.l}</div>
               </div>
             ))}
           </div>
-          {onNav && (
-            <button onClick={() => onNav('schema')}
-              style={{ marginTop: 20, display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer',
-                padding: '10px 18px', fontSize: 13, fontWeight: 800, fontFamily: SANS, color: C.navy,
-                background: C.goldLight, border: 'none', borderRadius: RADIUS.md, boxShadow: SHADOW.sm }}>
-              📊 View the Data Model — every table · column · data type →
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 22 }}>
+            {onNav && (
+              <button onClick={() => onNav('schema')}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '12px 22px',
+                  fontSize: 14, fontWeight: 700, fontFamily: SANS, color: '#000', background: CTA, border: 'none', borderRadius: 0 }}>
+                View the Data Model — every table · column · data type <span aria-hidden>→</span>
+              </button>
+            )}
+            <button onClick={() => setShowFlow((v) => !v)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '11px 21px',
+                fontSize: 14, fontWeight: 700, fontFamily: SANS, color: '#000', background: 'transparent', border: '1px solid #000', borderRadius: 0 }}>
+              {showFlow ? 'Hide' : 'View'} pipeline flowchart <span aria-hidden>{showFlow ? '↑' : '↓'}</span>
             </button>
-          )}
-          <button onClick={() => setShowFlow((v) => !v)}
-            style={{ marginTop: 20, marginLeft: onNav ? 10 : 0, display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer',
-              padding: '10px 18px', fontSize: 13, fontWeight: 800, fontFamily: SANS, color: '#fff',
-              background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.38)', borderRadius: RADIUS.md }}>
-            🗺 {showFlow ? 'Hide' : 'View'} pipeline flowchart {showFlow ? '↑' : '↓'}
-          </button>
+          </div>
         </div>
       </div>
 
@@ -421,11 +426,11 @@ export default function StoryPage({ onNav }: { onNav?: (p: Page) => void }) {
             <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: C.white,
                 border: `1px solid ${C.rule}`, borderRadius: 999, padding: '6px 14px 6px 8px', boxShadow: SHADOW.sm }}>
-                <span style={{ width: 22, height: 22, borderRadius: '50%', background: C.navy, color: '#fff',
+                <span style={{ width: 22, height: 22, borderRadius: '50%', background: rampAt(i), color: onRamp(rampAt(i)),
                   fontFamily: SERIF, fontWeight: 700, fontSize: 12.5, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i}</span>
                 <span style={{ fontSize: 12.5, fontWeight: 700, color: C.navy }}>{s}</span>
               </div>
-              {i < PIPE.length - 1 && <span style={{ color: C.gold, fontWeight: 800, fontSize: 15 }}>→</span>}
+              {i < PIPE.length - 1 && <span style={{ color: ACCENT, fontWeight: 800, fontSize: 15 }}>→</span>}
             </div>
           ))}
         </div>
@@ -435,8 +440,8 @@ export default function StoryPage({ onNav }: { onNav?: (p: Page) => void }) {
           <div key={p.n} style={{ marginBottom: 18, border: `1px solid ${C.rule}`, borderRadius: RADIUS.lg,
             boxShadow: SHADOW.md, overflow: 'hidden', background: C.white }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '13px 20px',
-              background: C.cream, borderBottom: `1px solid ${C.rule}`, borderLeft: `5px solid ${p.accent}` }}>
-              <span style={{ width: 34, height: 34, borderRadius: '50%', background: C.navy, color: '#fff', flexShrink: 0,
+              background: PEACH, borderBottom: `1px solid ${PEACH_LINE}`, borderLeft: `4px solid ${ACCENT}` }}>
+              <span style={{ width: 34, height: 34, borderRadius: '50%', background: rampAt(Number(p.n) || 0), color: onRamp(rampAt(Number(p.n) || 0)), flexShrink: 0,
                 fontFamily: SERIF, fontWeight: 700, fontSize: 17, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{p.n}</span>
               <div>
                 <div style={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: 19, lineHeight: 1.1 }}>{p.title}</div>
@@ -458,7 +463,7 @@ export default function StoryPage({ onNav }: { onNav?: (p: Page) => void }) {
         {/* guarantees */}
         <div style={{ marginTop: 24, border: `1px solid ${C.rule}`, borderRadius: RADIUS.lg, boxShadow: SHADOW.md,
           overflow: 'hidden', background: C.white }}>
-          <div style={{ padding: '12px 20px', background: C.green, color: '#fff', display: 'flex', alignItems: 'baseline', gap: 10 }}>
+          <div style={{ padding: '12px 20px', background: '#017E35', color: '#fff', display: 'flex', alignItems: 'baseline', gap: 10 }}>
             <span style={{ fontFamily: SERIF, fontWeight: 700, fontSize: 17 }}>Guarantees</span>
             <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.82)' }}>what always holds after a run</span>
           </div>

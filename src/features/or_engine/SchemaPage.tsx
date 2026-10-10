@@ -19,14 +19,14 @@ interface Dom { domain: string; desc: string; tables: Tbl[]; }
 interface Payload { app_schema: string; sap_schema: string; total_tables: number; total_columns: number; domains: Dom[]; }
 
 const DOMAIN_COLOR: Record<string, string> = {
-  masters: '#2D2D2D', transaction: '#1B7346', processed: '#D93954', engine: '#5C616A',
-  orders: '#C52B09', rlm: '#C52B09', sap: '#E0301E',
+  masters: '#2D2D2D', transaction: '#017E35', processed: '#D93954', engine: '#5C616A',
+  orders: '#CC3D07', rlm: '#CC3D07', sap: '#E0301E',
 };
 
 const Shell = ({ children }: { children: React.ReactNode }) => (
   <Box sx={{ background: C.canvas, minHeight: '100vh', fontFamily: SANS, color: C.slate }}>
     <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 1.5, sm: 2.5, md: 4 }, py: { xs: 2, sm: 2.5, md: 3.5 }, pb: 8 }}>
-      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold }}>
+      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>
         Data Model · Production
       </Box>
       <Box component="h1" sx={{ fontFamily: SANS, fontWeight: 800, color: C.navy, fontSize: 30, letterSpacing: '-.01em', m: '6px 0 8px' }}>

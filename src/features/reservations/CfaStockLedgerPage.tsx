@@ -21,8 +21,8 @@ interface Row {
 interface Data { date: string; cols: string[]; rows: Row[]; regzskus: string[]; shipped: Record<string, number>; }
 
 const N = (v: number) => (v ?? 0).toLocaleString();
-const C = { navy: '#2D2D2D', gold: '#C52B09', green: '#1B7346', slate: '#2D2D2D', muted: '#5C616A',
-  cream: '#F5F7F8', border: '#DFE3E6', amber: '#C52B09' };
+const C = { navy: '#2D2D2D', gold: '#CC3D07', green: '#017E35', slate: '#2D2D2D', muted: '#5C616A',
+  cream: '#F5F7F8', border: '#DFE3E6', amber: '#CC3D07' };
 
 // a single node of the end-to-end flow strip
 function FlowStat({ label, value, sub, hue, strong }: { label: string; value: number; sub?: string; hue: string; strong?: boolean }) {
@@ -110,7 +110,7 @@ export default function CfaStockLedgerPage({ date, embedded }: { date?: string; 
     <Box sx={embedded ? { maxWidth: 1340 } : { p: { xs: 1.5, sm: 2.5, md: 3 }, maxWidth: 1340, mx: 'auto' }}>
       {!embedded && (
         <>
-          <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold, mb: 0.3 }}>Reservation · CFA stock ledger</Typography>
+          <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px', mb: 0.3 }}>Reservation · CFA stock ledger</Typography>
           <Typography variant="h5" sx={{ mb: 0.5 }}>CFA Stock Ledger · end-to-end flow per reg-zsku</Typography>
         </>
       )}
@@ -140,11 +140,11 @@ export default function CfaStockLedgerPage({ date, embedded }: { date?: string; 
       {flow && (
         <>
           <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap sx={{ mb: 1.25 }}>
-            <FlowStat label="Physical stock" value={flow.physical} sub="on-hand at CFA" hue={C.navy} strong />
+            <FlowStat label="Physical stock" value={flow.physical} sub="on-hand at CFA" hue={'#D04A02'} strong />
             <Arrow />
             <FlowStat label="Reserved" value={flow.reserved} sub={`earmarked · CFA ${selCfa ?? ''}`} hue={C.gold} />
             <Arrow />
-            <FlowStat label="Allocated" value={flow.allocated} sub="drawn · own + donor" hue={C.navy} />
+            <FlowStat label="Allocated" value={flow.allocated} sub="drawn · own + donor" hue={'#D04A02'} />
             <Arrow />
             <FlowStat label="Shipped" value={flow.shipped} sub="FEFO batch picks" hue={C.green} strong />
             <Arrow />
@@ -153,13 +153,13 @@ export default function CfaStockLedgerPage({ date, embedded }: { date?: string; 
           <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
             <Chip size="small" icon={shipOk ? <CheckCircleIcon /> : <WarningIcon />}
               label={shipOk ? 'shipped = allocated' : `shipped ${N(flow.shipped)} ≠ allocated ${N(flow.allocated)}`}
-              sx={{ bgcolor: shipOk ? '#E9F4EC' : '#FFE8D4', color: shipOk ? C.green : C.amber, fontWeight: 700, '& .MuiChip-icon': { color: shipOk ? C.green : C.amber } }} />
+              sx={{ bgcolor: shipOk ? '#E6F7EC' : '#FFE8D4', color: shipOk ? C.green : C.amber, fontWeight: 700, '& .MuiChip-icon': { color: shipOk ? C.green : C.amber } }} />
             <Chip size="small" icon={capOk ? <CheckCircleIcon /> : <WarningIcon />}
               label={capOk ? 'allocated ≤ physical' : 'allocated > physical'}
-              sx={{ bgcolor: capOk ? '#E9F4EC' : '#F8E9E6', color: capOk ? C.green : '#E0301E', fontWeight: 700, '& .MuiChip-icon': { color: capOk ? C.green : '#E0301E' } }} />
+              sx={{ bgcolor: capOk ? '#E6F7EC' : '#F8E9E6', color: capOk ? C.green : '#E0301E', fontWeight: 700, '& .MuiChip-icon': { color: capOk ? C.green : '#E0301E' } }} />
             <Chip size="small" icon={flow.reserved <= flow.physical ? <CheckCircleIcon /> : <WarningIcon />}
               label={flow.reserved <= flow.physical ? 'reserved ≤ physical' : `reserved ${N(flow.reserved)} > physical ${N(flow.physical)}`}
-              sx={{ bgcolor: flow.reserved <= flow.physical ? '#E9F4EC' : '#F8E9E6', color: flow.reserved <= flow.physical ? C.green : '#E0301E', fontWeight: 700, '& .MuiChip-icon': { color: flow.reserved <= flow.physical ? C.green : '#E0301E' } }} />
+              sx={{ bgcolor: flow.reserved <= flow.physical ? '#E6F7EC' : '#F8E9E6', color: flow.reserved <= flow.physical ? C.green : '#E0301E', fontWeight: 700, '& .MuiChip-icon': { color: flow.reserved <= flow.physical ? C.green : '#E0301E' } }} />
           </Stack>
 
           <Typography sx={{ fontSize: 13, fontWeight: 700, color: C.navy, mb: 0.75 }}>Channel cascade — {sel} @ CFA {selCfa} · how the {N(flow.physical)} cases flow run by run</Typography>

@@ -42,7 +42,7 @@ const NUM_COLS = new Set(['SOQ_Case', 'Norm_Qty_Cases', 'Max_Norm']);
 const Shell = ({ children }: { children: React.ReactNode }) => (
   <Box sx={{ background: C.canvas, minHeight: '100vh', fontFamily: SANS, color: C.slate }}>
     <Box sx={{ maxWidth: 1320, mx: 'auto', px: { xs: 1.5, sm: 2.5, md: 4 }, py: { xs: 2, sm: 2.5, md: 3.5 }, pb: 8 }}>
-      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold }}>
+      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>
         Pre-processing · step 0 · the demand gate
       </Box>
       <Box component="h1" sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: 28, m: '6px 0 8px' }}>
@@ -230,7 +230,7 @@ export default function FilteredSoqPage({ date, cfa }: { date?: string; cfa?: st
       <Stack direction="row" spacing={1.5} sx={{ mt: 2, flexWrap: 'wrap', gap: 1.5 }}>
         <Kpi label="(DB,CFA) kept" val={s.groups_kept ?? 0} suffix={` / ${nf(s.groups_total ?? 0)}`} fg={C.green} bar={C.green} />
         <Kpi label="(DB,CFA) dropped" val={s.groups_dropped ?? 0} fg={C.red} bar={C.red} />
-        <Kpi label="SOQ lines kept" val={s.rows_kept ?? 0} suffix={` / ${nf(s.rows_total ?? 0)}`} fg={C.navy} bar={C.navy} />
+        <Kpi label="SOQ lines kept" val={s.rows_kept ?? 0} suffix={` / ${nf(s.rows_total ?? 0)}`} fg={C.navy} bar={'#D04A02'} />
         <Kpi label="DBs in run" val={s.dbs_kept ?? 0} fg={C.navy} bar={C.gold} />
         <Kpi label="Cluster-rejected" val={s.groups_cluster_rejected ?? 0} fg={C.warnText} bar={C.gold} />
       </Stack>
@@ -341,7 +341,7 @@ export default function FilteredSoqPage({ date, cfa }: { date?: string; cfa?: st
 
       {/* KEPT SOQ lines — collapsible card, closed by default */}
       <Box onClick={() => toggle('kept')} sx={{ display: 'flex', alignItems: 'center', gap: 0.6, cursor: 'pointer', userSelect: 'none', mt: 3, mb: 1,
-        p: 1.5, border: `1px solid ${C.rule}`, borderLeft: `3px solid ${C.green}`, borderRadius: `${RADIUS.md}px`, bgcolor: '#F1F7F2', boxShadow: SHADOW.sm }}>
+        p: 1.5, border: `1px solid ${C.rule}`, borderLeft: `3px solid ${C.green}`, borderRadius: `${RADIUS.md}px`, bgcolor: '#F0FAF3', boxShadow: SHADOW.sm }}>
         <ChevronRightIcon sx={{ fontSize: 20, color: C.green, transition: 'transform .15s', transform: (openSec['kept'] ?? false) ? 'rotate(90deg)' : 'none' }} />
         <Box component="h2" sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: 19, m: 0 }}>Kept SOQ lines</Box>
         <Box component="span" sx={{ fontFamily: SANS, fontSize: 13, fontWeight: 600, color: C.muted }}>· the demand the engine runs on ({nf(rows.length)} shown)</Box>

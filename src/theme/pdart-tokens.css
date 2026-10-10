@@ -10,20 +10,20 @@
   /* ── Colors ────────────────────────────────────────────────── */
   --pdart-navy:        #2D2D2D;
   --pdart-navy-dark:   #303236;
-  --pdart-gold:        #C52B09;
+  --pdart-gold:        #CC3D07;
   --pdart-gold-light:  #FFB600;
   --pdart-cream:       #F5F7F8;
   --pdart-white:       #FFFFFF;
   --pdart-canvas:      #F5F7F8;
   --pdart-ink:         #2D2D2D;
   --pdart-muted:       #5C616A;
-  --pdart-success:     #1B7346;
-  --pdart-success-light: #E7F3E7;
-  --pdart-warn-light:  #FFE8D4;
-  --pdart-warn-text:   #C52B09;   /* dark PwC orange on warn-light (5.7:1) */
+  --pdart-success:     #017E35;
+  --pdart-success-light: #E6F7EC;
+  --pdart-warn-light:  #FFF6CC;
+  --pdart-warn-text:   #8A5A00;   /* PwC yellow family ink on warn-light (5.6:1) */
   --pdart-rule:        #DFE3E6;
   --pdart-panel-bg:    #EEEFF1;
-  --pdart-alert-red:   #A32020;
+  --pdart-alert-red:   #D02818;
 
   /* ── Typography ────────────────────────────────────────────── */
   --pdart-font-sans:   'Helvetica Neue', Helvetica, Arial, sans-serif;

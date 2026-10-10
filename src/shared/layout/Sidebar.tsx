@@ -138,12 +138,12 @@ export default function Sidebar({ page, onNav, preRun, setPreRun, setPreTab, ope
         <ListItemButton selected={sel} disabled={disabled} onClick={disabled ? undefined : (onClick ?? (() => onNav(n.key)))}
           sx={{ mx: 1, my: 0.3, pl: indent ? 3 : 2, borderRadius: '9px', borderLeft: '3px solid transparent',
             color: sel ? '#FFFFFF' : 'rgba(255,255,255,0.88)', transition: 'background-color .12s, color .12s',
-            '&.Mui-selected': { bgcolor: 'rgba(253,81,8,0.18)', borderLeftColor: '#FD5108' },
-            '&.Mui-selected:hover': { bgcolor: 'rgba(253,81,8,0.24)' },
+            '&.Mui-selected': { bgcolor: 'rgba(253,81,8,0.30)', borderLeftColor: '#FFB600' },
+            '&.Mui-selected:hover': { bgcolor: 'rgba(253,81,8,0.38)' },
             '&:hover': { bgcolor: 'rgba(255,255,255,0.07)', color: '#FFFFFF' },
-            '&:hover .MuiListItemIcon-root': { color: '#FFAA72' },
+            '&:hover .MuiListItemIcon-root': { color: '#FFB600' },
             '&.Mui-disabled': { opacity: 0.42 } }}>
-          <ListItemIcon sx={{ minWidth: 32, color: sel ? '#FFAA72' : 'rgba(255,255,255,0.72)' }}>{disabled ? <LockOutlinedIcon fontSize="small" /> : n.icon}</ListItemIcon>
+          <ListItemIcon sx={{ minWidth: 32, color: sel ? '#FFB600' : 'rgba(255,255,255,0.72)' }}>{disabled ? <LockOutlinedIcon fontSize="small" /> : n.icon}</ListItemIcon>
           <ListItemText primary={n.label} secondary={disabled ? 'run access required' : n.sub}
             primaryTypographyProps={{ fontWeight: sel ? 700 : 600, fontSize: indent ? '0.85rem' : '0.9rem' }}
             secondaryTypographyProps={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.72)' }} />
@@ -162,8 +162,8 @@ export default function Sidebar({ page, onNav, preRun, setPreRun, setPreTab, ope
   // a visible section divider label (gold uppercase) for the new grouped sections
   const sectionHead = (label: string) => (
     <Box key={`sec-${label}`} sx={{ px: 2.5, pt: 2, pb: 0.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-      <Box component="span" sx={{ fontSize: '0.62rem', fontWeight: 800, letterSpacing: '.11em', textTransform: 'uppercase', color: '#FFAA72', whiteSpace: 'nowrap' }}>{label}</Box>
-      <Box sx={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, rgba(255,170,114,0.45), transparent)' }} />
+      <Box component="span" sx={{ fontSize: '0.62rem', fontWeight: 800, letterSpacing: '.11em', textTransform: 'uppercase', color: '#FFB600', whiteSpace: 'nowrap' }}>{label}</Box>
+      <Box sx={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, #EB8C00, rgba(253,81,8,0.0))' }} />
     </Box>
   );
   // a showcase item: with an `href` it opens that app in a NEW TAB (tagged OPEN ↗); without one it's the greyed,

@@ -28,7 +28,7 @@ export default function AppHeader({ sidebarOpen = true, onToggleSidebar, user }:
         <IconButton onClick={onToggleSidebar} aria-label="toggle menu"
           sx={{ position: 'relative', zIndex: 2, color: '#2D2D2D', border: '1px solid #DFE3E6', borderRadius: '9px',
             display: { xs: 'none', md: 'inline-flex' },   // no sidebar to toggle on mobile — MobileNav is the nav there
-            bgcolor: '#FFFFFF', '&:hover': { bgcolor: '#FFF5ED', borderColor: GOLD, color: '#C52B09' } }}>
+            bgcolor: '#FFFFFF', '&:hover': { bgcolor: '#FFF5ED', borderColor: GOLD, color: '#CC3D07' } }}>
           {sidebarOpen ? <MenuOpenIcon /> : <MenuIcon />}
         </IconButton>
       </Tooltip>

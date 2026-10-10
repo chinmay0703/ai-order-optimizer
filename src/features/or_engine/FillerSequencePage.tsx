@@ -267,7 +267,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1240, mx: 'auto' }}>
-      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: C.gold }}>Step 3 · Filler</Box>
+      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>Step 3 · Filler</Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.3 }}>
         <Typography sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 26, color: C.navy }}>Filler Sequence</Typography>
         <IconButton size="small" onClick={() => setHelpOpen(true)} title="How the Filler Sequence works"
@@ -291,7 +291,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
       </Box>
       <Dialog open={helpOpen} onClose={() => setHelpOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: `${RADIUS.md}px`, overflow: 'hidden', border: `1px solid ${C.goldLight}` } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, color: '#fff',
-          background: 'linear-gradient(135deg, #FE7C39 0%, #C52B09 55%, #C52B09 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)' }}>
+          background: 'linear-gradient(135deg, #FE7C39 0%, #CC3D07 55%, #CC3D07 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)' }}>
           <HelpOutlineIcon sx={{ fontSize: 20 }} />
           <Box sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 17 }}>How the Filler Sequence works</Box>
           <Box sx={{ flex: 1 }} />
@@ -300,7 +300,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
         <Box sx={{ p: 2.75, color: C.slate, bgcolor: '#FFF5ED', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
           {/* the goal */}
           <Box sx={{ p: '11px 13px', borderRadius: `${RADIUS.sm}px`, bgcolor: '#FFF5ED', border: `1px solid ${C.goldLight}`, borderLeft: `3px solid ${C.gold}` }}>
-            <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.gold, mb: 0.5 }}>🎯 The goal</Box>
+            <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35, mb: 0.5 }}>🎯 The goal</Box>
             <Box sx={{ fontSize: 13, lineHeight: 1.55 }}>Ship the <b>fewest trucks</b>, add the <b>least filler</b>, leave the <b>least in RLM</b>. Step 3 tops each lane's trucks up with filler, then builds them to do exactly that.</Box>
           </Box>
 
@@ -383,7 +383,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
         const hasClusterTrim = !!ct && ct.trimmed > 0;               // a real cluster primary-truck trim landed on this DB
         const st = d.dropped
           ? { label: 'dropped', bg: '#F8E9E6', fg: '#E0301E' }
-          : d.filler > 0 ? { label: 'filled', bg: C.successLight, fg: C.success }
+          : d.filler > 0 ? { label: 'filled', bg: '#A8E3BD', fg: '#000' }
             : d.total > 0 ? { label: 'shipped · no filler', bg: C.navyP, fg: C.navy }
               : { label: 'no fill', bg: C.grayP, fg: C.muted };
         return (
@@ -461,7 +461,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
                       {inCluster && <Box component="span" sx={{ fontSize: 10.5, color: C.muted }}>· per-DB, before the cluster combines</Box>}
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'stretch', gap: 0.75, flexWrap: 'wrap' }}>
-                      <FlowStep n={1} label="Min trucks" hue={C.navy} icon="📦"
+                      <FlowStep n={1} label="Min trucks" hue={'#D04A02'} icon="📦"
                         big={`${f.min_trucks} truck${plural(f.min_trucks)}`}
                         sub={`hold ${f.hold_load} · cap ${f.cap} → ${f.full_trucks} full${f.leftover > 0 ? ` + ${f.leftover} over` : ''}`} />
                       <Box sx={{ alignSelf: 'center', color: C.muted, fontWeight: 800, fontSize: 20, opacity: 0.5 }}>›</Box>
@@ -581,8 +581,8 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
                                     : (
                                       <span style={{ display: 'inline-flex', gap: 3, flexWrap: 'wrap' }}>
                                         {o.asOrg > 0 && <span style={usedTag('#EEEFF1', '#2D2D2D')}>original</span>}
-                                        {o.asSub > 0 && <span style={usedTag('#E6F3EC', '#1B7346')}>substitute · {o.asSub}</span>}
-                                        {o.asFil > 0 && <span style={usedTag('#FFE8D4', '#C52B09')}>filler · {o.asFil}</span>}
+                                        {o.asSub > 0 && <span style={usedTag('#E6F7EC', '#017E35')}>substitute · {o.asSub}</span>}
+                                        {o.asFil > 0 && <span style={usedTag('#FFE8D4', '#CC3D07')}>filler · {o.asFil}</span>}
                                       </span>
                                     )}
                                 </td>
@@ -687,7 +687,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
                   DBs draw the shared CFA filler pool, checked BEFORE any filler is added. Exact engine values. */}
               <Box sx={{ my: 1.25, p: 1.35, bgcolor: '#FFF5ED', border: `1px solid ${C.goldLight}`, borderLeft: `4px solid ${C.gold}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.85, flexWrap: 'wrap' }}>
-                  <Box sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase', color: C.gold }}>🎯 Filler draw priority</Box>
+                  <Box sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35 }}>🎯 Filler draw priority</Box>
                   <Box sx={{ px: 0.9, py: 0.2, borderRadius: 999, bgcolor: C.navyP, color: C.navy, fontSize: 10, fontWeight: 800, letterSpacing: '.03em', textTransform: 'uppercase' }}>rank {d.rank || '—'} / {d.n_in_cfa}</Box>
                   <Box sx={{ flex: 1 }} />
                   <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
@@ -719,7 +719,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
               </Box>
 
               {/* 3 · per-eligible-filler fill calc — reuses the exact FillerTable (or_output_filler_calc) */}
-              <Box sx={{ my: 1.25, p: 1.35, bgcolor: '#F1F7F2', border: `1px solid #CFE6D5`, borderLeft: `4px solid ${C.success}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm }}>
+              <Box sx={{ my: 1.25, p: 1.35, bgcolor: '#F0FAF3', border: `1px solid #A8E2BF`, borderLeft: `4px solid ${C.success}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5, flexWrap: 'wrap' }}>
                 <Box sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase', color: C.success }}>🧩 Filler fill · how each is calculated</Box>
               </Box>
@@ -737,7 +737,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
                 return (
                   <Box sx={{ mb: 0.85, p: '9px 12px', bgcolor: '#fff', border: `1px solid ${C.rule}`, borderLeft: `3px solid ${C.gold}`, borderRadius: `${RADIUS.sm}px` }}>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0.6, fontSize: 11.5, color: C.slate }}>
-                      <Box component="span" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.04em', color: C.gold, fontSize: 10, mr: 0.3 }}>{pct(P.ADDON_CAP_PCT)} add-on budget</Box>
+                      <Box component="span" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.04em', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35, fontSize: 10, mr: 0.3 }}>{pct(P.ADDON_CAP_PCT)} add-on budget</Box>
                       <Chip size="small" label={`Combined SOQ ${d.soq}`} sx={chip} />
                       <Box component="span" sx={{ ...mono, color: C.muted }}>× {pct(P.ADDON_CAP_PCT)} =</Box>
                       <Chip size="small" label={`${cap} cap`} sx={{ ...chip, fontWeight: 700, color: C.navy, bgcolor: C.navyP }} />

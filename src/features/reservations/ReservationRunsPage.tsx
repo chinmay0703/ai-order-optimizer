@@ -21,7 +21,7 @@ interface Data { cascade: Record<string, Casc[]>; runs: Run[]; }
 type RunData = Record<string, { cfas: Cfa[]; meta: { cases: number; trucks: number } }>;
 
 const N = (v: number) => v.toLocaleString();
-const bandc = (b: number) => (b === 1 ? { bg: '#E9F4EC', bar: '#1B7346', chip: '#1B7346' } : b === 2 ? { bg: '#F5F7F8', bar: '#2D2D2D', chip: '#2D2D2D' } : { bg: '#FFE8D4', bar: '#C52B09', chip: '#C52B09' });
+const bandc = (b: number) => (b === 1 ? { bg: '#E6F7EC', bar: '#017E35', chip: '#017E35' } : b === 2 ? { bg: '#F5F7F8', bar: '#2D2D2D', chip: '#2D2D2D' } : { bg: '#FFE8D4', bar: '#CC3D07', chip: '#CC3D07' });
 // three internal tabs: the reservation cascade waterfall · the per-run allocation detail · the transshipment cluster primary trucks
 const TABS = [
   { k: 'cascade', label: 'Reservation cascade' },
@@ -53,7 +53,7 @@ function CascadeTable({ cascade }: { cascade: Record<string, Casc[]> }) {
                 <TableCell align="right">{N(s.carried_in)}</TableCell>
                 <TableCell align="right" sx={{ color: '#2D2D2D', fontWeight: 600 }}>{N(s.earmark)}</TableCell>
                 <TableCell align="right">{N(s.available)}</TableCell>
-                <TableCell align="right" sx={{ color: '#1B7346' }}>{N(s.allocated)}</TableCell>
+                <TableCell align="right" sx={{ color: '#017E35' }}>{N(s.allocated)}</TableCell>
                 <TableCell align="right" sx={{ fontWeight: 700 }}>{N(s.carried_out)}</TableCell>
               </TableRow>
             );
@@ -66,8 +66,8 @@ function CascadeTable({ cascade }: { cascade: Record<string, Casc[]> }) {
 
 // ---- RLM tabs (date-wise): truck-approval (PTL) + 2nd-CFA shift, from the RLM tables we persist ----
 const STOCK_C: Record<string, { bg: string; fg: string }> = {
-  'Out of Stock': { bg: '#F8E9E6', fg: '#A32020' }, Low: { bg: '#FFE8D4', fg: '#8A3A0C' },
-  Healthy: { bg: '#E9F4EC', fg: '#2E7D32' }, Overstocked: { bg: '#F5F7F8', fg: '#2D2D2D' },
+  'Out of Stock': { bg: '#F8E9E6', fg: '#D02818' }, Low: { bg: '#FFE8D4', fg: '#8A3A0C' },
+  Healthy: { bg: '#E6F7EC', fg: '#017E35' }, Overstocked: { bg: '#F5F7F8', fg: '#2D2D2D' },
 };
 const stockChip = (s: string) => {
   const c = STOCK_C[s] ?? { bg: '#F5F7F8', fg: '#5C616A' };
@@ -79,15 +79,15 @@ const pc = (v: number | null | undefined) => (v == null ? '—' : `${Number(v).t
 // APPROVED = shipped (green); REJECTED = won't ship (red); PENDING = awaiting the rollup (amber, auto-REJECTS at the deadline).
 const ptlStatusChipC = (s: string): { bg: string; fg: string } => {
   const st = String(s || '').trim().toUpperCase();
-  if (st === 'APPROVED') return { bg: '#E9F4EC', fg: '#2E7D32' };
-  if (st === 'REJECTED') return { bg: '#F8E9E6', fg: '#A32020' };
+  if (st === 'APPROVED') return { bg: '#E6F7EC', fg: '#017E35' };
+  if (st === 'REJECTED') return { bg: '#F8E9E6', fg: '#D02818' };
   return { bg: '#FFE8D4', fg: '#8A3A0C' };   // PENDING (or anything else) → amber
 };
 // 2nd-CFA shift header status → chip colour. The application owns it (PENDING / SHIFTED / HELD); the rollup resolves a
 // PENDING or HELD header to APPROVED (the primary CFA ships), and leaves SHIFTED (the secondary CFA ships) as-is.
 const shiftStatusChipC = (s: string): { bg: string; fg: string } => {
   const st = String(s || '').trim().toUpperCase();
-  if (st === 'APPROVED') return { bg: '#E9F4EC', fg: '#2E7D32' };   // resolved → primary/current CFA ships
+  if (st === 'APPROVED') return { bg: '#E6F7EC', fg: '#017E35' };   // resolved → primary/current CFA ships
   if (st === 'SHIFTED') return { bg: '#F5F7F8', fg: '#4C5056' };    // routed to the secondary CFA
   if (st === 'HELD') return { bg: '#FFE8D4', fg: '#8A3A0C' };       // held
   return { bg: '#F5F7F8', fg: '#5C616A' };                          // PENDING (or unknown) → awaiting the rollup
@@ -160,14 +160,14 @@ function RlmPtlTab({ date }: { date?: string }) {
             <Chip size="small" label={`${h.truck_type || 'Truck'} #${h.truck_number}`} sx={{ bgcolor: '#fff', border: '1px solid #CBD1D6', fontWeight: 700, height: 22 }} />
             {/* distributor-level (CFA × DB) — from filtered_soq */}
             <Chip size="small" label={`PDP ${h.pdp_flag ? '✓' : '✗'}`} title="distributor PDP flag (filtered_soq.is_pdp — boolean)"
-              sx={{ bgcolor: h.pdp_flag ? '#E9F4EC' : '#F5F7F8', color: h.pdp_flag ? '#2E7D32' : '#5C616A', fontWeight: 700, height: 22 }} />
+              sx={{ bgcolor: h.pdp_flag ? '#E6F7EC' : '#F5F7F8', color: h.pdp_flag ? '#017E35' : '#5C616A', fontWeight: 700, height: 22 }} />
             <Chip size="small" label={`PDP freq ${h.pdp_frequency || '—'}`}
               title={h.pdp_frequency ? `distributor PDP frequency from the PDP master: ${h.pdp_frequency}` : 'no PDP frequency for this distributor in the PDP master'}
               sx={{ bgcolor: h.pdp_frequency ? '#F5F7F8' : '#fff', border: '1px solid #CBD1D6', color: h.pdp_frequency ? '#4C5056' : '#5C616A', fontWeight: 700, height: 22 }} />
             <Chip size="small" label={`Combined SOQ ${nm(h.soq)}`} title="distributor combined SOQ (CFA × DB, Σ SOQ over its reg-zskus)"
               sx={{ bgcolor: '#F5F7F8', color: '#2D2D2D', fontWeight: 700, height: 22 }} />
             <Box sx={{ flex: 1 }} />
-            <Typography sx={{ fontSize: 12.5, color: '#5C616A' }}>fill <b style={{ color: Math.round(h.truck_load_utilization_pct ?? 0) >= P.TRUCK_FILL_TARGET_PCT * 100 ? '#2E7D32' : '#8A3A0C' }}>{pc(h.truck_load_utilization_pct)}</b> · cap {nm(h.truck_load_capacity)} · AOQ <b>{nm(h.aoq_qty)}</b> · gap {nm(h.truck_load_gap_qty)} · DB trucks <b title="total trucks for this DB across SO + RLM + shift">{nm(h.total_trucks)}</b></Typography>
+            <Typography sx={{ fontSize: 12.5, color: '#5C616A' }}>fill <b style={{ color: Math.round(h.truck_load_utilization_pct ?? 0) >= P.TRUCK_FILL_TARGET_PCT * 100 ? '#017E35' : '#8A3A0C' }}>{pc(h.truck_load_utilization_pct)}</b> · cap {nm(h.truck_load_capacity)} · AOQ <b>{nm(h.aoq_qty)}</b> · gap {nm(h.truck_load_gap_qty)} · DB trucks <b title="total trucks for this DB across SO + RLM + shift">{nm(h.total_trucks)}</b></Typography>
             <Chip size="small" label={h.status || 'RLM_TRUCK_APPROVAL'} sx={{ bgcolor: ptlStatusChipC(h.status).bg, color: ptlStatusChipC(h.status).fg, fontWeight: 700, height: 22 }} />
           </Box>
           {open[h.engine_order_id] && (
@@ -250,9 +250,9 @@ function RlmSecondCfaTab({ date }: { date?: string }) {
             <Typography sx={{ fontSize: 13, color: '#2D2D2D' }}>{h.distributor_name}</Typography>
             <Chip size="small" label={h.status || 'PENDING'} sx={{ bgcolor: shiftStatusChipC(h.status).bg, color: shiftStatusChipC(h.status).fg, fontWeight: 700, height: 22 }} />
             <Box sx={{ flex: 1 }} />
-            <Chip size="small" label={`preferred ${h.preferred_cfa_code} · ${pc(h.preferred_cfa_fill_pct)} · short ${nm(h.preferred_cfa_shortfall_qty)}`} sx={{ bgcolor: '#F8E9E6', color: '#A32020', fontWeight: 700, height: 22 }} />
+            <Chip size="small" label={`preferred ${h.preferred_cfa_code} · ${pc(h.preferred_cfa_fill_pct)} · short ${nm(h.preferred_cfa_shortfall_qty)}`} sx={{ bgcolor: '#F8E9E6', color: '#D02818', fontWeight: 700, height: 22 }} />
             <Typography sx={{ color: '#5C616A' }}>→</Typography>
-            <Chip size="small" label={`alternate ${h.alternate_cfa_code} · ${nm(h.alternate_cfa_qty)} cs`} sx={{ bgcolor: '#E9F4EC', color: '#2E7D32', fontWeight: 700, height: 22 }} />
+            <Chip size="small" label={`alternate ${h.alternate_cfa_code} · ${nm(h.alternate_cfa_qty)} cs`} sx={{ bgcolor: '#E6F7EC', color: '#017E35', fontWeight: 700, height: 22 }} />
             <Chip size="small" label={`lead ${h.lead_time ?? '—'}`} sx={{ bgcolor: '#fff', border: '1px solid #CBD1D6', fontWeight: 700, height: 22 }} />
           </Box>
           {open[h.engine_order_id] && (
@@ -268,7 +268,7 @@ function RlmSecondCfaTab({ date }: { date?: string }) {
                         <TableCell sx={{ whiteSpace: 'normal' }} title={descOf(l.reg_zsku_code) || l.zsku_description}>{descOf(l.reg_zsku_code) || l.zsku_description || '—'}</TableCell>
                         <TableCell align="right">{nm(l.zsku_soq_qty)}</TableCell>
                         <TableCell align="right">{nm(l.zsku_aoq_qty)}</TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 700, color: '#2E7D32' }}>{nm(l.zsku_alternate_cfa_qty)}</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 700, color: '#017E35' }}>{nm(l.zsku_alternate_cfa_qty)}</TableCell>
                         <TableCell align="right">{pc(l.zsku_db_inventory_coverage_pct)}</TableCell>
                         <TableCell>{stockChip(l.zsku_stock_status)}</TableCell>
                       </TableRow>
@@ -344,7 +344,7 @@ export default function ReservationRunsPage({ date, initialTab }: { date?: strin
 
   return (
     <Box sx={{ p: { xs: 1.5, sm: 2.5, md: 3 }, maxWidth: 1340, mx: 'auto' }}>
-      <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#C52B09', mb: 0.3 }}>Reservation · CFA stock cascade</Typography>
+      <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px', mb: 0.3 }}>Reservation · CFA stock cascade</Typography>
       <Typography variant="h5" sx={{ mb: 0.5 }}>Reservation Runs · {d.runs.length}-run cascade</Typography>
       <PageIntro>
         The CFA stock is reserved per channel (each band's share) and allocated in {d.runs.length} sequential channel runs
@@ -356,7 +356,7 @@ export default function ReservationRunsPage({ date, initialTab }: { date?: strin
         {TABS.map((t) => (
           <Box key={t.k} onClick={() => setTab(t.k)}
             sx={{ cursor: 'pointer', px: 2, py: 1, fontSize: 13, fontWeight: 800, color: tab === t.k ? '#2D2D2D' : '#5C616A',
-              borderBottom: `2px solid ${tab === t.k ? '#C52B09' : 'transparent'}`, mb: '-1px', '&:hover': { color: '#2D2D2D' } }}>{t.label}</Box>
+              borderBottom: `2px solid ${tab === t.k ? '#CC3D07' : 'transparent'}`, mb: '-1px', '&:hover': { color: '#2D2D2D' } }}>{t.label}</Box>
         ))}
       </Box>
 
@@ -412,7 +412,7 @@ export default function ReservationRunsPage({ date, initialTab }: { date?: strin
                   <Metric label="Demand">{N(m.demand)} cs</Metric>
                   <Metric label="Reservation cap" tip="Combined reservation pool available to this channel run (carried-in + this run's earmark, across all bands)">{N(m.cap)} cs</Metric>
                   <Metric label="Allocated" color="#2D2D2D">{N(m.allocated)} cs</Metric>
-                  <Metric label="Fill" color="#166534">{m.fill}%</Metric>
+                  <Metric label="Fill" color="#017E35">{m.fill}%</Metric>
                   {heldLanes > 0 && <Metric label="Held · no truck" color="#E0301E" tip={`Lanes cancelled at the ≥${pct(P.TRUCK_KEEP_PCT)}-per-truck rule — cases cascade to the next run`}>{heldLanes}</Metric>}
                 </Box>
               </Paper>

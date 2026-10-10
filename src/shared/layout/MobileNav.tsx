@@ -47,9 +47,9 @@ export default function MobileNav({ page, onNav, user }: {
               flex: '0 0 auto', minWidth: 76, minHeight: 44, px: 1.25, py: 0.75, scrollSnapAlign: 'start',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0.25,
               cursor: locked ? 'not-allowed' : 'pointer', opacity: locked ? 0.42 : 1,
-              color: active ? '#FFAA72' : 'rgba(255,255,255,0.8)',
+              color: active ? '#FFB600' : 'rgba(255,255,255,0.8)',
               borderTop: active ? '3px solid #FD5108' : '3px solid transparent',
-              bgcolor: active ? 'rgba(253,81,8,0.18)' : 'transparent',
+              bgcolor: active ? 'rgba(253,81,8,0.30)' : 'transparent',
               '&:focus-visible': { outline: '2px solid #FD5108', outlineOffset: '-2px' },
               '& svg': { fontSize: 20 },
             }}>

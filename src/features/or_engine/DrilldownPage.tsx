@@ -76,7 +76,7 @@ const Shell = ({ children, eyebrow = 'Drilldown · one reg-zsku, the whole story
   { children: React.ReactNode; eyebrow?: string; title?: string }) => (
   <Box sx={{ background: C.canvas, minHeight: '100vh', fontFamily: SANS, color: C.slate }}>
     <Box sx={{ maxWidth: 1280, mx: 'auto', px: { xs: 1.5, sm: 2.5, md: 4 }, py: { xs: 2, sm: 2.5, md: 3.5 }, pb: 8 }}>
-      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold }}>
+      <Box sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>
         {eyebrow}
       </Box>
       <Box component="h1" sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: 28, m: '6px 0 8px' }}>
@@ -299,7 +299,7 @@ export default function DrilldownPage({ date, cfa = '' }: { date?: string; cfa?:
     elig.length
       ? <Box onClick={(e) => { e.stopPropagation(); setPop({ top: e.clientY, left: e.clientX, title, meta, elig, tone: C.success }); }}
           sx={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 0.4, px: 0.85, py: 0.3,
-            borderRadius: 999, bgcolor: C.successLight, color: C.success, fontWeight: 800, fontSize: 11, '&:hover': { filter: 'brightness(0.94)' } }}>
+            borderRadius: 999, bgcolor: '#A8E3BD', color: '#000', fontWeight: 800, fontSize: 11, '&:hover': { filter: 'brightness(0.94)' } }}>
           <FormatListBulletedIcon sx={{ fontSize: 13 }} /> {elig.length}
         </Box>
       : <span style={{ color: C.muted }}>—</span>
@@ -371,9 +371,9 @@ export default function DrilldownPage({ date, cfa = '' }: { date?: string; cfa?:
               ? <Box sx={{ px: 1, py: 0.3, bgcolor: C.orange100, color: C.gold, fontWeight: 800, fontSize: 12, borderRadius: `${RADIUS.sm}px` }}
                   title={`${zf.z} has no CFA stock in this pool this run, so it never entered the v2 engine — no allocation was possible (not an engine miss).`}>not allocated · CFA stock 0</Box>
               : zf.full
-                ? <Box sx={{ px: 1, py: 0.3, bgcolor: C.successLight, color: C.success, fontWeight: 800, fontSize: 12, borderRadius: `${RADIUS.sm}px` }}
+                ? <Box sx={{ px: 1, py: 0.3, bgcolor: '#A8E3BD', color: '#000', fontWeight: 800, fontSize: 12, borderRadius: `${RADIUS.sm}px` }}
                     title="Reserved pool ≥ combined SOQ — no rationing: every DB got its full SOQ (the v2 engine was not run).">not constrained · full SOQ</Box>
-                : <Box sx={{ px: 1, py: 0.3, bgcolor: C.warnLight, color: C.warnText, fontWeight: 800, fontSize: 12, borderRadius: `${RADIUS.sm}px` }}
+                : <Box sx={{ px: 1, py: 0.3, bgcolor: '#FFE3A1', color: '#000', fontWeight: 800, fontSize: 12, borderRadius: `${RADIUS.sm}px` }}
                     title={`v2 regime ${zf.regime} — the pool's single water level λ (each DB's continuous share = Weight ÷ λ − Final Stock, clipped to [floor, SOQ]).`}>
                     {zf.regime ? zf.regime.toLowerCase() : 'regime —'} · λ {dash(zf.lambda)}</Box>}
             {/* WATER-FILL header badge (retired): water level {zf.water} */}
@@ -528,7 +528,7 @@ export default function DrilldownPage({ date, cfa = '' }: { date?: string; cfa?:
               return (
                 <Box sx={{ mt: 1.75, mx: 1, border: `1px solid ${C.rule}`, borderRadius: `${RADIUS.sm}px`, overflow: 'hidden' }}>
                   <Box onClick={() => setOpenElig((p) => ({ ...p, [zf.z]: !open }))}
-                    sx={{ px: 1.25, py: 0.6, bgcolor: C.successLight, color: C.success, fontWeight: 800, fontSize: 11,
+                    sx={{ px: 1.25, py: 0.6, bgcolor: '#A8E3BD', color: '#000', fontWeight: 800, fontSize: 11,
                       letterSpacing: '.04em', textTransform: 'uppercase', cursor: 'pointer', display: 'flex',
                       alignItems: 'center', justifyContent: 'space-between', userSelect: 'none' }}>
                     <span>Step 2 · Eligible substitutes — GLOBAL New-score order (each DB's true position across ALL reg-zskus), each filled rank by rank ({dbGroups.length} DBs)</span>

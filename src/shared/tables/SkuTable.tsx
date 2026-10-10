@@ -12,8 +12,8 @@ const expTone = (d: number) => (d < 30 ? status.error : d < 60 ? status.warning 
 const roleOf = (isSub: number, isFil: number) => (isFil ? 'Filler' : isSub ? 'Sub' : 'Original');
 const ROLE: Record<string, { bg: string; fg: string; rank: number }> = {
   Original: { bg: '#EEEFF1', fg: '#2D2D2D', rank: 0 },
-  Sub:      { bg: '#E6F3EC', fg: '#1B7346', rank: 1 },
-  Filler:   { bg: '#FFE8D4', fg: '#C52B09', rank: 2 },
+  Sub:      { bg: '#E6F7EC', fg: '#017E35', rank: 1 },
+  Filler:   { bg: '#FFE8D4', fg: '#CC3D07', rank: 2 },
 };
 
 interface Grp { owner: string; sku: string; batch: string; mrp: number | null; days: number; pdp: string; qty: number; roles: Set<string>; }
@@ -56,7 +56,7 @@ export default function SkuTable({ skus, dbCode, dbName, order }: {
             const roles = [...g.roles].sort((x, y) => ROLE[x].rank - ROLE[y].rank);
             return (
               <TableRow key={i} hover>
-                <TableCell sx={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600, color: '#1B7346' }}>{order}</TableCell>
+                <TableCell sx={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600, color: '#017E35' }}>{order}</TableCell>
                 <TableCell sx={{ fontVariantNumeric: 'tabular-nums', color: 'text.secondary' }}>{dbCode}</TableCell>
                 <TableCell sx={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', color: 'text.secondary' }} title={dbName}>{dbName}</TableCell>
                 <TableCell sx={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: '#2D2D2D' }}>{g.owner}</TableCell>
@@ -80,7 +80,7 @@ export default function SkuTable({ skus, dbCode, dbName, order }: {
                 </TableCell>
                 <TableCell align="right">
                   {g.pdp.toLowerCase() === 'yes'
-                    ? <Chip label="PDP" size="small" sx={{ height: 18, fontSize: '0.64rem', fontWeight: 700, bgcolor: '#E9F4EC', color: '#1B7346' }} />
+                    ? <Chip label="PDP" size="small" sx={{ height: 18, fontSize: '0.64rem', fontWeight: 700, bgcolor: '#E6F7EC', color: '#017E35' }} />
                     : <span style={{ color: '#5C616A', fontSize: '0.72rem' }}>{g.pdp ? 'non-PDP' : '—'}</span>}
                 </TableCell>
               </TableRow>

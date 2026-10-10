@@ -9,7 +9,7 @@
 export interface Tracked { id: string; name: string; channel: string; bg: string; accent: string; }
 // DISABLED — the demo highlight is OFF (empty list), so no DB is colored/starred on any page. isTracked() returns
 // false and trackedSxFor()/trackedRowSxFor() return {} everywhere. To re-enable the walkthrough, add entries here:
-//   { id: '0000121880', name: '…', channel: 'Non-PACE', bg: '#FFE8D4', accent: '#C52B09' }
+//   { id: '0000121880', name: '…', channel: 'Non-PACE', bg: '#FFE8D4', accent: '#CC3D07' }
 export const TRACKED_DBS: Tracked[] = [];
 
 const bare = (s: unknown): string => String(s ?? '').replace(/\D/g, '').replace(/^0+/, '');

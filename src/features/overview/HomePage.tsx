@@ -16,7 +16,7 @@ export default function HomePage({ onNav }: { onNav: (p: Page) => void }) {
       <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2.5, md: 4 }, py: 4, pb: 8 }}>
 
         {/* hero */}
-        <Box sx={{ fontSize: 11.5, fontWeight: 800, letterSpacing: '.09em', textTransform: 'uppercase', color: C.gold }}>
+        <Box sx={{ fontSize: 11.5, fontWeight: 800, letterSpacing: '.09em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>
           PwC · AI Order Optimizer
         </Box>
         <Box component="h1" sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: { xs: 27, md: 34 }, m: '6px 0 8px', letterSpacing: '-.4px' }}>

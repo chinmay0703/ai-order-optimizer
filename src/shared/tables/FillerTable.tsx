@@ -7,7 +7,7 @@ import { isUncappedRoom, NO_CAP_LABEL, NO_CAP_TIP } from '../roomCap';
 // Step-3 filler "show your work": every eligible filler competes for the lane's spare truck room under FOUR caps;
 // allocated = the MIN of them, and "Limited by" is whichever cap bound it. There is no solver — this is the exact min.
 // The cap labels (Norm room, add-on %) are read from oe_parameters — never hardcode 1.2 / 35%.
-const GREEN = '#1B7346', RED = '#E0301E', MUTED = '#5C616A', RULE = '#DFE3E6', ROWLINE = '#EEEFF1', CREAM = '#FAF8F7', INK = '#2D2D2D';
+const GREEN = '#017E35', RED = '#E0301E', MUTED = '#5C616A', RULE = '#DFE3E6', ROWLINE = '#EEEFF1', CREAM = '#FAF8F7', INK = '#2D2D2D';
 
 // which of the four caps bound this filler — matches the reason substring so it stays correct when the % values change.
 function isBound(reason: string, key: string): boolean {
@@ -24,7 +24,7 @@ function capSx(v: number, reason: string, k: string, alloc: number) {
   if (isBound(reason, k)) {
     const on = alloc > 0;
     return { display: 'inline-block', px: 0.7, py: '1px', borderRadius: '999px', fontVariantNumeric: 'tabular-nums' as const,
-      bgcolor: on ? '#E7F3E7' : '#FBEAEA', color: on ? GREEN : RED, fontWeight: 800, border: `1px solid ${on ? '#B7E0C0' : '#F0C9C7'}` };
+      bgcolor: on ? '#E6F7EC' : '#FBEAEA', color: on ? GREEN : RED, fontWeight: 800, border: `1px solid ${on ? '#A8E2BF' : '#F0C9C7'}` };
   }
   return { color: v <= 0 ? RULE : MUTED, fontWeight: 400, fontVariantNumeric: 'tabular-nums' as const };
 }
@@ -89,7 +89,7 @@ export default function FillerTable({ rows }: { rows: FillerCalc[] }) {
                 <TableCell>
                   <Box component="span" sx={{ display: 'inline-block', px: 0.85, py: '2px', borderRadius: '999px', fontSize: '0.64rem', fontWeight: 700,
                     maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', verticalAlign: 'middle',
-                    bgcolor: on ? '#E7F3E7' : '#F5F7F8', color: on ? GREEN : MUTED, border: `1px solid ${on ? '#B7E0C0' : RULE}` }}>{r.reason}</Box>
+                    bgcolor: on ? '#E6F7EC' : '#F5F7F8', color: on ? GREEN : MUTED, border: `1px solid ${on ? '#A8E2BF' : RULE}` }}>{r.reason}</Box>
                 </TableCell>
               </TableRow>
             );

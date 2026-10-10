@@ -89,7 +89,7 @@ export default function OeParametersPage() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1040, mx: 'auto', fontFamily: SANS }}>
-      <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold }}>Configuration · engine thresholds</Typography>
+      <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#000', bgcolor: '#FFAA72', display: 'inline-block', px: 1, py: '3px', borderRadius: '2px' }}>Configuration · engine thresholds</Typography>
       <Typography sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: 30, mb: 0.5, lineHeight: 1.1 }}>OE Parameters</Typography>
       <PageIntro>
         The engine's tunable business thresholds, stored in the <code>oe_parameters</code> table. Edit a value and
@@ -103,7 +103,7 @@ export default function OeParametersPage() {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2, flexWrap: 'wrap' }}>
         <Button onClick={save} disabled={!dirtyCount || saving} variant="contained"
           startIcon={saving ? <CircularProgress size={15} sx={{ color: '#fff' }} /> : <SaveIcon />}
-          sx={{ bgcolor: C.green, fontWeight: 700, textTransform: 'none', px: 2.5, boxShadow: SHADOW.sm, '&:hover': { bgcolor: '#1B7346' } }}>
+          sx={{ bgcolor: '#017E35', color: '#fff', fontWeight: 700, textTransform: 'none', px: 2.5, boxShadow: 'none', '&:hover': { bgcolor: '#01602B', boxShadow: 'none' } }}>
           {dirtyCount ? `Save ${dirtyCount} change${dirtyCount > 1 ? 's' : ''}` : 'Save'}
         </Button>
         <Button onClick={reset} disabled={saving} variant="outlined" startIcon={<RestartAltIcon />}
@@ -121,7 +121,7 @@ export default function OeParametersPage() {
         if (!rows.length) return null;
         return (
           <Box key={group} sx={{ mb: 2.5 }}>
-            <Typography sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.gold, mb: 1 }}>{group}</Typography>
+            <Typography sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: '#000', borderLeft: '3px solid #E8652C', pl: 0.75, lineHeight: 1.35, mb: 1 }}>{group}</Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {rows.map((p) => {
                 const raw = edited[p.key];
@@ -183,7 +183,7 @@ export default function OeParametersPage() {
             Cancel
           </Button>
           <Button onClick={doReset} variant="contained" startIcon={<RestartAltIcon />}
-            sx={{ bgcolor: C.red, color: '#fff', fontWeight: 700, textTransform: 'none', boxShadow: 'none', '&:hover': { bgcolor: '#A32020', boxShadow: 'none' } }}>
+            sx={{ bgcolor: C.red, color: '#fff', fontWeight: 700, textTransform: 'none', boxShadow: 'none', '&:hover': { bgcolor: '#D02818', boxShadow: 'none' } }}>
             Reset to defaults
           </Button>
         </DialogActions>
