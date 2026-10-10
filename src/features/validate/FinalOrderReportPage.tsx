@@ -162,7 +162,7 @@ export default function FinalOrderReportPage({ date, cfa }: { date?: string; cfa
                 const notInput = ix.input >= 0 && String(r[ix.input]) === 'No';
                 const remark = ix.remarks >= 0 ? String(r[ix.remarks] ?? '') : '';
                 const isDrop = /drop/i.test(remark);
-                const bg = notInput ? '#f6f7f9' : isDrop ? '#fbeceb' : undefined;   // grey = dropped pre-engine, red = dropped in-engine
+                const bg = notInput ? '#F8F8F8' : isDrop ? '#FBECEB' : undefined;   // grey = dropped pre-engine, red = dropped in-engine
                 return (
                   <TableRow key={i} sx={{ bgcolor: bg, '& td': { fontSize: 12, whiteSpace: 'nowrap' } }}>
                     {r.map((v, ci) => {
@@ -217,7 +217,7 @@ export default function FinalOrderReportPage({ date, cfa }: { date?: string; cfa
       </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', borderTop: `1px solid ${C.rule}`, mt: 3, pt: 1, fontSize: 9, color: C.muted }}>
-        <span>PepsiCo AIDEN · Reporting Format · live from Postgres · every SOQ distributor · one row per CFA × DB</span>
+        <span>AI Order Optimizer · Reporting Format · sample data · every SOQ distributor · one row per CFA × DB</span>
         <span>CFA × DB · {data.date ?? ''}</span>
       </Box>
     </Shell>

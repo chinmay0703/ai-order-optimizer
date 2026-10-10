@@ -19,7 +19,7 @@ export default function LineTable({ lines }: { lines: Line[] }) {
     <Box sx={{ bgcolor: '#fff', borderRadius: 1, overflowX: 'auto' }}>
       <Table size="small" sx={{ '& td, & th': { py: 0.75, px: 1.25, fontSize: '0.8rem', whiteSpace: 'nowrap' } }}>
         <TableHead>
-          <TableRow sx={{ bgcolor: '#F1F1F0' }}>
+          <TableRow sx={{ bgcolor: '#F2F2F2' }}>
             {HEAD.map((h, i) => (
               <TableCell
                 key={h}
@@ -46,11 +46,11 @@ export default function LineTable({ lines }: { lines: Line[] }) {
                 <TableCell align="right">{l[3]}</TableCell>
                 <TableCell align="right" sx={{ color: 'primary.main' }}>
                   {l[4] || ''}
-                  {l[5] && <Box component="span" sx={{ color: '#7A756D', fontSize: '0.72rem', ml: 0.5 }}>({l[5]})</Box>}
+                  {l[5] && <Box component="span" sx={{ color: '#6B6B6B', fontSize: '0.72rem', ml: 0.5 }}>({l[5]})</Box>}
                 </TableCell>
-                <TableCell align="right" sx={{ color: '#D98A00' }}>
+                <TableCell align="right" sx={{ color: '#D04A02' }}>
                   {l[6] || ''}
-                  {l[7] && <Box component="span" sx={{ color: '#bfae7a', fontSize: '0.72rem', ml: 0.5 }}>({l[7]})</Box>}
+                  {l[7] && <Box component="span" sx={{ color: '#C9A27E', fontSize: '0.72rem', ml: 0.5 }}>({l[7]})</Box>}
                 </TableCell>
                 <TableCell align="right" sx={{ fontWeight: 700 }}>{l[8]}</TableCell>
                 <TableCell align="right" sx={{ color: 'text.secondary' }}>{fill}</TableCell>

@@ -134,7 +134,7 @@ export default function CfaDbPage({ date }: { date?: string }) {
       <PageIntro>
         Everything summed across reg-zskus. The top table is the combined order per <b>CFA × DB</b>; the bottom is the
         same lane broken into its <b>trucks</b>, each with the lane&apos;s <b>original / substitute / filler</b> mix.
-        <b style={{ color: '#10365A' }}> Draw rank</b> is the Step-3 order each DB claims the shared CFA filler pool —
+        <b style={{ color: '#2D2D2D' }}> Draw rank</b> is the Step-3 order each DB claims the shared CFA filler pool —
         by <b>filler priority = (Σnorm ÷ Σheld) × tier weight</b>, Σheld = stock + original + substitute (highest draws first).
         The bar shows the mix — <span style={{ color: C.navy, fontWeight: 700 }}>■ original</span>{' '}
         <span style={{ color: C.success, fontWeight: 700 }}>■ substitute</span>{' '}
@@ -187,7 +187,7 @@ export default function CfaDbPage({ date }: { date?: string }) {
               return (
                 <Fragment key={rowKey}>
                 <TableRow hover onClick={() => setOpen(isOpen ? null : rowKey)}
-                  sx={{ cursor: 'pointer', bgcolor: isOpen ? '#faf7ef' : undefined, '& > td': isOpen ? { borderBottom: 'none' } : undefined, ...trackedRowSxFor(r[D.db]) }}>
+                  sx={{ cursor: 'pointer', bgcolor: isOpen ? '#FAF3EF' : undefined, '& > td': isOpen ? { borderBottom: 'none' } : undefined, ...trackedRowSxFor(r[D.db]) }}>
                   <TableCell sx={{ fontFamily: MONO, fontSize: 12 }}>{isOpen ? '▾ ' : '▸ '}{r[D.cfa]}</TableCell>
                   <TableCell sx={{ fontFamily: MONO, fontSize: 12, color: C.navy, fontWeight: 700 }}>{tracked ? TRACK_STAR + ' ' : ''}{r[D.db]}</TableCell>
                   <TableCell sx={{ ...num, color: C.muted }}>T{tier}</TableCell>
@@ -199,24 +199,24 @@ export default function CfaDbPage({ date }: { date?: string }) {
                   <TableCell sx={{ ...num, color: f > 0 ? C.warnText : C.muted }}>{nf(f)}</TableCell>
                   <TableCell sx={{ ...num, fontWeight: 800, color: C.slate }}>{nf(tot)}</TableCell>
                   <TableCell sx={{ ...num, color: C.navy, fontWeight: 700 }}>{pc(tot, r[D.soq] as number)}%</TableCell>
-                  <TableCell sx={{ ...num, color: '#10365A', fontWeight: 700 }} title={prioTip}>{prio}</TableCell>
+                  <TableCell sx={{ ...num, color: '#2D2D2D', fontWeight: 700 }} title={prioTip}>{prio}</TableCell>
                   <TableCell align="center">
                     {rank > 0
                       ? <Box component="span" title={prioTip}
                           sx={{ display: 'inline-block', px: 0.9, py: 0.2, borderRadius: 999, fontWeight: 800, fontSize: 11.5,
-                            bgcolor: rank === 1 ? '#F5E9CC' : '#eef2ff', color: rank === 1 ? '#D98A00' : '#10365A' }}>{ordinal(rank)}</Box>
+                            bgcolor: rank === 1 ? '#F5DCCC' : '#F6F6F6', color: rank === 1 ? '#D04A02' : '#2D2D2D' }}>{ordinal(rank)}</Box>
                       : <span style={{ color: C.muted }}>—</span>}
                   </TableCell>
                   <TableCell><Bar o={o} s={s} f={f} /></TableCell>
                 </TableRow>
                 {isOpen && (
                   <TableRow>
-                    <TableCell colSpan={14} sx={{ bgcolor: '#faf7ef', borderBottom: `2px solid ${C.gold}`, py: 1.75 }}>
+                    <TableCell colSpan={14} sx={{ bgcolor: '#FAF3EF', borderBottom: `2px solid ${C.gold}`, py: 1.75 }}>
                       {hasSeq ? (
                         <Box sx={{ display: 'flex', gap: 3.5, flexWrap: 'wrap', alignItems: 'center' }}>
                           <Box>
                             <Box sx={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: C.muted, letterSpacing: '.05em' }}>Filler draw rank</Box>
-                            <Box sx={{ fontFamily: SERIF, fontSize: 26, fontWeight: 700, color: rank === 1 ? '#D98A00' : C.navy, lineHeight: 1.15 }}>{ordinal(rank)}{ncfa > 0 ? ` of ${ncfa}` : ''}</Box>
+                            <Box sx={{ fontFamily: SERIF, fontSize: 26, fontWeight: 700, color: rank === 1 ? '#D04A02' : C.navy, lineHeight: 1.15 }}>{ordinal(rank)}{ncfa > 0 ? ` of ${ncfa}` : ''}</Box>
                             <Box sx={{ fontSize: 11.5, color: C.muted, maxWidth: 250 }}>in CFA {r[D.cfa]}, DBs sorted by priority ↓ — rank 1 draws the shared filler pool first</Box>
                           </Box>
                           {/* priority = tier weight ÷ (Σheld ÷ Σnorm) — same shape as the Step-1 priority score */}
@@ -226,7 +226,7 @@ export default function CfaDbPage({ date }: { date?: string }) {
                               <Box sx={{ px: 1.5, color: C.navy, fontWeight: 700 }}>tier wt {tw}</Box>
                               <Box sx={{ borderTop: `1.5px solid ${C.slate}`, mt: 0.4, pt: 0.4, px: 1.5 }}>Σheld {nf(sheld)} ÷ Σnorm {nf(snorm)}</Box>
                             </Box>
-                            <span>= <b style={{ color: '#10365A', fontSize: 18 }}>{prio}</b></span>
+                            <span>= <b style={{ color: '#2D2D2D', fontSize: 18 }}>{prio}</b></span>
                           </Box>
                           <Box sx={{ fontFamily: MONO, fontSize: 12, color: C.muted }}>
                             ≡ (Σnorm {nf(snorm)} ÷ max(Σheld {nf(sheld)}, 1)) × T{tier} weight {tw} = {prio}
@@ -307,7 +307,7 @@ export default function CfaDbPage({ date }: { date?: string }) {
       </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', borderTop: `1px solid ${C.rule}`, mt: 3, pt: 1, fontSize: 9, color: C.muted }}>
-        <span>PepsiCo AIDEN · CFA × DB combined allocation</span>
+        <span>AI Order Optimizer · CFA × DB combined allocation</span>
         <span>combined SOQ · norm · original · sub · filler · per truck</span>
       </Box>
     </Shell>

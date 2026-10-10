@@ -305,7 +305,7 @@ export default function SubstitutionSequencePage({ date, cfa = '' }: { date?: st
                 })()}
               </Box>
             </AccordionSummary>
-            <AccordionDetails sx={{ px: 1.5, pb: 1.5, pt: 0, bgcolor: '#fcfdfe' }}>
+            <AccordionDetails sx={{ px: 1.5, pb: 1.5, pt: 0, bgcolor: '#FDFDFD' }}>
               {l.subPairs.length > 0 && (
                 <Box sx={{ display: 'flex', gap: 0.6, flexWrap: 'wrap', mb: 1 }}>
                   {l.subPairs.map(([s, q], j) => (
@@ -334,7 +334,7 @@ export default function SubstitutionSequencePage({ date, cfa = '' }: { date?: st
                         <TableCell sx={mono}>{e.rank}</TableCell>
                         <TableCell sx={{ ...mono, fontWeight: 600, color: C.navy }}>{e.sub}</TableCell>
                         <TableCell sx={{ fontSize: 12, color: C.muted, whiteSpace: 'normal' }} title={descOf(e.sub)}>{descOf(e.sub) || '—'}</TableCell>
-                        <TableCell sx={numCell} title="Shared CFA pool for this substitute, RUNNING top-to-bottom: what it saw when this line ran → what's left for the next line that wants it">{e.pool}<Box component="span" sx={{ color: '#7A756D', ml: 0.4 }}>→ {e.poolAfter}</Box></TableCell>
+                        <TableCell sx={numCell} title="Shared CFA pool for this substitute, RUNNING top-to-bottom: what it saw when this line ran → what's left for the next line that wants it">{e.pool}<Box component="span" sx={{ color: '#6B6B6B', ml: 0.4 }}>→ {e.poolAfter}</Box></TableCell>
                         <TableCell sx={numCell} title="Norm of this substitute zsku at the DB">{e.norm}</TableCell>
                         <TableCell sx={{ ...numCell, color: isUncappedRoom(e.room) ? C.success : C.warnText, fontWeight: 700 }} title={isUncappedRoom(e.room) ? NO_CAP_TIP : `floor(${mult} × Norm ${e.norm}) = ${Math.floor(mult * e.norm)}`}>{isUncappedRoom(e.room) ? NO_CAP_LABEL : Math.floor(mult * e.norm)}</TableCell>
                         <TableCell sx={numCell} title={`SOH — the DB's physical on-hand for this substitute (from db_inventory), exactly as the ${mult}×Norm cap uses it`}>{e.soh}</TableCell>

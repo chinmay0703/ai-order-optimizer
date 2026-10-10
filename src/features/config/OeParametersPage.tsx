@@ -103,7 +103,7 @@ export default function OeParametersPage() {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2, flexWrap: 'wrap' }}>
         <Button onClick={save} disabled={!dirtyCount || saving} variant="contained"
           startIcon={saving ? <CircularProgress size={15} sx={{ color: '#fff' }} /> : <SaveIcon />}
-          sx={{ bgcolor: C.green, fontWeight: 700, textTransform: 'none', px: 2.5, boxShadow: SHADOW.sm, '&:hover': { bgcolor: '#1c8f57' } }}>
+          sx={{ bgcolor: C.green, fontWeight: 700, textTransform: 'none', px: 2.5, boxShadow: SHADOW.sm, '&:hover': { bgcolor: '#1C8F57' } }}>
           {dirtyCount ? `Save ${dirtyCount} change${dirtyCount > 1 ? 's' : ''}` : 'Save'}
         </Button>
         <Button onClick={reset} disabled={saving} variant="outlined" startIcon={<RestartAltIcon />}
@@ -133,12 +133,12 @@ export default function OeParametersPage() {
                   <Box key={p.key} sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap',
                     border: `1px solid ${gold ? C.gold : C.border}`,
                     borderLeft: `3px solid ${gold ? C.gold : C.border}`,
-                    borderRadius: `${RADIUS.md}px`, bgcolor: gold ? '#FEFBF3' : '#fff', boxShadow: SHADOW.sm, p: 1.5 }}>
+                    borderRadius: `${RADIUS.md}px`, bgcolor: gold ? '#FEF7F3' : '#fff', boxShadow: SHADOW.sm, p: 1.5 }}>
                     <Box sx={{ flex: '1 1 340px', minWidth: 280 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                         <Typography sx={{ fontWeight: 700, color: C.navy, fontSize: 14 }}>{META[p.key]?.label ?? p.key}</Typography>
-                        <Box component="code" sx={{ fontFamily: MONO, fontSize: 10.5, color: C.muted, bgcolor: 'rgba(16,54,90,0.06)', px: 0.6, py: 0.1, borderRadius: '4px' }}>{p.key}</Box>
-                        {gold && <Box sx={{ fontSize: 9.5, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase', color: C.navy, bgcolor: '#FEFBF3', border: `1px solid ${C.gold}`, px: 0.6, py: 0.1, borderRadius: '4px' }}>{isDirty ? 'unsaved' : 'edited'}</Box>}
+                        <Box component="code" sx={{ fontFamily: MONO, fontSize: 10.5, color: C.muted, bgcolor: 'rgba(45,45,45,0.06)', px: 0.6, py: 0.1, borderRadius: '4px' }}>{p.key}</Box>
+                        {gold && <Box sx={{ fontSize: 9.5, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase', color: C.navy, bgcolor: '#FEF7F3', border: `1px solid ${C.gold}`, px: 0.6, py: 0.1, borderRadius: '4px' }}>{isDirty ? 'unsaved' : 'edited'}</Box>}
                       </Box>
                       <Typography sx={{ fontSize: 11.5, color: C.muted, mt: 0.3, lineHeight: 1.4 }}>{p.description}</Typography>
                     </Box>
@@ -183,7 +183,7 @@ export default function OeParametersPage() {
             Cancel
           </Button>
           <Button onClick={doReset} variant="contained" startIcon={<RestartAltIcon />}
-            sx={{ bgcolor: C.red, color: '#fff', fontWeight: 700, textTransform: 'none', boxShadow: 'none', '&:hover': { bgcolor: '#B0201A', boxShadow: 'none' } }}>
+            sx={{ bgcolor: C.red, color: '#fff', fontWeight: 700, textTransform: 'none', boxShadow: 'none', '&:hover': { bgcolor: '#A32020', boxShadow: 'none' } }}>
             Reset to defaults
           </Button>
         </DialogActions>

@@ -20,7 +20,7 @@ const fill = (s: string, P: OeParams): string => {
 };
 import PipelineFlow from './PipelineFlow';
 
-/* How AIDEN (the AI-assisted Distribution ENgine) works — the CURRENT end-to-end flow, checked line by line against
+/* How the AI Order Optimizer works — the CURRENT end-to-end flow, checked line by line against
    the backend code (develop). A run is stamped with TODAY's run date and processes the chosen SOQ (data) date; every
    CFA runs the full engine in its own process. Inside a CFA: filter the SOQ → segregate DBs by channel → reserve the
    CFA stock by channel × MRP band (the date-wise %) → cascade 4 channel-runs, each a 3-step allocation (Step 1 = the
@@ -79,7 +79,7 @@ const PHASES: Phase[] = [
         RULE('Only the snapshot for the run’s EXACT data date is used — another day is never substituted. If it is not published, the Run page shows a warning and every distributor’s DRR is 0 — which Step 1 then uses as 0.1.', 'amber'),
       ] },
       { title: 'The masters', items: [
-        T('13 masters, fully re-loaded every run (in parallel): db_master · material_master · network_master · substitution_master + filler_master (latest load) · truck_master · transhipment_master (the Cluster Master) · plant_master · lead_time_master · db_tier (Final_Tier_Score) · region_sku_master · aiden_brand_material_master (AIDEN category) · pdp_master (PDP frequency → the Step-1 RF).'),
+        T('13 masters, fully re-loaded every run (in parallel): db_master · material_master · network_master · substitution_master + filler_master (latest load) · truck_master · transhipment_master (the Cluster Master) · plant_master · lead_time_master · db_tier (Final_Tier_Score) · region_sku_master · brand_material_master (brand category) · pdp_master (PDP frequency → the Step-1 RF).'),
         RULE('sub_channel_reservation (CFA × channel × MRP-band %) is fetched from S3 every run, after the masters — the LATEST S3 run_date — and stored DATE-WISE under the run date (with the S3 run_date it came from), so every run keeps the % it actually used.', 'green'),
       ] },
     ],
@@ -99,17 +99,17 @@ const PHASES: Phase[] = [
     ],
   },
   {
-    n: 3, title: 'Segregate the DBs into channels', tag: 'AIDEN taxonomy · Customer Type × Sub-Channel', accent: C.gold,
+    n: 3, title: 'Segregate the DBs into channels', tag: 'Channel taxonomy · Customer Type × Sub-Channel', accent: C.gold,
     steps: [
       { title: 'Which DBs this CFA serves', items: [
         T('The filtered SOQ’s DBs for this CFA with SOQ > 0, that exist in db_master and that the channel rule can classify. The SOQ is the authoritative CFA → DB map from the data team; network_master is used ONLY for the Secondary CFA (RLM).'),
       ] },
-      { title: 'Customer Type + Sub-Channel → AIDEN channel', items: [
+      { title: 'Customer Type + Sub-Channel → allocation channel', items: [
         FX('SAH · D81/D84/D85 → Retail   |   D82/D86 → AFH   |   D83 → Hub & Spoke'),
         FX('SAL/SAN → Non-PACE for EVERY D-code (incl. D87 EXPORTS + D88 INTERCOMPANY)'),
         RULE('Keys on Customer Type first, then the D-code; any other combination is not classified and the DB is left out. The full basis — Customer Type · C-code · Sub-Channel → channel — is written to db_channel_map, so every DB’s channel is auditable.'),
         TBL(
-          ['Customer type', 'AIDEN channel', 'Sub-channel code', 'Sub-channel description'],
+          ['Customer type', 'Allocation channel', 'Sub-channel code', 'Sub-channel description'],
           [
             ['SAH', { v: 'Retail', tint: 'green' }, 'D81', 'RETAIL'],
             ['SAH', { v: 'Retail', tint: 'green' }, 'D84', 'RURAL DIRECT'],
@@ -126,7 +126,7 @@ const PHASES: Phase[] = [
             ['SAL/SAN', { v: 'Non-Pace', tint: 'violet' }, 'D86', 'MULTI-FORMAT'],
             ['SAL/SAN', { v: 'Non-Pace', tint: 'violet' }, 'D88', 'INTERCOMPANY'],
           ],
-          { caption: 'Functional-team channel master. The AIDEN channel keys on Customer Type + Sub-channel (D-code); the sales C-code does not change it. SAN is treated like SAL.' },
+          { caption: 'Functional-team channel master. The allocation channel keys on Customer Type + Sub-channel (D-code); the sales C-code does not change it. SAN is treated like SAL.' },
         ),
       ] },
     ],
@@ -142,8 +142,8 @@ const PHASES: Phase[] = [
         FX('reserved(channel, reg-zsku) = CFA pool × the channel’s band-%   →   cases rounded by largest-remainder, so the channels sum to the physical stock when the %s sum to 100'),
         RULE('The % is the one stored in sub_channel_reservation FOR THE RUN DATE (latest S3 snapshot). If that date has none — e.g. an older run — the LATEST stored date is used, never an empty set (and if this CFA is missing from that row-set, its distinct channel %s are used). The % actually applied is saved on every cfa_reservation row (reservation_pct), so a past split can always be checked.', 'green'),
         RULE('The %s are used exactly as delivered — decimals kept, never renormalised. Only the resulting CASES are rounded.', 'green'),
-        RULE('Only reg-zskus with CFA stock > 0 are reserved. A demanded reg-zsku the CFA holds no stock of (no batch with qty > 0) still gets a 0-physical / 0-reserved row when it has an MRP, so it carries its MRP and AIDEN category for the Step-2 substitute match. It gets no cases of its own; any SOQ still unfilled is a NO_CFA_STOCK shortfall.', 'amber'),
-        T('Each row also carries the reg-zsku’s AIDEN category (region_sku_master → aiden_brand_material_master) — part of the substitute match in Step 2.'),
+        RULE('Only reg-zskus with CFA stock > 0 are reserved. A demanded reg-zsku the CFA holds no stock of (no batch with qty > 0) still gets a 0-physical / 0-reserved row when it has an MRP, so it carries its MRP and brand category for the Step-2 substitute match. It gets no cases of its own; any SOQ still unfilled is a NO_CFA_STOCK shortfall.', 'amber'),
+        T('Each row also carries the reg-zsku’s brand category (region_sku_master → brand_material_master) — part of the substitute match in Step 2.'),
       ] },
     ],
   },
@@ -173,9 +173,9 @@ const PHASES: Phase[] = [
         FX('whole cases: round each down, kept within its limits (pristine — NORMAL ⌈Floor⌉…⌊SOQ⌋ · SEVERE 0…⌊Floor⌋) → hand out the remaining cases one at a time, largest fraction first, only to DBs still below their upper limit — or take back extra cases smallest fraction first, only from DBs above their lower limit (ties: priority score Tier × DRR ÷ Stock → Demand → SOQ → lower Stock) → Σ allocation = the pool exactly'),
         RULE('A DRR of 0 is always calculated as 0.1, so a distributor with no recent sales still takes part in the fair share (ranked below every real seller). Step 1 is capped only by SOQ and the pool — not by {NORMX}×Norm. Every DB’s inputs (DRR used, DRR actual, PDP frequency, RF, Stock, pool) and regime are written to or_waterfill_steps — the Fair-Share page; DBs in pools that enter the engine also get Demand, Floor, Weight, λ, pristine, adjustment and category.', 'green'),
       ] },
-      { title: 'Step 2 · Substitute — exact MRP + AIDEN category, neediest first', items: [
+      { title: 'Step 2 · Substitute — exact MRP + brand category, neediest first', items: [
         T('Demand Step 1 could not fill (open SOQ = SOQ − Original) is met from the DB’s ranked substitutes (soq_db_substitution, the run’s CFA × DB slice of the substitution master), rank 1 first; a reg-zsku never substitutes itself.'),
-        RULE('Substitutes match on CFA × DB × the EXACT MRP price point × the AIDEN category of the demanded reg-zsku — a ₹5 item draws only ₹5 subs of the same category, not every ≤₹10 sub.', 'green'),
+        RULE('Substitutes match on CFA × DB × the EXACT MRP price point × the brand category of the demanded reg-zsku — a ₹5 item draws only ₹5 subs of the same category, not every ≤₹10 sub.', 'green'),
         FX('New score = Tier × Norm ÷ max(Stock + Original, 1)  →  lines are served neediest first; each fills its whole open demand through its ranks before the next line, so the needier line has first claim on a contested substitute'),
         FX('grant = min( open demand , CFA pool , {NORMX}×Norm room of the substitute reg-zsku , {ADDONP} add-on )  — a substitute with no SOQ Norm at the DB has 0 room; a demanded reg-zsku with no MRP gets no substitutes'),
         RULE('Non-PACE DBs have NO {NORMX}×Norm room cap — only the pool, the {ADDONP} add-on and the truck limit them.', 'amber'),
@@ -262,7 +262,7 @@ const PHASES: Phase[] = [
 
 const GUARANTEES: Item[] = [
   RULE('Step 1 hands out the whole pool whenever demand allows: Σ Step-1 allocation = min(pool, Σ SOQ), in whole cases, never above a DB’s SOQ.', 'green'),
-  RULE('Substitutes always match the demanded item’s EXACT MRP price point and AIDEN category (₹5 → ₹5); fillers may be any MRP.', 'green'),
+  RULE('Substitutes always match the demanded item’s EXACT MRP price point and brand category (₹5 → ₹5); fillers may be any MRP.', 'green'),
   RULE('Substitute + Filler is capped INCLUSIVELY at floor({ADDONF} × SOQ), and Substitute / Filler are granted only while total held (stock + Original + Substitute + Filler) ≤ floor({NORMX} × Norm) — except Non-PACE DBs, which have no Norm cap. Step-1 Original is not Norm-capped, so held can exceed the Norm cap from Original alone.', 'green'),
   RULE('No lane truck ships below round({KEEP} × cap) cases: a lane opens the MINIMUM trucks, packs them, and a remainder below that is trimmed, or the lane drops (its fillers go back to the CFA pool, its Original + Substitute cascade to the next run). Every cluster secondary truck keeps ≥ ⌈{KEEP} × cap⌉; a cluster ships n primary trucks each ≥ {KEEP}, plus at most one overflow truck (which may be below {KEEP}).', 'green'),
   RULE('Allocated cases = shipped SKU/batch cases (the FEFO pool is the reserved pool) — checked by the Data QA tests.', 'green'),
@@ -284,7 +284,7 @@ function Line({ it }: { it: Item }) {
   if (it.t === 'formula')
     return (
       <div style={{ margin: '7px 0', background: C.codeBg, borderRadius: RADIUS.sm, padding: '9px 13px',
-        fontFamily: MONO, fontSize: 12.5, lineHeight: 1.5, color: '#DCE6F2', overflowX: 'auto',
+        fontFamily: MONO, fontSize: 12.5, lineHeight: 1.5, color: '#E7E7E7', overflowX: 'auto',
         borderLeft: `3px solid ${C.gold}` }}>
         <span style={{ color: C.goldLight, fontWeight: 700, marginRight: 8 }}>ƒ</span>{fill(it.v, P)}
       </div>
@@ -300,13 +300,13 @@ function Line({ it }: { it: Item }) {
   );
 }
 
-// pale-bg + saturated-text tints for emphasised cells (Action / AIDEN channel) — both colours set directly, high contrast
+// pale-bg + saturated-text tints for emphasised cells (Action / allocation channel) — both colours set directly, high contrast
 const cellTint: Record<Tint, { bg: string; fg: string }> = {
-  red: { bg: '#FBEAEA', fg: '#DC2C25' },
+  red: { bg: '#FBEAEA', fg: '#E0301E' },
   green: { bg: '#E7F3E7', fg: '#21A366' },
-  amber: { bg: '#FBF4E1', fg: '#D98A00' },
-  blue: { bg: '#EAF0F8', fg: C.navy },
-  violet: { bg: '#ECEBF6', fg: '#4B3F8F' },
+  amber: { bg: '#FBEBE1', fg: '#D04A02' },
+  blue: { bg: '#F1F1F1', fg: C.navy },
+  violet: { bg: '#F8E9EC', fg: '#9E2A3E' },
 };
 
 function StoryTable({ it }: { it: Extract<Item, { t: 'table' }> }) {
@@ -349,7 +349,7 @@ function StoryTable({ it }: { it: Extract<Item, { t: 'table' }> }) {
 
 const PIPE = ['Run', 'Delivered', 'Filter', 'Segregate', 'Reserve', 'Cascade', '3 Steps', 'FEFO & orders', 'Disposition', 'RLM'];
 const KPIS = [
-  { v: '4', l: 'AIDEN channels' },
+  { v: '4', l: 'Allocation channels' },
   { v: '4', l: 'cascade runs' },
   { v: '3', l: 'engine steps' },
   { v: '3', l: 'MRP price bands' },
@@ -363,18 +363,15 @@ export default function StoryPage({ onNav }: { onNav?: (p: Page) => void }) {
   return (
     <div style={{ background: C.canvas, minHeight: '100vh', fontFamily: SANS, color: C.slate }}>
       {/* hero */}
-      <div style={{ background: `linear-gradient(135deg, ${C.navyDark} 0%, ${C.navy} 62%, #24507F 100%)`,
+      <div style={{ background: `linear-gradient(135deg, ${C.navyDark} 0%, ${C.navy} 62%, #464646 100%)`,
         color: '#fff', padding: '38px 32px 30px', borderBottom: `3px solid ${C.gold}` }}>
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: C.goldLight }}>
             How it works
           </div>
-          {/* AIDEN spelled out: the gold letters trace the acronym — AI-assisted Distribution ENgine */}
+          {/* product name, with "AI" in gold */}
           <h1 style={{ fontFamily: SERIF, fontWeight: 700, fontSize: 33, margin: '8px 0 10px', lineHeight: 1.12, textWrap: 'balance', color: '#fff' }}>
-            <span style={{ color: C.gold, letterSpacing: '.03em' }}>AIDEN</span> — the{' '}
-            <b style={{ color: C.gold, fontWeight: 800 }}>AI</b>-assisted{' '}
-            <b style={{ color: C.gold, fontWeight: 800 }}>D</b>istribution{' '}
-            <b style={{ color: C.gold, fontWeight: 800 }}>EN</b>gine, end to end
+            <b style={{ color: C.gold, fontWeight: 800 }}>AI</b> Order Optimizer, end to end
           </h1>
           <p style={{ fontSize: 15, lineHeight: 1.6, color: 'rgba(255,255,255,0.88)', maxWidth: 780, margin: 0 }}>
             The data team delivers the SOQ (with per-line gate flags), the DB stock, the batch-level CFA inventory, the
@@ -469,7 +466,7 @@ export default function StoryPage({ onNav }: { onNav?: (p: Page) => void }) {
         </div>
 
         <div style={{ marginTop: 22, fontSize: 12, color: C.muted, textAlign: 'center' }}>
-          AIDEN — the AI-assisted Distribution ENgine · live from Postgres
+          AI Order Optimizer · sample data
         </div>
       </div>
     </div>

@@ -61,7 +61,7 @@ interface Payload { date?: string; clusters: Cluster[]; }
 
 const nf = (n: number) => Math.round(Number(n) || 0).toLocaleString();
 const num = { textAlign: 'right' as const, fontVariantNumeric: 'tabular-nums', fontFamily: MONO, fontSize: 12.5, whiteSpace: 'nowrap' as const };
-const fillClr = (p: number, keepPct: number, targetPct: number) => (p >= targetPct ? C.success : p >= keepPct ? C.warnText : '#B23A2E');
+const fillClr = (p: number, keepPct: number, targetPct: number) => (p >= targetPct ? C.success : p >= keepPct ? C.warnText : '#A32020');
 
 // "1:83; 2:14" -> { 1: 83, 2: 14 } — the per-secondary-truck breakdown the backend records for each reg-zsku
 const parseTrucks = (s?: string): Record<number, number> => {
@@ -79,8 +79,8 @@ function TruckChips({ on, cut }: { on?: string; cut?: string }) {
   return (
     <Box sx={{ display: 'flex', gap: 0.4, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
       {trucks.map((t) => (
-        <Box key={t} sx={{ px: 0.65, py: 0.15, borderRadius: `${RADIUS.sm}px`, border: `1px solid ${cutm[t] ? '#E7C6C0' : C.rule}`, bgcolor: cutm[t] ? '#fdf1e6' : '#f4f2ec', fontFamily: MONO, fontSize: 11, whiteSpace: 'nowrap' }}>
-          <b style={{ color: C.navy }}>T{t}</b>·{(onm[t] ?? 0) + (cutm[t] ?? 0)}{cutm[t] ? <span style={{ color: '#B23A2E', fontWeight: 800 }}> −{cutm[t]}</span> : ''}
+        <Box key={t} sx={{ px: 0.65, py: 0.15, borderRadius: `${RADIUS.sm}px`, border: `1px solid ${cutm[t] ? '#E7C6C0' : C.rule}`, bgcolor: cutm[t] ? '#FDEFE6' : '#F4EFEC', fontFamily: MONO, fontSize: 11, whiteSpace: 'nowrap' }}>
+          <b style={{ color: C.navy }}>T{t}</b>·{(onm[t] ?? 0) + (cutm[t] ?? 0)}{cutm[t] ? <span style={{ color: '#A32020', fontWeight: 800 }}> −{cutm[t]}</span> : ''}
         </Box>
       ))}
     </Box>
@@ -101,21 +101,21 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
           Cluster Primary — combine → fewest ≥{pct(P.TRUCK_KEEP_PCT)} trucks (Step-3 rule) → cross-DB trim
         </Box>
         <IconButton size="small" onClick={() => setHelpOpen(true)} title="How this page works"
-          sx={{ color: C.gold, border: `1px solid ${C.goldLight}`, bgcolor: '#FCF8EE', '&:hover': { bgcolor: '#FBF1DC', borderColor: C.gold } }}>
+          sx={{ color: C.gold, border: `1px solid ${C.goldLight}`, bgcolor: '#FCF4EE', '&:hover': { bgcolor: '#FBE8DC', borderColor: C.gold } }}>
           <HelpOutlineIcon sx={{ fontSize: 19 }} />
         </IconButton>
         <Box component="span" sx={{ fontSize: 11.5, color: C.muted }}>how it works</Box>
       </Box>
       <Dialog open={helpOpen} onClose={() => setHelpOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: `${RADIUS.md}px`, overflow: 'hidden', border: `1px solid ${C.goldLight}` } }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #E7A93A 0%, #D98A00 55%, #C67D00 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #EB8C00 0%, #D04A02 55%, #B33F02 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
           <HelpOutlineIcon sx={{ fontSize: 20 }} />
           <Box sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 17 }}>How this page works</Box>
           <Box sx={{ flex: 1 }} />
           <IconButton onClick={() => setHelpOpen(false)} size="small" aria-label="close" sx={{ color: '#fff', '&:hover': { bgcolor: 'rgba(255,255,255,0.18)' } }}><CloseIcon sx={{ fontSize: 20 }} /></IconButton>
         </Box>
-        <Box sx={{ p: 2.75, color: C.slate, bgcolor: '#FCFAF4', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
+        <Box sx={{ p: 2.75, color: C.slate, bgcolor: '#FCF7F4', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
           {/* the goal */}
-          <Box sx={{ p: '10px 12px', borderRadius: `${RADIUS.sm}px`, bgcolor: '#FCF8EE', border: `1px solid ${C.goldLight}`, borderLeft: `3px solid ${C.gold}` }}>
+          <Box sx={{ p: '10px 12px', borderRadius: `${RADIUS.sm}px`, bgcolor: '#FCF4EE', border: `1px solid ${C.goldLight}`, borderLeft: `3px solid ${C.gold}` }}>
             <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.gold, mb: 0.4 }}>🎯 The goal</Box>
             <Box sx={{ fontSize: 13, lineHeight: 1.55 }}>Combine each transshipment cluster's DBs <b>across channels</b> and ship them on the <b>fewest primary trucks</b> — each one <b>≥{pct(P.TRUCK_KEEP_PCT)} of cap</b>.</Box>
           </Box>
@@ -238,7 +238,7 @@ function DbDrill({ m, keepPct, targetPct }: { m: Member; keepPct: number; target
   const P = useOeParams();
   const descOf = useRegZskuDesc();
   return (
-    <Box sx={{ px: 2, py: 1.5, bgcolor: '#fbfaf7', borderTop: `1px dashed ${C.rule}` }}>
+    <Box sx={{ px: 2, py: 1.5, bgcolor: '#FBF9F7', borderTop: `1px dashed ${C.rule}` }}>
       {/* secondary trucks: planned (before) → shipped (after) */}
       {m.trucks.length > 0 && (
         <>
@@ -249,7 +249,7 @@ function DbDrill({ m, keepPct, targetPct }: { m: Member; keepPct: number; target
             {m.trucks.map((t) => {
               const cut = t.planned !== t.shipped;
               return (
-                <Box key={t.truck_no} sx={{ px: 1.1, py: 0.6, borderRadius: `${RADIUS.sm}px`, border: `1px solid ${cut ? '#E7C6C0' : C.rule}`, bgcolor: cut ? '#fdf6ee' : '#fff', ...num, textAlign: 'left', fontSize: 12 }}>
+                <Box key={t.truck_no} sx={{ px: 1.1, py: 0.6, borderRadius: `${RADIUS.sm}px`, border: `1px solid ${cut ? '#E7C6C0' : C.rule}`, bgcolor: cut ? '#FDF4EE' : '#fff', ...num, textAlign: 'left', fontSize: 12 }}>
                   <b>Truck {t.truck_no}</b> · {t.planned}
                   <Box component="span" sx={{ color: fillClr(t.planned_fill, keepPct, targetPct) }}> ({t.planned_fill}%)</Box>
                   {cut ? <>
@@ -282,7 +282,7 @@ function DbDrill({ m, keepPct, targetPct }: { m: Member; keepPct: number; target
               const r = o.r;
               const cut = o.cutTot > 0;
               return (
-                <TableRow key={r.reg_zsku} sx={{ bgcolor: cut ? '#fdf1e6' : undefined }}>
+                <TableRow key={r.reg_zsku} sx={{ bgcolor: cut ? '#FDEFE6' : undefined }}>
                   <TableCell sx={{ ...num, textAlign: 'left', color: cut ? C.warnText : C.muted, fontWeight: cut ? 800 : 400 }}>{r.sn_rank}</TableCell>
                   <TableCell sx={{ fontFamily: MONO, fontSize: 12, color: C.navy, fontWeight: cut ? 800 : 600 }}>{r.reg_zsku}</TableCell>
                   <TableCell sx={{ whiteSpace: 'normal' }} title={descOf(r.reg_zsku)}>{descOf(r.reg_zsku) || '—'}</TableCell>
@@ -291,9 +291,9 @@ function DbDrill({ m, keepPct, targetPct }: { m: Member; keepPct: number; target
                       ? <Box component="span" sx={{ color: C.muted }}>—</Box>
                       : (
                         <Box sx={{ display: 'flex', gap: 0.4, flexWrap: 'wrap' }}>
-                          {o.asOrg > 0 && <Box component="span" sx={usedTag('#e9eef4', '#10365A')}>original</Box>}
-                          {o.asSub > 0 && <Box component="span" sx={usedTag('#e6f3ec', '#1E8E5A')}>substitute · {nf(o.asSub)}</Box>}
-                          {o.asFil > 0 && <Box component="span" sx={usedTag('#fdf6e3', '#D98A00')}>filler · {nf(o.asFil)}</Box>}
+                          {o.asOrg > 0 && <Box component="span" sx={usedTag('#EEEEEE', '#2D2D2D')}>original</Box>}
+                          {o.asSub > 0 && <Box component="span" sx={usedTag('#E6F3EC', '#1E8E5A')}>substitute · {nf(o.asSub)}</Box>}
+                          {o.asFil > 0 && <Box component="span" sx={usedTag('#FDEDE3', '#D04A02')}>filler · {nf(o.asFil)}</Box>}
                         </Box>
                       )}
                   </TableCell>
@@ -301,10 +301,10 @@ function DbDrill({ m, keepPct, targetPct }: { m: Member; keepPct: number; target
                   <TableCell sx={{ ...num, color: C.slate }} title="cases of THIS reg-zsku's material shipped — its own demand (original) + what it lends as substitute / filler">{nf(o.material)}</TableCell>
                   <TableCell sx={{ ...num, color: C.muted }}>{nf(r.norm)}</TableCell>
                   <TableCell sx={{ ...num, fontWeight: 800, color: cut ? C.warnText : C.slate }} title={`SOH ${Math.max(r.stock, 1)} ÷ norm ${r.norm}`}>{r.sn_ratio != null ? r.sn_ratio.toFixed(3) : '∞'}</TableCell>
-                  <TableCell sx={{ ...num, fontWeight: 800, color: cut ? '#B23A2E' : C.muted }}>{cut ? `− ${nf(o.cutTot)}` : '—'}</TableCell>
-                  <TableCell sx={num}>{o.asFil === 0 ? <span style={{ color: C.muted }}>0</span> : <b style={{ color: C.slate }}>{nf(o.asFil)}</b>}{o.cutFil > 0 && <span style={{ color: '#B23A2E', fontWeight: 800 }}> −{nf(o.cutFil)}</span>}</TableCell>
-                  <TableCell sx={num}>{o.asSub === 0 ? <span style={{ color: C.muted }}>0</span> : <b style={{ color: C.slate }}>{nf(o.asSub)}</b>}{o.cutSub > 0 && <span style={{ color: '#B23A2E', fontWeight: 800 }}> −{nf(o.cutSub)}</span>}</TableCell>
-                  <TableCell sx={num}>{o.asOrg === 0 ? <span style={{ color: C.muted }}>0</span> : <b style={{ color: C.slate }}>{nf(o.asOrg)}</b>}{o.cutOrg > 0 && <span style={{ color: '#B23A2E', fontWeight: 800 }}> −{nf(o.cutOrg)}</span>}</TableCell>
+                  <TableCell sx={{ ...num, fontWeight: 800, color: cut ? '#A32020' : C.muted }}>{cut ? `− ${nf(o.cutTot)}` : '—'}</TableCell>
+                  <TableCell sx={num}>{o.asFil === 0 ? <span style={{ color: C.muted }}>0</span> : <b style={{ color: C.slate }}>{nf(o.asFil)}</b>}{o.cutFil > 0 && <span style={{ color: '#A32020', fontWeight: 800 }}> −{nf(o.cutFil)}</span>}</TableCell>
+                  <TableCell sx={num}>{o.asSub === 0 ? <span style={{ color: C.muted }}>0</span> : <b style={{ color: C.slate }}>{nf(o.asSub)}</b>}{o.cutSub > 0 && <span style={{ color: '#A32020', fontWeight: 800 }}> −{nf(o.cutSub)}</span>}</TableCell>
+                  <TableCell sx={num}>{o.asOrg === 0 ? <span style={{ color: C.muted }}>0</span> : <b style={{ color: C.slate }}>{nf(o.asOrg)}</b>}{o.cutOrg > 0 && <span style={{ color: '#A32020', fontWeight: 800 }}> −{nf(o.cutOrg)}</span>}</TableCell>
                   <TableCell sx={num}><TruckChips on={r.trucks_on} cut={r.cut_by_truck} /></TableCell>
                   <TableCell sx={{ ...num, color: cut ? C.slate : C.muted }}>{cut ? <><b>{nf(o.material)}</b> → <b style={{ color: C.success }}>{nf(o.after)}</b></> : nf(o.after)}</TableCell>
                 </TableRow>
@@ -314,8 +314,8 @@ function DbDrill({ m, keepPct, targetPct }: { m: Member; keepPct: number; target
         </Table>
       </Box>
       <Box sx={{ fontSize: 11, color: C.muted, mt: 0.6 }}>
-        <b>As filler / As substitute / As original</b> = cases of THIS reg-zsku's material used as that role (filler / sub are what it LENT to any DB; original is its own demand); <b>Material</b> = the three summed. <b style={{ color: '#B23A2E' }}>−X</b> = how much was trimmed. Cut order: <b>reg-zskus used as filler first, then used as substitute, then originals</b>, least-needy (highest S/N) within each.
-        <br /><b>On truck(s) · cut</b> = the secondary truck(s) this reg-zsku sits on — <b style={{ color: C.navy }}>T#·cases</b> (how many were on that truck) — and, in <b style={{ color: '#B23A2E' }}>red</b>, the cases the trim took off it. The cut is taken from the trucks a reg-zsku actually sits on, and <b>each truck stops at its {pct(P.TRUCK_KEEP_PCT)} floor</b> before the cut moves on, so no secondary truck is rebuilt or dropped below {pct(P.TRUCK_KEEP_PCT)}.
+        <b>As filler / As substitute / As original</b> = cases of THIS reg-zsku's material used as that role (filler / sub are what it LENT to any DB; original is its own demand); <b>Material</b> = the three summed. <b style={{ color: '#A32020' }}>−X</b> = how much was trimmed. Cut order: <b>reg-zskus used as filler first, then used as substitute, then originals</b>, least-needy (highest S/N) within each.
+        <br /><b>On truck(s) · cut</b> = the secondary truck(s) this reg-zsku sits on — <b style={{ color: C.navy }}>T#·cases</b> (how many were on that truck) — and, in <b style={{ color: '#A32020' }}>red</b>, the cases the trim took off it. The cut is taken from the trucks a reg-zsku actually sits on, and <b>each truck stops at its {pct(P.TRUCK_KEEP_PCT)} floor</b> before the cut moves on, so no secondary truck is rebuilt or dropped below {pct(P.TRUCK_KEEP_PCT)}.
       </Box>
     </Box>
   );
@@ -331,7 +331,7 @@ function ClusterCrossTrim({ c }: { c: Cluster }) {
   if (!ordered.some((o) => o.cutTot > 0)) return null;         // no trim on this cluster → no cross-DB table
   let cutSeq = 0;
   return (
-    <Box sx={{ px: 2, pb: 1.75, borderTop: `1px solid ${C.rule}`, pt: 1.25, bgcolor: '#fbfaf7' }}>
+    <Box sx={{ px: 2, pb: 1.75, borderTop: `1px solid ${C.rule}`, pt: 1.25, bgcolor: '#FBF9F7' }}>
       <Box sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.warnText, mb: 0.5 }}>
         Cross-DB trim · every DB×reg-zsku in the cluster, in cut order — the reg-zskus used AS filler → used AS substitute → their own original (least-needy S/N first)
       </Box>
@@ -347,7 +347,7 @@ function ClusterCrossTrim({ c }: { c: Cluster }) {
               const cut = o.cutTot > 0;
               if (cut) cutSeq += 1;
               return (
-                <TableRow key={`${r.db}-${r.reg_zsku}`} sx={{ bgcolor: cut ? '#fdf1e6' : undefined, ...trackedRowSxFor(r.db) }}>
+                <TableRow key={`${r.db}-${r.reg_zsku}`} sx={{ bgcolor: cut ? '#FDEFE6' : undefined, ...trackedRowSxFor(r.db) }}>
                   <TableCell sx={{ ...num, textAlign: 'left', color: cut ? C.warnText : C.muted, fontWeight: 800 }}>{cut ? cutSeq : '—'}</TableCell>
                   <TableCell sx={{ fontFamily: MONO, fontSize: 12, color: C.navy, fontWeight: 700 }}>{isTracked(r.db) ? TRACK_STAR + ' ' : ''}{r.db}</TableCell>
                   <TableCell sx={{ fontFamily: MONO, fontSize: 12, color: C.navy, fontWeight: cut ? 800 : 600 }}>{r.reg_zsku}</TableCell>
@@ -357,9 +357,9 @@ function ClusterCrossTrim({ c }: { c: Cluster }) {
                       ? <Box component="span" sx={{ color: C.muted }}>—</Box>
                       : (
                         <Box sx={{ display: 'flex', gap: 0.4, flexWrap: 'wrap' }}>
-                          {o.asOrg > 0 && <Box component="span" sx={usedTag('#e9eef4', '#10365A')}>original</Box>}
-                          {o.asSub > 0 && <Box component="span" sx={usedTag('#e6f3ec', '#1E8E5A')}>substitute · {nf(o.asSub)}</Box>}
-                          {o.asFil > 0 && <Box component="span" sx={usedTag('#fdf6e3', '#D98A00')}>filler · {nf(o.asFil)}</Box>}
+                          {o.asOrg > 0 && <Box component="span" sx={usedTag('#EEEEEE', '#2D2D2D')}>original</Box>}
+                          {o.asSub > 0 && <Box component="span" sx={usedTag('#E6F3EC', '#1E8E5A')}>substitute · {nf(o.asSub)}</Box>}
+                          {o.asFil > 0 && <Box component="span" sx={usedTag('#FDEDE3', '#D04A02')}>filler · {nf(o.asFil)}</Box>}
                         </Box>
                       )}
                   </TableCell>
@@ -367,10 +367,10 @@ function ClusterCrossTrim({ c }: { c: Cluster }) {
                   <TableCell sx={{ ...num, color: C.slate }} title="cases of THIS reg-zsku's material shipped in the cluster — its own demand (original) + what it lends as substitute / filler">{nf(o.material)}</TableCell>
                   <TableCell sx={{ ...num, color: C.muted }}>{nf(r.norm)}</TableCell>
                   <TableCell sx={{ ...num, fontWeight: 800, color: cut ? C.warnText : C.slate }} title={`SOH ${Math.max(r.stock, 1)} ÷ norm ${r.norm}`}>{r.sn_ratio != null ? r.sn_ratio.toFixed(3) : '∞'}</TableCell>
-                  <TableCell sx={{ ...num, fontWeight: 800, color: cut ? '#B23A2E' : C.muted }}>{cut ? `− ${nf(o.cutTot)}` : '—'}</TableCell>
-                  <TableCell sx={num}>{o.asFil === 0 ? <span style={{ color: C.muted }}>0</span> : <b style={{ color: C.slate }}>{nf(o.asFil)}</b>}{o.cutFil > 0 && <span style={{ color: '#B23A2E', fontWeight: 800 }}> −{nf(o.cutFil)}</span>}</TableCell>
-                  <TableCell sx={num}>{o.asSub === 0 ? <span style={{ color: C.muted }}>0</span> : <b style={{ color: C.slate }}>{nf(o.asSub)}</b>}{o.cutSub > 0 && <span style={{ color: '#B23A2E', fontWeight: 800 }}> −{nf(o.cutSub)}</span>}</TableCell>
-                  <TableCell sx={num}>{o.asOrg === 0 ? <span style={{ color: C.muted }}>0</span> : <b style={{ color: C.slate }}>{nf(o.asOrg)}</b>}{o.cutOrg > 0 && <span style={{ color: '#B23A2E', fontWeight: 800 }}> −{nf(o.cutOrg)}</span>}</TableCell>
+                  <TableCell sx={{ ...num, fontWeight: 800, color: cut ? '#A32020' : C.muted }}>{cut ? `− ${nf(o.cutTot)}` : '—'}</TableCell>
+                  <TableCell sx={num}>{o.asFil === 0 ? <span style={{ color: C.muted }}>0</span> : <b style={{ color: C.slate }}>{nf(o.asFil)}</b>}{o.cutFil > 0 && <span style={{ color: '#A32020', fontWeight: 800 }}> −{nf(o.cutFil)}</span>}</TableCell>
+                  <TableCell sx={num}>{o.asSub === 0 ? <span style={{ color: C.muted }}>0</span> : <b style={{ color: C.slate }}>{nf(o.asSub)}</b>}{o.cutSub > 0 && <span style={{ color: '#A32020', fontWeight: 800 }}> −{nf(o.cutSub)}</span>}</TableCell>
+                  <TableCell sx={num}>{o.asOrg === 0 ? <span style={{ color: C.muted }}>0</span> : <b style={{ color: C.slate }}>{nf(o.asOrg)}</b>}{o.cutOrg > 0 && <span style={{ color: '#A32020', fontWeight: 800 }}> −{nf(o.cutOrg)}</span>}</TableCell>
                   <TableCell sx={num}><TruckChips on={r.trucks_on} cut={r.cut_by_truck} /></TableCell>
                   <TableCell sx={{ ...num, color: cut ? C.slate : C.muted }}>{cut ? <><b>{nf(o.material)}</b> → <b style={{ color: C.success }}>{nf(o.after)}</b></> : nf(o.after)}</TableCell>
                 </TableRow>
@@ -384,7 +384,7 @@ function ClusterCrossTrim({ c }: { c: Cluster }) {
         are the cases of THIS reg-zsku's material lent to fill a truck / stand in for another reg-zsku (not what it received), and <b>As original</b> is its own demand;
         <b>Material</b> = the three summed. The cut spans <b>DB×reg-zsku</b>: ALL reg-zskus used as filler first (any DB), then all used as substitute, then all originals —
         within each group the <b>only-filler / only-sub lines first</b>, then least-needy (highest S/N). <b>On truck(s) · cut</b> shows which secondary truck(s) each
-        reg-zsku sits on (<b style={{ color: C.navy }}>T#·cases</b> = cases that were on that truck) and, in <b style={{ color: '#B23A2E' }}>red</b>, the cases taken
+        reg-zsku sits on (<b style={{ color: C.navy }}>T#·cases</b> = cases that were on that truck) and, in <b style={{ color: '#A32020' }}>red</b>, the cases taken
         off each — the cut comes off the truck a reg-zsku actually sits on and <b>each truck stops at its {pct(P.TRUCK_KEEP_PCT)} floor</b>,
         so no secondary truck is rebuilt or dropped below {pct(P.TRUCK_KEEP_PCT)}.
       </Box>
@@ -476,16 +476,16 @@ export default function ClusterPrimaryPage({ date, cfa = '' }: { date?: string; 
           const ships = c.primary_trucks > 0;
           return (
             <Box key={`${c.cfa}-${c.cluster_code}`} sx={{ border: `1px solid ${C.rule}`, borderLeft: `4px solid ${ships ? C.success : C.alertRed}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm, bgcolor: C.white, overflow: 'hidden' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 2, py: 1.25, borderBottom: `1px solid ${C.rule}`, bgcolor: '#fbf9f4', flexWrap: 'wrap' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 2, py: 1.25, borderBottom: `1px solid ${C.rule}`, bgcolor: '#FBF7F4', flexWrap: 'wrap' }}>
                 <LocalShippingIcon sx={{ color: ships ? C.success : C.alertRed, fontSize: 20 }} />
                 <Box sx={{ fontFamily: MONO, fontWeight: 800, fontSize: 15, color: C.navy }}>{c.cluster_code}</Box>
                 <Box sx={{ fontFamily: MONO, fontSize: 12, color: C.muted }}>CFA {c.cfa} · {c.n_dbs} DB{c.n_dbs !== 1 ? 's' : ''}</Box>
-                <Box component="span" sx={{ fontFamily: MONO, fontSize: 11.5, fontWeight: 800, color: C.navy, bgcolor: '#eef2f8', border: `1px solid ${C.rule}`, px: 0.9, py: 0.3, borderRadius: `${RADIUS.sm}px` }}
+                <Box component="span" sx={{ fontFamily: MONO, fontSize: 11.5, fontWeight: 800, color: C.navy, bgcolor: '#F3F3F3', border: `1px solid ${C.rule}`, px: 0.9, py: 0.3, borderRadius: `${RADIUS.sm}px` }}
                   title="the MAX cases one PRIMARY (transshipment) truck can carry — the cap in ⌈load ÷ cap⌉ below">
                   PRIMARY TRUCK CAP · {nf(c.truck_build.cap)} cs
                 </Box>
                 <Box sx={{ flex: 1 }} />
-                <Box component="span" sx={{ px: 1, py: 0.3, borderRadius: 1, fontWeight: 800, fontSize: 11.5, bgcolor: ships ? '#e9f4ec' : '#f8e9e6', color: ships ? C.success : C.alertRed }}>
+                <Box component="span" sx={{ px: 1, py: 0.3, borderRadius: 1, fontWeight: 800, fontSize: 11.5, bgcolor: ships ? '#E9F4EC' : '#F8E9E6', color: ships ? C.success : C.alertRed }}>
                   {ships ? `SHIPS ${c.primary_trucks} PRIMARY TRUCK${c.primary_trucks !== 1 ? 'S' : ''}` : 'NOTHING TO SHIP'}
                 </Box>
               </Box>
@@ -511,7 +511,7 @@ export default function ClusterPrimaryPage({ date, cfa = '' }: { date?: string; 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, flexWrap: 'wrap' }}>
                   <Box sx={{ fontSize: 10.5, fontWeight: 800, color: C.muted, textTransform: 'uppercase', letterSpacing: '.05em', mr: 0.4 }}>Primary trucks (balanced ≥{pct(P.TRUCK_KEEP_PCT)}):</Box>
                   {c.truck_build.fills.map((f, i) => (
-                    <Box key={i} sx={{ px: 1, py: 0.35, borderRadius: `${RADIUS.sm}px`, border: `1px solid ${f.pct >= keepPct ? '#BFE3C9' : '#E7C6C0'}`, bgcolor: f.pct >= keepPct ? '#eef7f0' : '#fdf1e6', fontFamily: MONO, fontSize: 12.5 }}>
+                    <Box key={i} sx={{ px: 1, py: 0.35, borderRadius: `${RADIUS.sm}px`, border: `1px solid ${f.pct >= keepPct ? '#BFE3C9' : '#E7C6C0'}`, bgcolor: f.pct >= keepPct ? '#EEF7F0' : '#FDEFE6', fontFamily: MONO, fontSize: 12.5 }}>
                       <b>T{i + 1}</b> · {nf(f.cases)} cs<span style={{ color: fillClr(f.pct, keepPct, targetPct), fontWeight: 800 }}> ({f.pct}%)</span>
                     </Box>
                   ))}
@@ -537,7 +537,7 @@ export default function ClusterPrimaryPage({ date, cfa = '' }: { date?: string; 
                       return (
                         <Fragment key={key}>
                           <TableRow onClick={() => expandable && setOpen((p) => ({ ...p, [key]: !isOpen }))}
-                            sx={{ bgcolor: cut ? '#fdf6ee' : undefined, cursor: expandable ? 'pointer' : 'default', '& td': { borderBottom: isOpen ? 'none' : undefined }, ...trackedRowSxFor(m.db) }}>
+                            sx={{ bgcolor: cut ? '#FDF4EE' : undefined, cursor: expandable ? 'pointer' : 'default', '& td': { borderBottom: isOpen ? 'none' : undefined }, ...trackedRowSxFor(m.db) }}>
                             <TableCell sx={{ width: 26, color: C.muted }}>{expandable ? <ChevronRightIcon sx={{ fontSize: 17, transition: 'transform .15s', transform: isOpen ? 'rotate(90deg)' : 'none' }} /> : ''}</TableCell>
                             <TableCell sx={{ fontFamily: MONO, fontSize: 12, color: C.navy, fontWeight: 700 }}>{isTracked(m.db) ? TRACK_STAR + ' ' : ''}{m.db}</TableCell>
                             <TableCell sx={{ fontFamily: MONO, fontSize: 11.5, color: C.muted }}>{m.channel || '—'}</TableCell>
@@ -570,7 +570,7 @@ export default function ClusterPrimaryPage({ date, cfa = '' }: { date?: string; 
       </Stack>
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', borderTop: `1px solid ${C.rule}`, mt: 3, pt: 1, fontSize: 9, color: C.muted }}>
-        <span>PepsiCo AIDEN · Transshipment cluster primary-truck pass · live from Postgres (or_cluster_primary)</span>
+        <span>AI Order Optimizer · Transshipment cluster primary-truck pass · sample data (or_cluster_primary)</span>
         <span>combine across channels → fewest ≥{pct(P.TRUCK_KEEP_PCT)} primary trucks → cross-DB trim (filler→sub→original by S/N), sec-truck {pct(P.TRUCK_KEEP_PCT)} floor</span>
       </Box>
     </Shell>

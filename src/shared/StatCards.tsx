@@ -9,7 +9,7 @@ export function Stat({ label, value, sub, tone = C.navy, strong, help }:
   { label: string; value: number | string; sub?: string; tone?: string; strong?: boolean; help?: React.ReactNode }) {
   return (
     <Box sx={{ position: 'relative', minWidth: 150, border: `1px solid ${strong ? tone : C.border}`, borderLeft: `3px solid ${tone}`,
-      borderRadius: '12px', boxShadow: '0 1px 3px rgba(16,54,90,0.07)', px: 1.9, py: 1.15, bgcolor: '#fff' }}>
+      borderRadius: '12px', boxShadow: '0 1px 3px rgba(45,45,45,0.07)', px: 1.9, py: 1.15, bgcolor: '#fff' }}>
       {help && (
         <Tooltip arrow placement="top" title={<Box sx={{ p: 0.5, fontSize: 12, lineHeight: 1.5 }}>{help}</Box>}>
           <HelpOutlineIcon sx={{ position: 'absolute', top: 6, right: 6, fontSize: 15, color: C.muted, cursor: 'help' }} />

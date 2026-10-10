@@ -17,7 +17,7 @@ const GROUP_COLOR: Record<string, { bg: string; fg: string }> = {
   'Masters': { bg: C.amberP, fg: C.amber },
   'Orphan Masters': { bg: C.navyP, fg: C.navy },
   'Transactional': { bg: C.greenP, fg: C.green },
-  'Processed': { bg: '#EDE9FE', fg: '#6D28D9' },   // violet — a deliberately DISTINCT tint for the derived/processed step (filtered SOQ), set apart from amber/green/navy/red
+  'Processed': { bg: '#FBE6EA', fg: '#D93954' },   // violet — a deliberately DISTINCT tint for the derived/processed step (filtered SOQ), set apart from amber/green/navy/red
   'Engine Output': { bg: C.redP, fg: C.red },
   Other: { bg: C.grayP, fg: C.muted },
 };
@@ -72,7 +72,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ background: C.canvas, minHeight: '100vh', fontFamily: SANS, color: C.slate }}>
       <div style={{ maxWidth: 1320, margin: '0 auto', padding: 'clamp(14px, 4vw, 28px) clamp(12px, 4vw, 32px) clamp(92px, 8vw, 92px)' }}>
-        <style>{`.mtbl tbody tr:hover td { background: rgba(16,54,90,0.07); }`}</style>
+        <style>{`.mtbl tbody tr:hover td { background: rgba(45,45,45,0.07); }`}</style>
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: C.gold }}>
           Data · live from API
         </div>
@@ -371,7 +371,7 @@ export default function MastersPage() {
       </Box>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: `1px solid ${C.border}`, marginTop: 22, paddingTop: 8, fontSize: 9, color: C.muted }}>
-        <span>PepsiCo AIDEN · live from {api.base}</span>
+        <span>AI Order Optimizer · sample data</span>
         <span>{totals.tables} tables</span>
       </div>
     </Shell>

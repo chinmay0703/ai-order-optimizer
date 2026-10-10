@@ -21,7 +21,7 @@ interface Data { cascade: Record<string, Casc[]>; runs: Run[]; }
 type RunData = Record<string, { cfas: Cfa[]; meta: { cases: number; trucks: number } }>;
 
 const N = (v: number) => v.toLocaleString();
-const bandc = (b: number) => (b === 1 ? { bg: '#E9F4EC', bar: '#21A366', chip: '#21A366' } : b === 2 ? { bg: '#EAF0F8', bar: '#10365A', chip: '#10365A' } : { bg: '#FBF1E0', bar: '#D98A00', chip: '#D98A00' });
+const bandc = (b: number) => (b === 1 ? { bg: '#E9F4EC', bar: '#21A366', chip: '#21A366' } : b === 2 ? { bg: '#F1F1F1', bar: '#2D2D2D', chip: '#2D2D2D' } : { bg: '#FBEBE0', bar: '#D04A02', chip: '#D04A02' });
 // three internal tabs: the reservation cascade waterfall · the per-run allocation detail · the transshipment cluster primary trucks
 const TABS = [
   { k: 'cascade', label: 'Reservation cascade' },
@@ -47,11 +47,11 @@ function CascadeTable({ cascade }: { cascade: Record<string, Casc[]> }) {
             return (
               <TableRow key={`${band}-${s.run}`} sx={{ bgcolor: c.bg }}>
                 <TableCell><Chip size="small" label={`Band ${band} ${band === 1 ? '\u226410\u20b9' : band === 2 ? '11-30\u20b9' : '>30\u20b9'}`} sx={{ bgcolor: '#fff', color: c.chip, border: `1px solid ${c.bar}`, fontWeight: 700, height: 22 }} /></TableCell>
-                <TableCell align="right" sx={{ fontWeight: 700, color: '#10365A' }}>R{s.run}</TableCell>
+                <TableCell align="right" sx={{ fontWeight: 700, color: '#2D2D2D' }}>R{s.run}</TableCell>
                 <TableCell>{s.channel}</TableCell>
-                <TableCell align="right" sx={{ color: '#7A756D' }}>{s.pct}%</TableCell>
+                <TableCell align="right" sx={{ color: '#6B6B6B' }}>{s.pct}%</TableCell>
                 <TableCell align="right">{N(s.carried_in)}</TableCell>
-                <TableCell align="right" sx={{ color: '#10365A', fontWeight: 600 }}>{N(s.earmark)}</TableCell>
+                <TableCell align="right" sx={{ color: '#2D2D2D', fontWeight: 600 }}>{N(s.earmark)}</TableCell>
                 <TableCell align="right">{N(s.available)}</TableCell>
                 <TableCell align="right" sx={{ color: '#21A366' }}>{N(s.allocated)}</TableCell>
                 <TableCell align="right" sx={{ fontWeight: 700 }}>{N(s.carried_out)}</TableCell>
@@ -66,11 +66,11 @@ function CascadeTable({ cascade }: { cascade: Record<string, Casc[]> }) {
 
 // ---- RLM tabs (date-wise): truck-approval (PTL) + 2nd-CFA shift, from the RLM tables we persist ----
 const STOCK_C: Record<string, { bg: string; fg: string }> = {
-  'Out of Stock': { bg: '#F8E9E6', fg: '#B23A2E' }, Low: { bg: '#FBF1E0', fg: '#92400E' },
-  Healthy: { bg: '#E9F4EC', fg: '#2E7D32' }, Overstocked: { bg: '#EAF0F8', fg: '#10365A' },
+  'Out of Stock': { bg: '#F8E9E6', fg: '#A32020' }, Low: { bg: '#FBEBE0', fg: '#8A3A0C' },
+  Healthy: { bg: '#E9F4EC', fg: '#2E7D32' }, Overstocked: { bg: '#F1F1F1', fg: '#2D2D2D' },
 };
 const stockChip = (s: string) => {
-  const c = STOCK_C[s] ?? { bg: '#F1F5F9', fg: '#64748B' };
+  const c = STOCK_C[s] ?? { bg: '#F5F5F5', fg: '#787878' };
   return <Chip size="small" label={s || '—'} sx={{ bgcolor: c.bg, color: c.fg, fontWeight: 700, height: 20, fontSize: 11 }} />;
 };
 const nm = (v: number | null | undefined) => (v == null ? '—' : Number(v).toLocaleString());
@@ -80,17 +80,17 @@ const pc = (v: number | null | undefined) => (v == null ? '—' : `${Number(v).t
 const ptlStatusChipC = (s: string): { bg: string; fg: string } => {
   const st = String(s || '').trim().toUpperCase();
   if (st === 'APPROVED') return { bg: '#E9F4EC', fg: '#2E7D32' };
-  if (st === 'REJECTED') return { bg: '#F8E9E6', fg: '#B23A2E' };
-  return { bg: '#FBF1E0', fg: '#92400E' };   // PENDING (or anything else) → amber
+  if (st === 'REJECTED') return { bg: '#F8E9E6', fg: '#A32020' };
+  return { bg: '#FBEBE0', fg: '#8A3A0C' };   // PENDING (or anything else) → amber
 };
 // 2nd-CFA shift header status → chip colour. The application owns it (PENDING / SHIFTED / HELD); the rollup resolves a
 // PENDING or HELD header to APPROVED (the primary CFA ships), and leaves SHIFTED (the secondary CFA ships) as-is.
 const shiftStatusChipC = (s: string): { bg: string; fg: string } => {
   const st = String(s || '').trim().toUpperCase();
   if (st === 'APPROVED') return { bg: '#E9F4EC', fg: '#2E7D32' };   // resolved → primary/current CFA ships
-  if (st === 'SHIFTED') return { bg: '#EAF0F8', fg: '#1A3E6F' };    // routed to the secondary CFA
-  if (st === 'HELD') return { bg: '#FBF1E0', fg: '#92400E' };       // held
-  return { bg: '#F1F5F9', fg: '#475569' };                          // PENDING (or unknown) → awaiting the rollup
+  if (st === 'SHIFTED') return { bg: '#F1F1F1', fg: '#3A3A3A' };    // routed to the secondary CFA
+  if (st === 'HELD') return { bg: '#FBEBE0', fg: '#8A3A0C' };       // held
+  return { bg: '#F5F5F5', fg: '#585858' };                          // PENDING (or unknown) → awaiting the rollup
 };
 
 interface PtlLine { reg_zsku_code: string; truck_number: number | null; truck_qty: number; zsku_description: string; zsku_soq_qty: number; zsku_aoq_qty: number; zsku_original_qty: number; zsku_filler_qty: number; zsku_substitution_qty: number; zsku_soh: number; zsku_db_inventory_coverage_pct: number; zsku_current_inventory_coverage_pct: number; zsku_stock_status: string; }
@@ -153,26 +153,26 @@ function RlmPtlTab({ date }: { date?: string }) {
       {d.headers.map((h) => (
         <Paper key={h.aiden_order_id} variant="outlined" sx={{ mb: 1.25, overflow: 'hidden' }}>
           <Box onClick={() => setOpen((o) => ({ ...o, [h.aiden_order_id]: !o[h.aiden_order_id] }))}
-            sx={{ display: 'flex', alignItems: 'center', gap: 1.25, px: 1.75, py: 1.1, cursor: 'pointer', flexWrap: 'wrap', '&:hover': { bgcolor: '#FAFAF8' } }}>
-            <Typography sx={{ fontWeight: 800, color: '#10365A' }}>{open[h.aiden_order_id] ? '▾' : '▸'} DB {h.distributor_code}</Typography>
-            <Typography sx={{ fontSize: 13, color: '#1E293B' }}>{h.distributor_name}</Typography>
-            <Chip size="small" label={`CFA ${h.cfa_code}`} sx={{ bgcolor: '#EAF0F8', color: '#10365A', fontWeight: 700, height: 22 }} />
-            <Chip size="small" label={`${h.truck_type || 'Truck'} #${h.truck_number}`} sx={{ bgcolor: '#fff', border: '1px solid #CBD5E1', fontWeight: 700, height: 22 }} />
+            sx={{ display: 'flex', alignItems: 'center', gap: 1.25, px: 1.75, py: 1.1, cursor: 'pointer', flexWrap: 'wrap', '&:hover': { bgcolor: '#FAF9F8' } }}>
+            <Typography sx={{ fontWeight: 800, color: '#2D2D2D' }}>{open[h.aiden_order_id] ? '▾' : '▸'} DB {h.distributor_code}</Typography>
+            <Typography sx={{ fontSize: 13, color: '#2C2C2C' }}>{h.distributor_name}</Typography>
+            <Chip size="small" label={`CFA ${h.cfa_code}`} sx={{ bgcolor: '#F1F1F1', color: '#2D2D2D', fontWeight: 700, height: 22 }} />
+            <Chip size="small" label={`${h.truck_type || 'Truck'} #${h.truck_number}`} sx={{ bgcolor: '#fff', border: '1px solid #D6D6D6', fontWeight: 700, height: 22 }} />
             {/* distributor-level (CFA × DB) — from filtered_soq */}
             <Chip size="small" label={`PDP ${h.pdp_flag ? '✓' : '✗'}`} title="distributor PDP flag (filtered_soq.is_pdp — boolean)"
-              sx={{ bgcolor: h.pdp_flag ? '#E9F4EC' : '#F1F5F9', color: h.pdp_flag ? '#2E7D32' : '#64748B', fontWeight: 700, height: 22 }} />
+              sx={{ bgcolor: h.pdp_flag ? '#E9F4EC' : '#F5F5F5', color: h.pdp_flag ? '#2E7D32' : '#787878', fontWeight: 700, height: 22 }} />
             <Chip size="small" label={`PDP freq ${h.pdp_frequency || '—'}`}
               title={h.pdp_frequency ? `distributor PDP frequency from the PDP master: ${h.pdp_frequency}` : 'no PDP frequency for this distributor in the PDP master'}
-              sx={{ bgcolor: h.pdp_frequency ? '#EAF0F8' : '#fff', border: '1px solid #CBD5E1', color: h.pdp_frequency ? '#1A3E6F' : '#64748B', fontWeight: 700, height: 22 }} />
+              sx={{ bgcolor: h.pdp_frequency ? '#F1F1F1' : '#fff', border: '1px solid #D6D6D6', color: h.pdp_frequency ? '#3A3A3A' : '#787878', fontWeight: 700, height: 22 }} />
             <Chip size="small" label={`Combined SOQ ${nm(h.soq)}`} title="distributor combined SOQ (CFA × DB, Σ SOQ over its reg-zskus)"
-              sx={{ bgcolor: '#EAF0F8', color: '#10365A', fontWeight: 700, height: 22 }} />
+              sx={{ bgcolor: '#F1F1F1', color: '#2D2D2D', fontWeight: 700, height: 22 }} />
             <Box sx={{ flex: 1 }} />
-            <Typography sx={{ fontSize: 12.5, color: '#64748B' }}>fill <b style={{ color: Math.round(h.truck_load_utilization_pct ?? 0) >= P.TRUCK_FILL_TARGET_PCT * 100 ? '#2E7D32' : '#92400E' }}>{pc(h.truck_load_utilization_pct)}</b> · cap {nm(h.truck_load_capacity)} · AOQ <b>{nm(h.aoq_qty)}</b> · gap {nm(h.truck_load_gap_qty)} · DB trucks <b title="total trucks for this DB across SO + RLM + shift">{nm(h.total_trucks)}</b></Typography>
+            <Typography sx={{ fontSize: 12.5, color: '#787878' }}>fill <b style={{ color: Math.round(h.truck_load_utilization_pct ?? 0) >= P.TRUCK_FILL_TARGET_PCT * 100 ? '#2E7D32' : '#8A3A0C' }}>{pc(h.truck_load_utilization_pct)}</b> · cap {nm(h.truck_load_capacity)} · AOQ <b>{nm(h.aoq_qty)}</b> · gap {nm(h.truck_load_gap_qty)} · DB trucks <b title="total trucks for this DB across SO + RLM + shift">{nm(h.total_trucks)}</b></Typography>
             <Chip size="small" label={h.status || 'RLM_TRUCK_APPROVAL'} sx={{ bgcolor: ptlStatusChipC(h.status).bg, color: ptlStatusChipC(h.status).fg, fontWeight: 700, height: 22 }} />
           </Box>
           {open[h.aiden_order_id] && (
             <Box sx={{ px: 1.75, pb: 1.5 }}>
-              <Typography sx={{ fontSize: 11.5, color: '#64748B', mb: 0.75 }}>Base {nm(h.base_aoq_qty)} + Filler {nm(h.filler_aoq_qty)} + Substitute {nm(h.substitution_aoq_qty)} = AOQ {nm(h.aoq_qty)}</Typography>
+              <Typography sx={{ fontSize: 11.5, color: '#787878', mb: 0.75 }}>Base {nm(h.base_aoq_qty)} + Filler {nm(h.filler_aoq_qty)} + Substitute {nm(h.substitution_aoq_qty)} = AOQ {nm(h.aoq_qty)}</Typography>
               <TableContainer component={Paper} variant="outlined">
                 <Table size="small">
                   <TableHead><TableRow>{([['reg-zsku', 'left'], ['Description', 'left'], ['Truck Qty', 'right'], ['SOQ', 'right'], ['AOQ', 'right'], ['Original', 'right'], ['Filler', 'right'], ['Substitution', 'right'], ['SOH', 'right'], ['Coverage', 'right'], ['Curr. Cov', 'right'], ['Stock', 'left']] as const).map(([c, a], i) => <TableCell key={i} align={a}>{c}</TableCell>)}</TableRow></TableHead>
@@ -180,9 +180,9 @@ function RlmPtlTab({ date }: { date?: string }) {
                     {h.line_items.map((l, i) => {
                       const notAllocated = l.truck_number == null;   // demanded (has SOQ) but nothing allocated — no truck
                       return (
-                      <TableRow key={i} sx={notAllocated ? { bgcolor: '#F8FAFC', '& td': { color: '#94A3B8', fontStyle: 'italic' } } : undefined}
+                      <TableRow key={i} sx={notAllocated ? { bgcolor: '#FAFAFA', '& td': { color: '#A6A6A6', fontStyle: 'italic' } } : undefined}
                         title={notAllocated ? 'Demanded (has SOQ) but not allocated — not on any truck' : undefined}>
-                        <TableCell sx={{ fontFamily: 'monospace', fontSize: 12, color: notAllocated ? '#94A3B8' : '#10365A' }}>{l.reg_zsku_code}</TableCell>
+                        <TableCell sx={{ fontFamily: 'monospace', fontSize: 12, color: notAllocated ? '#A6A6A6' : '#2D2D2D' }}>{l.reg_zsku_code}</TableCell>
                         <TableCell sx={{ whiteSpace: 'normal' }} title={descOf(l.reg_zsku_code) || l.zsku_description}>{descOf(l.reg_zsku_code) || l.zsku_description || '—'}</TableCell>
                         <TableCell align="right" sx={{ fontWeight: 700 }}>{l.truck_number != null ? nm(l.truck_qty) : '—'}</TableCell>
                         <TableCell align="right">{nm(l.zsku_soq_qty)}</TableCell>
@@ -245,26 +245,26 @@ function RlmSecondCfaTab({ date }: { date?: string }) {
       {d.headers.map((h) => (
         <Paper key={h.aiden_order_id} variant="outlined" sx={{ mb: 1.25, overflow: 'hidden' }}>
           <Box onClick={() => setOpen((o) => ({ ...o, [h.aiden_order_id]: !o[h.aiden_order_id] }))}
-            sx={{ display: 'flex', alignItems: 'center', gap: 1.25, px: 1.75, py: 1.1, cursor: 'pointer', flexWrap: 'wrap', '&:hover': { bgcolor: '#FAFAF8' } }}>
-            <Typography sx={{ fontWeight: 800, color: '#10365A' }}>{open[h.aiden_order_id] ? '▾' : '▸'} DB {h.distributor_code}</Typography>
-            <Typography sx={{ fontSize: 13, color: '#1E293B' }}>{h.distributor_name}</Typography>
+            sx={{ display: 'flex', alignItems: 'center', gap: 1.25, px: 1.75, py: 1.1, cursor: 'pointer', flexWrap: 'wrap', '&:hover': { bgcolor: '#FAF9F8' } }}>
+            <Typography sx={{ fontWeight: 800, color: '#2D2D2D' }}>{open[h.aiden_order_id] ? '▾' : '▸'} DB {h.distributor_code}</Typography>
+            <Typography sx={{ fontSize: 13, color: '#2C2C2C' }}>{h.distributor_name}</Typography>
             <Chip size="small" label={h.status || 'PENDING'} sx={{ bgcolor: shiftStatusChipC(h.status).bg, color: shiftStatusChipC(h.status).fg, fontWeight: 700, height: 22 }} />
             <Box sx={{ flex: 1 }} />
-            <Chip size="small" label={`preferred ${h.preferred_cfa_code} · ${pc(h.preferred_cfa_fill_pct)} · short ${nm(h.preferred_cfa_shortfall_qty)}`} sx={{ bgcolor: '#F8E9E6', color: '#B23A2E', fontWeight: 700, height: 22 }} />
-            <Typography sx={{ color: '#64748B' }}>→</Typography>
+            <Chip size="small" label={`preferred ${h.preferred_cfa_code} · ${pc(h.preferred_cfa_fill_pct)} · short ${nm(h.preferred_cfa_shortfall_qty)}`} sx={{ bgcolor: '#F8E9E6', color: '#A32020', fontWeight: 700, height: 22 }} />
+            <Typography sx={{ color: '#787878' }}>→</Typography>
             <Chip size="small" label={`alternate ${h.alternate_cfa_code} · ${nm(h.alternate_cfa_qty)} cs`} sx={{ bgcolor: '#E9F4EC', color: '#2E7D32', fontWeight: 700, height: 22 }} />
-            <Chip size="small" label={`lead ${h.lead_time ?? '—'}`} sx={{ bgcolor: '#fff', border: '1px solid #CBD5E1', fontWeight: 700, height: 22 }} />
+            <Chip size="small" label={`lead ${h.lead_time ?? '—'}`} sx={{ bgcolor: '#fff', border: '1px solid #D6D6D6', fontWeight: 700, height: 22 }} />
           </Box>
           {open[h.aiden_order_id] && (
             <Box sx={{ px: 1.75, pb: 1.5 }}>
-              <Typography sx={{ fontSize: 11.5, color: '#64748B', mb: 0.75 }}>Preferred {h.preferred_cfa_name} ({h.preferred_cfa_code}): fill {nm(h.preferred_cfa_fill_qty)} / shortfall {nm(h.preferred_cfa_shortfall_qty)} · Alternate {h.alternate_cfa_name} ({h.alternate_cfa_code}): {nm(h.alternate_cfa_qty)} · AOQ {nm(h.aoq_qty)}</Typography>
+              <Typography sx={{ fontSize: 11.5, color: '#787878', mb: 0.75 }}>Preferred {h.preferred_cfa_name} ({h.preferred_cfa_code}): fill {nm(h.preferred_cfa_fill_qty)} / shortfall {nm(h.preferred_cfa_shortfall_qty)} · Alternate {h.alternate_cfa_name} ({h.alternate_cfa_code}): {nm(h.alternate_cfa_qty)} · AOQ {nm(h.aoq_qty)}</Typography>
               <TableContainer component={Paper} variant="outlined">
                 <Table size="small">
                   <TableHead><TableRow>{['reg-zsku', 'Description', 'SOQ', 'AOQ', 'Alt-CFA qty', 'Coverage', 'Stock'].map((c, i) => <TableCell key={i} align={i >= 2 && i <= 5 ? 'right' : 'left'}>{c}</TableCell>)}</TableRow></TableHead>
                   <TableBody>
                     {h.line_items.map((l, i) => (
                       <TableRow key={i}>
-                        <TableCell sx={{ fontFamily: 'monospace', fontSize: 12, color: '#10365A' }}>{l.reg_zsku_code}</TableCell>
+                        <TableCell sx={{ fontFamily: 'monospace', fontSize: 12, color: '#2D2D2D' }}>{l.reg_zsku_code}</TableCell>
                         <TableCell sx={{ whiteSpace: 'normal' }} title={descOf(l.reg_zsku_code) || l.zsku_description}>{descOf(l.reg_zsku_code) || l.zsku_description || '—'}</TableCell>
                         <TableCell align="right">{nm(l.zsku_soq_qty)}</TableCell>
                         <TableCell align="right">{nm(l.zsku_aoq_qty)}</TableCell>
@@ -344,7 +344,7 @@ export default function ReservationRunsPage({ date, initialTab }: { date?: strin
 
   return (
     <Box sx={{ p: { xs: 1.5, sm: 2.5, md: 3 }, maxWidth: 1340, mx: 'auto' }}>
-      <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#D98A00', mb: 0.3 }}>Reservation · CFA stock cascade</Typography>
+      <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: '#D04A02', mb: 0.3 }}>Reservation · CFA stock cascade</Typography>
       <Typography variant="h5" sx={{ mb: 0.5 }}>Reservation Runs · {d.runs.length}-run cascade</Typography>
       <PageIntro>
         The CFA stock is reserved per channel (each band's share) and allocated in {d.runs.length} sequential channel runs
@@ -352,11 +352,11 @@ export default function ReservationRunsPage({ date, initialTab }: { date?: strin
         band to the next channel; any surplus after the last run stays unallocated.
       </PageIntro>
 
-      <Box sx={{ display: 'flex', gap: 0.5, mb: 2.5, borderBottom: '1px solid #E5E2DB', flexWrap: 'wrap' }}>
+      <Box sx={{ display: 'flex', gap: 0.5, mb: 2.5, borderBottom: '1px solid #DEDEDE', flexWrap: 'wrap' }}>
         {TABS.map((t) => (
           <Box key={t.k} onClick={() => setTab(t.k)}
-            sx={{ cursor: 'pointer', px: 2, py: 1, fontSize: 13, fontWeight: 800, color: tab === t.k ? '#10365A' : '#7A756D',
-              borderBottom: `2px solid ${tab === t.k ? '#D98A00' : 'transparent'}`, mb: '-1px', '&:hover': { color: '#10365A' } }}>{t.label}</Box>
+            sx={{ cursor: 'pointer', px: 2, py: 1, fontSize: 13, fontWeight: 800, color: tab === t.k ? '#2D2D2D' : '#6B6B6B',
+              borderBottom: `2px solid ${tab === t.k ? '#D04A02' : 'transparent'}`, mb: '-1px', '&:hover': { color: '#2D2D2D' } }}>{t.label}</Box>
         ))}
       </Box>
 
@@ -385,10 +385,10 @@ export default function ReservationRunsPage({ date, initialTab }: { date?: strin
               }}>
               {channels.flatMap((ch) => [
                 <ListSubheader key={ch} sx={{ fontWeight: 800, fontSize: '0.7rem', letterSpacing: '.04em',
-                  textTransform: 'uppercase', color: '#1C1C1C', lineHeight: 2.4, bgcolor: '#f8fafc' }}>{ch}</ListSubheader>,
+                  textTransform: 'uppercase', color: '#2D2D2D', lineHeight: 2.4, bgcolor: '#FAFAFA' }}>{ch}</ListSubheader>,
                 ...d.runs.filter((r) => r.meta.channel === ch).map((r) => (
                   <MenuItem key={r.meta.run} value={r.meta.run} sx={{ pl: 3, fontSize: '0.82rem' }}>
-                    <Box component="span" sx={{ width: 9, height: 9, borderRadius: '50%', bgcolor: '#10365A', mr: 1, flexShrink: 0 }} />
+                    <Box component="span" sx={{ width: 9, height: 9, borderRadius: '50%', bgcolor: '#2D2D2D', mr: 1, flexShrink: 0 }} />
                     {/* ONE span for the whole label: MenuItem is a flex row, so bare text + <b> + " cs" would be
                         THREE flex items and the narrow ones get squeezed — "194 cs" wrapped as "19 / 4 · c / s"
                         on a phone. As a single item the label wraps like normal prose. */}
@@ -403,21 +403,21 @@ export default function ReservationRunsPage({ date, initialTab }: { date?: strin
 
           {m && run && (
             <>
-              <Paper variant="outlined" sx={{ px: 2, py: 1.5, mb: 1.5, borderTop: '3px solid #10365A' }}>
-                <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#0F172A', mb: 1 }}>
+              <Paper variant="outlined" sx={{ px: 2, py: 1.5, mb: 1.5, borderTop: '3px solid #2D2D2D' }}>
+                <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#1C1C1C', mb: 1 }}>
                   Run {m.run} — {m.channel} · Bands 1+2+3 (combined truck)
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', rowGap: 1 }}>
                   <Metric label="Lanes">{N(m.lanes)}</Metric>
                   <Metric label="Demand">{N(m.demand)} cs</Metric>
                   <Metric label="Reservation cap" tip="Combined reservation pool available to this channel run (carried-in + this run's earmark, across all bands)">{N(m.cap)} cs</Metric>
-                  <Metric label="Allocated" color="#1e40af">{N(m.allocated)} cs</Metric>
+                  <Metric label="Allocated" color="#2D2D2D">{N(m.allocated)} cs</Metric>
                   <Metric label="Fill" color="#166534">{m.fill}%</Metric>
-                  {heldLanes > 0 && <Metric label="Held · no truck" color="#DC2C25" tip={`Lanes cancelled at the ≥${pct(P.TRUCK_KEEP_PCT)}-per-truck rule — cases cascade to the next run`}>{heldLanes}</Metric>}
+                  {heldLanes > 0 && <Metric label="Held · no truck" color="#E0301E" tip={`Lanes cancelled at the ≥${pct(P.TRUCK_KEEP_PCT)}-per-truck rule — cases cascade to the next run`}>{heldLanes}</Metric>}
                 </Box>
               </Paper>
 
-              <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#10365A', mb: 0.75 }}>Allocation · Trucks · SKUs</Typography>
+              <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#2D2D2D', mb: 0.75 }}>Allocation · Trucks · SKUs</Typography>
               <Box>
                 {(rdLoading || !rd) && <Typography color="text.secondary" sx={{ py: 2 }}>Loading run detail…</Typography>}
                 {rd && cfas.map((c) => <CfaAccordion key={c.cfa} cfa={c} defaultOpen={false} />)}

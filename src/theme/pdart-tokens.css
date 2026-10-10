@@ -8,22 +8,22 @@
 
 :root {
   /* ── Colors ────────────────────────────────────────────────── */
-  --pdart-navy:        #10365A;
-  --pdart-navy-dark:   #0C1D33;
-  --pdart-gold:        #D98A00;
-  --pdart-gold-light:  #FDD666;
-  --pdart-cream:       #F4F3F1;
+  --pdart-navy:        #2D2D2D;
+  --pdart-navy-dark:   #1A1A1A;
+  --pdart-gold:        #D04A02;
+  --pdart-gold-light:  #FFB600;
+  --pdart-cream:       #F6F6F6;
   --pdart-white:       #FFFFFF;
   --pdart-canvas:      #F5F5F5;
-  --pdart-ink:         #1C1C1C;
-  --pdart-muted:       #7A756D;
-  --pdart-success:     #21A366;
+  --pdart-ink:         #2D2D2D;
+  --pdart-muted:       #6B6B6B;
+  --pdart-success:     #1B7346;
   --pdart-success-light: #E7F3E7;
-  --pdart-warn-light:  #FEF3C7;
-  --pdart-warn-text:   #D98A00;   /* golden foreground on warn-light */
-  --pdart-rule:        #E5E2DB;
-  --pdart-panel-bg:    #EDEBE6;
-  --pdart-alert-red:   #DC2C25;
+  --pdart-warn-light:  #FBEBE1;
+  --pdart-warn-text:   #A33A02;   /* dark PwC orange on warn-light (5.7:1) */
+  --pdart-rule:        #DEDEDE;
+  --pdart-panel-bg:    #EDEDED;
+  --pdart-alert-red:   #C02A1A;
 
   /* ── Typography ────────────────────────────────────────────── */
   --pdart-font-sans:   'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;

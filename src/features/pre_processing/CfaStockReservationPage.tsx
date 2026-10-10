@@ -23,7 +23,7 @@ interface ResDetail {
 type Data = { date: string; reservation_detail?: ResDetail[] } & ReservationPctMeta;
 
 const N = (v: number) => (v ?? 0).toLocaleString();
-const C = { navy: '#10365A', gold: '#D98A00', green: '#21A366', muted: '#7A756D', cream: '#F4F3F1', border: '#E5E2DB', amber: '#D98A00' };
+const C = { navy: '#2D2D2D', gold: '#D04A02', green: '#21A366', muted: '#6B6B6B', cream: '#F6F6F6', border: '#DEDEDE', amber: '#D04A02' };
 const PAGE_SIZE = 100;   // client-side pagination — a large reservation table (thousands of reg-zsku × channel rows) froze the render
 
 type Col = { label: string; align: 'left' | 'right'; key: keyof ResDetail; num?: boolean };
@@ -135,7 +135,7 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
     });
   })();
   // row tint by outcome: MRP anomaly = amber (action needed), no CFA stock = neutral grey, priced OK = white
-  const tint = (r: ResDetail) => (r.mrp_note ? '#FBF1E0' : r.status === 'No CFA stock' ? '#F4F3F1' : '#fff');
+  const tint = (r: ResDetail) => (r.mrp_note ? '#FBEBE0' : r.status === 'No CFA stock' ? '#F6F6F6' : '#fff');
   // client-side pagination — only the visible page's rows are rendered (a full reservation table is thousands of rows)
   const total = sortedShown.length;
   const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -160,22 +160,22 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
         <Typography variant="h5">CFA Stock Reservation · MRP validation</Typography>
         <IconButton size="small" onClick={() => setHelpOpen(true)} title="How this page works"
-          sx={{ color: C.gold, border: '1px solid #EAD9AE', bgcolor: '#FCF8EE', '&:hover': { bgcolor: '#FBF1DC', borderColor: C.gold } }}>
+          sx={{ color: C.gold, border: '1px solid #EAC6AE', bgcolor: '#FCF4EE', '&:hover': { bgcolor: '#FBE8DC', borderColor: C.gold } }}>
           <HelpOutlineIcon sx={{ fontSize: 19 }} />
         </IconButton>
         <Box component="span" sx={{ fontSize: 11.5, color: C.muted }}>how it works</Box>
       </Box>
       <ReservationPctDate meta={d} />
-      <Dialog open={helpOpen} onClose={() => setHelpOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '8px', overflow: 'hidden', border: '1px solid #FDD666' } }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #E7A93A 0%, #D98A00 55%, #C67D00 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
+      <Dialog open={helpOpen} onClose={() => setHelpOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '8px', overflow: 'hidden', border: '1px solid #FFB600' } }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #EB8C00 0%, #D04A02 55%, #B33F02 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
           <HelpOutlineIcon sx={{ fontSize: 20 }} />
           <Box sx={{ fontFamily: "'Google Sans', 'Product Sans', 'Poppins', 'Segoe UI', system-ui, sans-serif", fontWeight: 700, fontSize: 17 }}>How this page works</Box>
           <Box sx={{ flex: 1 }} />
           <IconButton onClick={() => setHelpOpen(false)} size="small" aria-label="close" sx={{ color: '#fff', '&:hover': { bgcolor: 'rgba(255,255,255,0.18)' } }}><CloseIcon sx={{ fontSize: 20 }} /></IconButton>
         </Box>
-        <Box sx={{ p: 2.75, color: '#334155', bgcolor: '#FCFAF4', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
+        <Box sx={{ p: 2.75, color: '#444444', bgcolor: '#FCF7F4', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
           {/* the goal */}
-          <Box sx={{ p: '10px 12px', borderRadius: '6px', bgcolor: '#FCF8EE', border: '1px solid #EAD9AE', borderLeft: `3px solid ${C.gold}` }}>
+          <Box sx={{ p: '10px 12px', borderRadius: '6px', bgcolor: '#FCF4EE', border: '1px solid #EAC6AE', borderLeft: `3px solid ${C.gold}` }}>
             <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.gold, mb: 0.4 }}>🎯 The goal</Box>
             <Box sx={{ fontSize: 13, lineHeight: 1.55 }}>The <b>first step</b>, before the engine. <b>Every reg-zsku the CFA holds stock of</b> is priced from the actual materials in CFA inventory, then banded &amp; reserved for the engine to draw.</Box>
           </Box>
@@ -184,12 +184,12 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
           <Box>
             <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.navy, mb: 0.7 }}>How each reg-zsku is priced</Box>
             <Box sx={{ p: '9px 11px', mb: 1, borderRadius: '6px', bgcolor: '#fff', border: `1px solid ${C.border}` }}>
-              <Box sx={{ fontFamily: 'Consolas, monospace', fontSize: 12, color: '#334155' }}><b style={{ color: C.navy }}>cfa_inventory</b> ⋈ <b style={{ color: C.navy }}>material_master</b> → MRP → band → reserve</Box>
+              <Box sx={{ fontFamily: 'Consolas, monospace', fontSize: 12, color: '#444444' }}><b style={{ color: C.navy }}>cfa_inventory</b> ⋈ <b style={{ color: C.navy }}>material_master</b> → MRP → band → reserve</Box>
             </Box>
             <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mb: 1 }}>
               <Box component="span" sx={{ px: 0.85, py: '3px', borderRadius: 999, border: `1px solid ${C.green}`, color: C.green, fontSize: 11, fontWeight: 700 }}>one clean MRP → banded &amp; reserved</Box>
               <Box component="span" sx={{ px: 0.85, py: '3px', borderRadius: 999, border: `1px solid ${C.amber}`, color: C.amber, fontSize: 11, fontWeight: 700 }}>materials disagree → priced at MAX MRP, still reserved</Box>
-              <Box component="span" sx={{ px: 0.85, py: '3px', borderRadius: 999, border: '1px solid #DC2C25', color: '#DC2C25', fontSize: 11, fontWeight: 700 }}>no MRP at all → dropped</Box>
+              <Box component="span" sx={{ px: 0.85, py: '3px', borderRadius: 999, border: '1px solid #E0301E', color: '#E0301E', fontSize: 11, fontWeight: 700 }}>no MRP at all → dropped</Box>
             </Box>
             <Box sx={{ fontSize: 12.5, lineHeight: 1.5 }}>A reg-zsku whose materials <b>disagree on MRP</b> is <b>not</b> dropped — it is priced at the <b>HIGHEST MRP</b> (a deliberate business decision) and still reserved into the cascade. Only a reg-zsku with <b>no parseable MRP at all</b> is a data anomaly, dropped here so it never reaches the engine. MRP issues are caught at this <b>input-validation gate</b>, not in the engine output.</Box>
           </Box>
@@ -247,7 +247,7 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
               <Box component="span" sx={{ fontWeight: 800, color: C.navy }}>Demanded {nDemanded}</Box>
               <Box component="span" sx={{ color: C.muted }}>reg-zskus (SOQ&gt;0) →</Box>
               <Box component="span" sx={{ px: 0.85, py: '2px', borderRadius: 999, bgcolor: '#E7F3E7', color: C.green, fontWeight: 800 }}>{nDemStock} have CFA stock</Box>
-              <Box component="span" sx={{ px: 0.85, py: '2px', borderRadius: 999, bgcolor: '#FBF1E0', color: C.gold, fontWeight: 800 }}>{nDemNoStock} hold 0 stock</Box>
+              <Box component="span" sx={{ px: 0.85, py: '2px', borderRadius: 999, bgcolor: '#FBEBE0', color: C.gold, fontWeight: 800 }}>{nDemNoStock} hold 0 stock</Box>
             </Box>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.25, flexWrap: 'wrap' }}>
@@ -286,7 +286,7 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
                     <TableCell>{r.mrp_band || '—'}</TableCell>
                     <TableCell align="right">{N(r.physical_cases)}</TableCell>
                     <TableCell align="right" sx={{ fontWeight: 600, color: C.navy }}>{r.channel ? N(r.reserved_cases) : '—'}</TableCell>
-                    <TableCell align="right" sx={{ color: '#D98A00', fontWeight: 600 }} title="Reservation % for this CFA × channel × band (reserved ≈ physical × this %)">{r.channel ? `${r.reservation_pct}%` : '—'}</TableCell>
+                    <TableCell align="right" sx={{ color: '#D04A02', fontWeight: 600 }} title="Reservation % for this CFA × channel × band (reserved ≈ physical × this %)">{r.channel ? `${r.reservation_pct}%` : '—'}</TableCell>
                     <TableCell sx={{ color: (r.soq_cases || 0) > 0 ? C.navy : C.muted, fontWeight: (r.soq_cases || 0) > 0 ? 600 : 400 }}>{(r.soq_cases || 0) > 0 ? 'Demanded' : (r.in_soq ? 'Feed (SOQ=0)' : 'Donor only')}</TableCell>
                     <TableCell align="right">{r.in_soq ? N(r.soq_cases) : '—'}</TableCell>
                     <TableCell sx={{ color: r.mrp_note ? C.amber : r.status === 'No CFA stock' ? C.muted : C.green, fontWeight: r.mrp_note ? 700 : 600 }}>{r.mrp_note || r.status}</TableCell>

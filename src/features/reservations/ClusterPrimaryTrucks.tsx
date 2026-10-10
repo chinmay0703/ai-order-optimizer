@@ -23,7 +23,7 @@ const num = { textAlign: 'right' as const, fontVariantNumeric: 'tabular-nums', f
 export default function ClusterPrimaryTrucks({ date, cfa }: { date?: string; cfa?: string }) {
   const P = useOeParams();   // engine thresholds (oe_parameters) — never hardcode 90 / 65
   const descOf = useRegZskuDesc();
-  const fillClr = (p: number) => (p >= P.TRUCK_FILL_TARGET_PCT * 100 ? C.success : p >= P.TRUCK_KEEP_PCT * 100 ? C.warnText : '#B23A2E');
+  const fillClr = (p: number) => (p >= P.TRUCK_FILL_TARGET_PCT * 100 ? C.success : p >= P.TRUCK_KEEP_PCT * 100 ? C.warnText : '#A32020');
   const [data, setData] = useState<Cluster[] | null>(null);
   const [loading, setLoading] = useState(true);           // NEVER infer "in flight" from data===null: an empty cluster
   const [err, setErr] = useState<string | null>(null);    // list, or a failure, would then spin forever.
@@ -68,7 +68,7 @@ export default function ClusterPrimaryTrucks({ date, cfa }: { date?: string; cfa
             slotProps={{ transition: { unmountOnExit: true } }}
             sx={{ border: `1px solid ${C.rule}`, borderLeft: `4px solid ${C.success}`, borderRadius: `${RADIUS.sm}px`, boxShadow: SHADOW.sm, mb: 0.6, '&:before': { display: 'none' } }}>
             <AccordionSummary expandIcon={<ChevronRightIcon sx={{ fontSize: 18 }} />}
-              sx={{ flexDirection: 'row-reverse', gap: 1, px: 1.5, bgcolor: '#f6faf7',
+              sx={{ flexDirection: 'row-reverse', gap: 1, px: 1.5, bgcolor: '#F6FAF7',
                 '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': { transform: 'rotate(90deg)' },
                 '& .MuiAccordionSummary-content': { alignItems: 'center', gap: 1.25, flexWrap: 'wrap', my: 0.8 } }}>
               <LocalShippingIcon sx={{ color: C.success, fontSize: 19 }} />
@@ -76,7 +76,7 @@ export default function ClusterPrimaryTrucks({ date, cfa }: { date?: string; cfa
               <Box sx={{ fontFamily: MONO, fontSize: 12, color: C.muted }}>CFA {c.cfa} · {c.n_dbs} DB{c.n_dbs !== 1 ? 's' : ''}</Box>
               {c.channels.length > 0 && (
                 <Box component="span" title="Channel runs this cluster's DBs came from — combined across runs onto one primary truck"
-                  sx={{ px: 0.8, py: 0.2, borderRadius: 1, fontSize: 11, fontWeight: 700, bgcolor: '#eef2ff', color: C.navy }}>
+                  sx={{ px: 0.8, py: 0.2, borderRadius: 1, fontSize: 11, fontWeight: 700, bgcolor: '#F6F6F6', color: C.navy }}>
                   {c.channels.join(' + ')}{c.channels.length > 1 ? ' · cross-run' : ''}
                 </Box>
               )}
@@ -85,7 +85,7 @@ export default function ClusterPrimaryTrucks({ date, cfa }: { date?: string; cfa
                 <b style={{ color: C.success }}>{c.primary_trucks}</b> primary truck{c.primary_trucks !== 1 ? 's' : ''} · <b>{nf(c.combined_cases)}</b> cs combined · cap {nf(c.primary_cap)}
               </Box>
             </AccordionSummary>
-            <AccordionDetails sx={{ px: 1.5, pb: 1.5, pt: 0, bgcolor: '#fcfdfe' }}>
+            <AccordionDetails sx={{ px: 1.5, pb: 1.5, pt: 0, bgcolor: '#FDFDFD' }}>
               {/* member DBs combined onto the primary truck */}
               <Box sx={{ display: 'flex', gap: 0.6, flexWrap: 'wrap', my: 1 }}>
                 <Box sx={{ fontSize: 11, color: C.muted, alignSelf: 'center', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em' }}>combined DBs:</Box>

@@ -40,33 +40,33 @@ export default function CfaAccordion({ cfa, defaultOpen }: { cfa: Cfa; defaultOp
         sx={{
           flexDirection: 'row-reverse', gap: 1.25, px: 2.25,
           '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': { transform: 'rotate(90deg)' },
-          '&:hover': { bgcolor: '#f1f5f9' },
+          '&:hover': { bgcolor: '#F5F5F5' },
           '& .MuiAccordionSummary-content': { alignItems: 'center', gap: 1.5, my: 1.5, flexWrap: 'wrap' },
         }}
       >
-        <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#0F172A' }}>CFA {cfa.cfa}</Typography>
+        <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#1C1C1C' }}>CFA {cfa.cfa}</Typography>
         {/* alerts stay as colored chips — they're exceptions worth surfacing */}
         {held > 0 && (
           <Chip label={`🚫 ${held} held`} size="small"
             title={`Lanes cancelled at the ≥${pct(P.TRUCK_KEEP_PCT)}-per-truck rule — Steps 1+2 allocated then released; cases cascade to the next run`}
-            sx={{ height: 22, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#fef2f2', color: '#DC2C25' }} />
+            sx={{ height: 22, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#FEF2F2', color: '#E0301E' }} />
         )}
         {rlmApproval > 0 && (
           <Chip label={`⚠ ${rlmApproval} RLM truck approval`} size="small"
             title={`DBs whose truck is a partial (<${pct(P.TRUCK_FILL_TARGET_PCT)}) load — needs RLM sign-off before the SO is created (RLM_TRUCK_APPROVAL)`}
-            sx={{ height: 22, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#FBF1E0', color: '#D98A00' }} />
+            sx={{ height: 22, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#FBEBE0', color: '#D04A02' }} />
         )}
         {rlmSecCfa > 0 && (
           <Chip label={`⚠ ${rlmSecCfa} RLM 2nd CFA`} size="small"
             title={`DBs served <${pct(P.SO_CREATION_ORIGINAL_FLOOR_PCT)} by their own demand — the shortfall is routed to a second CFA (RLM_FOR_SECOND_CFA)`}
-            sx={{ height: 22, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#fdecea', color: '#B23A2E' }} />
+            sx={{ height: 22, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#FDECEA', color: '#A32020' }} />
         )}
         <Box sx={{ flex: 1, minWidth: 8 }} />
         {/* the numbers as a clean labeled strip */}
         <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', rowGap: 0.75 }}>
           <Metric label="DBs">{shipped}</Metric>
           {nTrucks > 0 && <Metric label="Trucks">{nTrucks}</Metric>}
-          <Metric label="Allocated" color="#0F172A">{fmt(cfa.tot)} cs</Metric>
+          <Metric label="Allocated" color="#1C1C1C">{fmt(cfa.tot)} cs</Metric>
           <Metric label="SOQ · demand">{fmt(cfa.soq)} cs</Metric>
           <Metric label="Fill" color={fillT.fg}>{fill}%</Metric>
           {atp > 0 && (

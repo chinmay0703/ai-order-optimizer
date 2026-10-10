@@ -9,10 +9,10 @@ export default function Metric({ label, tip, color, children }: {
 }) {
   return (
     <Box title={tip} sx={{ display: 'flex', flexDirection: 'column', px: 1.4, py: 0.1,
-      borderLeft: '1px solid #E8EDF3', cursor: tip ? 'help' : 'default' }}>
+      borderLeft: '1px solid #EEEEEE', cursor: tip ? 'help' : 'default' }}>
       <Box sx={{ fontSize: '0.58rem', fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase',
-        color: '#64748B', lineHeight: 1.5, whiteSpace: 'nowrap' }}>{label}</Box>
-      <Box sx={{ fontSize: '0.86rem', fontWeight: 700, color: color ?? '#1C1C1C', lineHeight: 1.25,
+        color: '#787878', lineHeight: 1.5, whiteSpace: 'nowrap' }}>{label}</Box>
+      <Box sx={{ fontSize: '0.86rem', fontWeight: 700, color: color ?? '#2D2D2D', lineHeight: 1.25,
         whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums' }}>{children}</Box>
     </Box>
   );

@@ -39,7 +39,7 @@ function BoolChip({ v }: { v: boolean }) {
   return (
     <span style={{
       fontSize: 10.5, fontWeight: 700, letterSpacing: '.03em', padding: '1px 8px', borderRadius: 999,
-      background: v ? '#E7F3E7' : '#F1F1F0', color: v ? C.green : C.muted, border: `1px solid ${v ? C.green : C.rule}`,
+      background: v ? '#E7F3E7' : '#F2F2F2', color: v ? C.green : C.muted, border: `1px solid ${v ? C.green : C.rule}`,
     }}>{v ? 'TRUE' : 'false'}</span>
   );
 }
@@ -144,7 +144,7 @@ export default function S3HandoffPage({ date }: { date?: string }) {
       ) : (
         <Box sx={{ overflow: 'auto', maxHeight: 620, border: `1px solid ${C.rule}`, borderRadius: `${RADIUS.md}px`,
           boxShadow: SHADOW.sm, background: C.white }}>
-          <style>{`.s3tbl tbody tr:hover td { background: rgba(16,54,90,0.07); }`}</style>
+          <style>{`.s3tbl tbody tr:hover td { background: rgba(45,45,45,0.07); }`}</style>
           <table className="s3tbl" style={{ borderCollapse: 'collapse', width: '100%', fontSize: 12.5 }}>
             <thead><tr>{data.columns.map((c) => (
               RZ_COLS.has(c)

@@ -566,7 +566,7 @@ export default function DrilldownPage({ date, cfa = '' }: { date?: string; cfa?:
                               <TableCell sx={{ ...num, color: C.muted }} title="Step-1 ORIGINAL of this SKU (the DB's own order)">{e.sorig.toLocaleString()}</TableCell>
                               <TableCell sx={{ ...num, color: isUncappedRoom(e.room) ? C.success : C.navy, fontWeight: 800 }} title={isUncappedRoom(e.room) ? NO_CAP_TIP : `= ⌈${mult}×Norm⌉ − On-hand − Step-1 own = room this DB has left for this substitute`}>{isUncappedRoom(e.room) ? NO_CAP_LABEL : e.room.toLocaleString()}</TableCell>
                               <TableCell sx={{ ...num, color: C.muted }} title="Shared CFA pool for this substitute, RUNNING top-to-bottom: what it saw when this line ran → what's left for the next line that wants it">
-                                {e.before.toLocaleString()}<Box component="span" sx={{ color: '#7A756D', ml: 0.4 }}>→ {e.after.toLocaleString()}</Box>
+                                {e.before.toLocaleString()}<Box component="span" sx={{ color: '#6B6B6B', ml: 0.4 }}>→ {e.after.toLocaleString()}</Box>
                               </TableCell>
                               <TableCell sx={{ ...num, color: e.alloc > 0 ? C.success : C.muted, fontWeight: 800 }}>{e.alloc || '—'}</TableCell>
                               <TableCell sx={{ fontSize: 11, color: e.reason === 'demand met' ? (e.alloc > 0 ? C.success : C.muted) : e.alloc > 0 ? C.slate : C.warnText }}>{e.reason === 'demand met' ? (e.alloc > 0 ? 'order filled ✓' : 'order already full') : e.reason}</TableCell>
@@ -630,7 +630,7 @@ export default function DrilldownPage({ date, cfa = '' }: { date?: string; cfa?:
       )}
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', borderTop: `1px solid ${C.rule}`, mt: 3, pt: 1, fontSize: 9, color: C.muted }}>
-        <span>PepsiCo AIDEN · Step-1 v2 weight-equalising fair share (functional team engine)</span>
+        <span>AI Order Optimizer · Step-1 v2 weight-equalising fair share (functional team engine)</span>
         <span>per reg-zsku · Step 1 original → Step 2 substitute</span>
       </Box>
     </Shell>

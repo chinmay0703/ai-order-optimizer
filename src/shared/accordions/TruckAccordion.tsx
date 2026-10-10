@@ -103,7 +103,7 @@ export default function TruckAccordion({ truck, cap, expanded, onToggle }: {
   const origPct = truck.origFillPct ?? null;
   const origTone = origPct == null ? null
     : origPct >= P.SO_CREATION_ORIGINAL_FLOOR_PCT * 100 ? { bg: '#E9F4EC', fg: '#21A366' }   // ≥ floor% own-demand served
-      : { bg: '#F8E9E6', fg: '#DC2C25' };                // <50% → routes to a 2nd CFA
+      : { bg: '#F8E9E6', fg: '#E0301E' };                // <50% → routes to a 2nd CFA
   const origTip = origPct == null ? ''
     : `Original ÷ SOQ = ${origPct}% — the share of this DB's SOQ served by its OWN Step-1 demand (Original). `
       + `This is the EXACT rate the SO disposition keys on: ≥${pct(P.SO_CREATION_ORIGINAL_FLOOR_PCT)} → SO_CREATION (truck ≥${pct(P.TRUCK_FILL_TARGET_PCT)}) or RLM truck approval; `
@@ -121,18 +121,18 @@ export default function TruckAccordion({ truck, cap, expanded, onToggle }: {
           flexDirection: 'row-reverse', gap: 1, px: 1.75,
           '& .MuiAccordionSummary-expandIconWrapper': { transform: 'rotate(-90deg)' },
           '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': { transform: 'rotate(0deg)' },
-          '&:hover': { bgcolor: '#f1f5f9' },
+          '&:hover': { bgcolor: '#F5F5F5' },
           '& .MuiAccordionSummary-content': { alignItems: 'center', my: 1.15, minWidth: 0 },
         }}
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.95, width: '100%', minWidth: 0 }}>
           {/* Row 1 — identity + truck / status chips */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-            <Typography sx={{ fontWeight: 700, fontVariantNumeric: 'tabular-nums', fontSize: '0.95rem', color: '#0F172A' }}>
+            <Typography sx={{ fontWeight: 700, fontVariantNumeric: 'tabular-nums', fontSize: '0.95rem', color: '#1C1C1C' }}>
               {isTracked(truck.db) ? TRACK_STAR + ' ' : ''}DB {truck.db}
             </Typography>
             {truck.name && (
-              <Typography variant="body2" sx={{ color: '#475569', fontWeight: 600, maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <Typography variant="body2" sx={{ color: '#585858', fontWeight: 600, maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {truck.name}
               </Typography>
             )}
@@ -147,28 +147,28 @@ export default function TruckAccordion({ truck, cap, expanded, onToggle }: {
             )}
             <Chip label={ntrucks === 0 ? 'held · no truck' : `🚚 ${ntrucks} truck${ntrucks > 1 ? 's' : ''}`} size="small"
               sx={{ height: 21, fontSize: '0.72rem', fontWeight: 700,
-                bgcolor: ntrucks === 0 ? '#f1f5f9' : '#eef2ff', color: ntrucks === 0 ? '#7A756D' : '#10365A' }} />
+                bgcolor: ntrucks === 0 ? '#F5F5F5' : '#F6F6F6', color: ntrucks === 0 ? '#6B6B6B' : '#2D2D2D' }} />
             {truck.truckType && (
               <Chip label={`${truck.truckType} · ${cap} cs`} size="small" title={`Truck type for this lane · ${cap} cases per truck`}
-                sx={{ height: 21, fontSize: '0.72rem', fontWeight: 600, bgcolor: '#f8fafc', color: '#1C1C1C', border: '1px solid #E5E2DB' }} />
+                sx={{ height: 21, fontSize: '0.72rem', fontWeight: 600, bgcolor: '#FAFAFA', color: '#2D2D2D', border: '1px solid #DEDEDE' }} />
             )}
             {truck.isTranship && (
               <Chip label={`▸ secondary${truck.cluster ? ` · cluster ${truck.cluster}` : ''}${truck.primaryTruckCount ? ` · ${truck.primaryTruckCount.toFixed(1)} primary` : ''}`} size="small"
                 title="Ships on the transshipment SECONDARY truck. Cluster = shared primary route; primary trucks = Σ cluster total ÷ cluster primary max (decimal, e.g. 1.3)."
-                sx={{ height: 21, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#fbf1e0', color: '#D98A00', border: '1px solid #e6d3a3' }} />
+                sx={{ height: 21, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#FBEBE0', color: '#D04A02', border: '1px solid #E6CBA3' }} />
             )}
           </Box>
           {/* Row 2 — every number as a labeled metric cell, so each value is readable for validation */}
           <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', rowGap: 1 }}>
             <Box sx={{ width: 132, mr: 1.25, flexShrink: 0 }}>
               <LinearProgress variant="determinate" value={Math.min(capPct, 100)}
-                sx={{ height: 9, borderRadius: 5, bgcolor: '#e8edf3', '& .MuiLinearProgress-bar': { bgcolor: tone.solid, borderRadius: 5 } }} />
+                sx={{ height: 9, borderRadius: 5, bgcolor: '#EEEEEE', '& .MuiLinearProgress-bar': { bgcolor: tone.solid, borderRadius: 5 } }} />
             </Box>
             {ntrucks === 0 ? (
-              <Metric label="Shipped" color="#DC2C25">held · 0 cs</Metric>
+              <Metric label="Shipped" color="#E0301E">held · 0 cs</Metric>
             ) : (
               <>
-                <Metric label="Allocated" color="#0F172A">{truck.tot} cs</Metric>
+                <Metric label="Allocated" color="#1C1C1C">{truck.tot} cs</Metric>
                 <Metric label="Truck cap" tip={`Capacity of one truck for this lane (cases). Trucks are NOT built as a flat N×cap — the engine uses the ${pct(P.TRUCK_KEEP_PCT)} floor + collapse/trim, so only the per-truck cap is shown.`}>{cap} cs</Metric>
                 <Metric label="Utilization" color={tone.fg} tip="Total allocated ÷ dispatched truck capacity">{capPct}%</Metric>
               </>
@@ -181,60 +181,60 @@ export default function TruckAccordion({ truck, cap, expanded, onToggle }: {
             )}
             <Metric label="Reg-zskus">{truck.n}</Metric>
             {drawRank > 0 && (
-              <Metric label="Filler draw" color="#D98A00" tip={seqTip}>{ordinal(drawRank)}{nRank ? ` / ${nRank}` : ''}</Metric>
+              <Metric label="Filler draw" color="#D04A02" tip={seqTip}>{ordinal(drawRank)}{nRank ? ` / ${nRank}` : ''}</Metric>
             )}
             {drawRank > 0 && (
-              <Metric label="Filler score" color="#10365A" tip={seqTip}>{fillPriority.toFixed(3)}</Metric>
+              <Metric label="Filler score" color="#2D2D2D" tip={seqTip}>{fillPriority.toFixed(3)}</Metric>
             )}
           </Box>
         </Box>
       </AccordionSummary>
-      <AccordionDetails sx={{ px: 1.25, pb: 1.25, pt: 0.75, bgcolor: '#f8fafc' }}>
+      <AccordionDetails sx={{ px: 1.25, pb: 1.25, pt: 0.75, bgcolor: '#FAFAFA' }}>
         {/* per-step allocated qty for this DB — Step 1 Original → Step 2 Substitute → Step 3 Filler = Total.
             For a dropped lane, Steps 1+2 come from the pre-drop trim; Step 3 was eliminated and nothing shipped. */}
         {dropped && (
-          <Box sx={{ px: 1.25, py: 0.85, mb: 1, bgcolor: '#fef2f2', border: '1px solid #fecaca', borderRadius: 1.5, fontSize: '0.8rem', color: '#7f1d1d' }}>
-            <b style={{ color: '#DC2C25' }}>⚠ Lane cancelled at Step 3.</b> Steps 1+2 allocated <b>{preFiller}</b> cs, but even one truck couldn&apos;t reach ≥{pct(P.TRUCK_KEEP_PCT)} — so the whole lane was <b>dropped (not shipped)</b> and this stock cascades to the next run.
+          <Box sx={{ px: 1.25, py: 0.85, mb: 1, bgcolor: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 1.5, fontSize: '0.8rem', color: '#602320' }}>
+            <b style={{ color: '#E0301E' }}>⚠ Lane cancelled at Step 3.</b> Steps 1+2 allocated <b>{preFiller}</b> cs, but even one truck couldn&apos;t reach ≥{pct(P.TRUCK_KEEP_PCT)} — so the whole lane was <b>dropped (not shipped)</b> and this stock cascades to the next run.
           </Box>
         )}
         {!dropped && cascaded > 0 && (
-          <Box sx={{ px: 1.25, py: 0.85, mb: 1, bgcolor: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 1.5, fontSize: '0.8rem', color: '#1e3a8a' }}>
-            <b style={{ color: '#10365A' }}>↷ Shipped {ntrucks} full truck{ntrucks > 1 ? 's' : ''} ({truck.tot} cs).</b> A <b>{cascaded} cs</b> overflow beyond the {ntrucks}×{cap} = {ntrucks * cap} cap couldn&apos;t fill another ≥{pct(P.TRUCK_KEEP_PCT)} truck, so only that tail <b>cascades to the next run</b> (the truck still ships at 100%).
+          <Box sx={{ px: 1.25, py: 0.85, mb: 1, bgcolor: '#F7F7F7', border: '1px solid #DEDEDE', borderRadius: 1.5, fontSize: '0.8rem', color: '#2D2D2D' }}>
+            <b style={{ color: '#2D2D2D' }}>↷ Shipped {ntrucks} full truck{ntrucks > 1 ? 's' : ''} ({truck.tot} cs).</b> A <b>{cascaded} cs</b> overflow beyond the {ntrucks}×{cap} = {ntrucks * cap} cap couldn&apos;t fill another ≥{pct(P.TRUCK_KEEP_PCT)} truck, so only that tail <b>cascades to the next run</b> (the truck still ships at 100%).
           </Box>
         )}
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center', px: 1.25, py: 1, mb: 1,
-          bgcolor: '#fff', border: '1px solid', borderColor: 'divider', borderRadius: 1.5, fontSize: '0.82rem', color: '#1C1C1C' }}>
-          <Box><span style={{ color: '#7A756D' }}>Step 1 · Original</span> <b style={{ color: '#1C1C1C' }}>{stepOrig}</b> cs</Box>
-          <span style={{ color: '#E5E2DB' }}>＋</span>
-          <Box><span style={{ color: '#7A756D' }}>Step 2 · Substitute</span> <b style={{ color: '#21A366' }}>{stepSub}</b> cs</Box>
-          <span style={{ color: '#E5E2DB' }}>＋</span>
-          <Box><span style={{ color: '#7A756D' }}>Step 3 · Filler</span> <b style={{ color: dropped ? '#DC2C25' : '#D98A00' }}>{stepFil}</b> cs{dropped ? ' · eliminated' : ''}</Box>
-          <span style={{ color: '#7A756D' }}>＝</span>
-          <Box sx={{ px: 1, py: 0.25, bgcolor: dropped ? '#fef2f2' : '#ecfdf5', borderRadius: 1 }}>
+          bgcolor: '#fff', border: '1px solid', borderColor: 'divider', borderRadius: 1.5, fontSize: '0.82rem', color: '#2D2D2D' }}>
+          <Box><span style={{ color: '#6B6B6B' }}>Step 1 · Original</span> <b style={{ color: '#2D2D2D' }}>{stepOrig}</b> cs</Box>
+          <span style={{ color: '#DEDEDE' }}>＋</span>
+          <Box><span style={{ color: '#6B6B6B' }}>Step 2 · Substitute</span> <b style={{ color: '#21A366' }}>{stepSub}</b> cs</Box>
+          <span style={{ color: '#DEDEDE' }}>＋</span>
+          <Box><span style={{ color: '#6B6B6B' }}>Step 3 · Filler</span> <b style={{ color: dropped ? '#E0301E' : '#D04A02' }}>{stepFil}</b> cs{dropped ? ' · eliminated' : ''}</Box>
+          <span style={{ color: '#6B6B6B' }}>＝</span>
+          <Box sx={{ px: 1, py: 0.25, bgcolor: dropped ? '#FEF2F2' : '#ECFDF5', borderRadius: 1 }}>
             {dropped
-              ? <><span style={{ color: '#DC2C25' }}>shipped</span> <b style={{ color: '#DC2C25' }}>0</b> cs · cancelled</>
+              ? <><span style={{ color: '#E0301E' }}>shipped</span> <b style={{ color: '#E0301E' }}>0</b> cs · cancelled</>
               : <><span style={{ color: '#21A366' }}>Total allocated</span> <b style={{ color: '#21A366' }}>{truck.tot}</b> cs</>}
           </Box>
         </Box>
         {/* truck type + capacity + how much more is required to ship (dropped) / to fill (shipped) */}
         <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', alignItems: 'center', px: 1.25, py: 0.85, mb: 1,
-          bgcolor: '#fff', border: '1px solid', borderColor: 'divider', borderRadius: 1.5, fontSize: '0.82rem', color: '#1C1C1C' }}>
-          <Box><span style={{ color: '#7A756D' }}>Truck type</span> <b style={{ color: '#1C1C1C' }}>{truck.truckType || '—'}</b></Box>
-          <span style={{ color: '#E5E2DB' }}>·</span>
-          <Box><span style={{ color: '#7A756D' }}>Capacity</span> <b style={{ color: '#1C1C1C' }}>{cap}</b> cs/truck{nBase > 1 ? ` × ${nBase} = ${nBase * cap} cs` : ''}</Box>
-          <span style={{ color: '#E5E2DB' }}>·</span>
+          bgcolor: '#fff', border: '1px solid', borderColor: 'divider', borderRadius: 1.5, fontSize: '0.82rem', color: '#2D2D2D' }}>
+          <Box><span style={{ color: '#6B6B6B' }}>Truck type</span> <b style={{ color: '#2D2D2D' }}>{truck.truckType || '—'}</b></Box>
+          <span style={{ color: '#DEDEDE' }}>·</span>
+          <Box><span style={{ color: '#6B6B6B' }}>Capacity</span> <b style={{ color: '#2D2D2D' }}>{cap}</b> cs/truck{nBase > 1 ? ` × ${nBase} = ${nBase * cap} cs` : ''}</Box>
+          <span style={{ color: '#DEDEDE' }}>·</span>
           {dropped
-            ? <Box sx={{ color: '#DC2C25', fontWeight: 700 }}>needs {moreToShip} more cs to reach {pct(P.TRUCK_KEEP_PCT)} &amp; ship</Box>
+            ? <Box sx={{ color: '#E0301E', fontWeight: 700 }}>needs {moreToShip} more cs to reach {pct(P.TRUCK_KEEP_PCT)} &amp; ship</Box>
             : ntrucks > 0
-              ? <Box><span style={{ color: '#7A756D' }}>spare room</span> <b style={{ color: '#D98A00' }}>{spareToFill}</b> cs left to fill</Box>
-              : <Box sx={{ color: '#7A756D' }}>no truck dispatched</Box>}
+              ? <Box><span style={{ color: '#6B6B6B' }}>spare room</span> <b style={{ color: '#D04A02' }}>{spareToFill}</b> cs left to fill</Box>
+              : <Box sx={{ color: '#6B6B6B' }}>no truck dispatched</Box>}
         </Box>
         {truck.clusterCombine && (() => {
           const cc = truck.clusterCombine!;
           const trimAtPrimary = Math.max(0, cc.combined_load - cc.primary_ships);
           return (
-            <Box sx={{ px: 1.25, py: 1, mb: 1, bgcolor: '#fdf6e3', border: '1px solid #E7D9B0', borderLeft: '3px solid #D98A00', borderRadius: 1.5, fontSize: '0.8rem', color: '#1C1C1C' }}>
-              <Box sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em', fontSize: '0.68rem', color: '#8A5A00', mb: 0.5 }}>
+            <Box sx={{ px: 1.25, py: 1, mb: 1, bgcolor: '#FDEDE3', border: '1px solid #E7D1B0', borderLeft: '3px solid #D04A02', borderRadius: 1.5, fontSize: '0.8rem', color: '#2D2D2D' }}>
+              <Box sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em', fontSize: '0.68rem', color: '#8A3A0C', mb: 0.5 }}>
                 ▸ Cluster {cc.code} primary truck · combine view (visualization)
               </Box>
               <Box sx={{ mb: 0.5 }}>
@@ -243,15 +243,15 @@ export default function TruckAccordion({ truck, cap, expanded, onToggle }: {
                 those secondary trucks), and its capacity is what caps the shipment:
               </Box>
               <Box sx={{ fontFamily: 'monospace', display: 'flex', flexWrap: 'wrap', gap: 0.75, alignItems: 'center' }}>
-                <span>cluster combined <b>{cc.combined_load}</b> cs</span><span style={{ color: '#B0A88F' }}>÷</span>
-                <span>primary cap <b>{cc.primary_cap}</b></span><span style={{ color: '#B0A88F' }}>=</span>
+                <span>cluster combined <b>{cc.combined_load}</b> cs</span><span style={{ color: '#9E9E9E' }}>÷</span>
+                <span>primary cap <b>{cc.primary_cap}</b></span><span style={{ color: '#9E9E9E' }}>=</span>
                 <span style={{ color: '#21A366', fontWeight: 800 }}>{cc.primary_trucks} full primary truck{cc.primary_trucks === 1 ? '' : 's'}</span>
-                <span style={{ color: '#B0A88F' }}>→ ships</span><span style={{ fontWeight: 800 }}>{cc.primary_ships} cs</span>
-                {trimAtPrimary > 0 && <span style={{ color: '#D98A00', fontWeight: 800 }}>· trim {trimAtPrimary} cs at cluster level</span>}
+                <span style={{ color: '#9E9E9E' }}>→ ships</span><span style={{ fontWeight: 800 }}>{cc.primary_ships} cs</span>
+                {trimAtPrimary > 0 && <span style={{ color: '#D04A02', fontWeight: 800 }}>· trim {trimAtPrimary} cs at cluster level</span>}
               </Box>
               {cc.db_trimmed > 0 && (
                 <Box sx={{ mt: 0.5 }}>
-                  This DB: secondary built <b>{cc.db_sec_built}</b> → <b style={{ color: '#D98A00' }}>−{cc.db_trimmed}</b> (its share of the cluster trim) → ships <b style={{ color: '#21A366' }}>{cc.db_ships}</b> cs.
+                  This DB: secondary built <b>{cc.db_sec_built}</b> → <b style={{ color: '#D04A02' }}>−{cc.db_trimmed}</b> (its share of the cluster trim) → ships <b style={{ color: '#21A366' }}>{cc.db_ships}</b> cs.
                 </Box>
               )}
               <Box sx={{ mt: 0.5, fontWeight: 700, color: '#21A366' }}>
@@ -261,13 +261,13 @@ export default function TruckAccordion({ truck, cap, expanded, onToggle }: {
           );
         })()}
         <Section title="reg-zsku level" count={truck.lines.length}
-          color="#10365A" tint="#eff6ff" defaultOpen
+          color="#2D2D2D" tint="#F7F7F7" defaultOpen
           subtitle={truck.clusterCombine ? 'final (post-trim) shipped cases on the secondary truck — after the cluster primary combine' : undefined}>
           <LineTable lines={truck.lines} />
         </Section>
         {(truck.filler_calc?.length ?? 0) > 0 && (
           <Section title="filler fill · how each is calculated" count={truck.filler_calc!.length}
-            color="#10365A" tint="#eef2ff"
+            color="#2D2D2D" tint="#F6F6F6"
             subtitle={`${truck.filler_calc!.filter((f) => f.alloc > 0).length} filled · spare truck room, no solver`}>
             <FillerTable rows={truck.filler_calc!} />
           </Section>
@@ -285,7 +285,7 @@ export default function TruckAccordion({ truck, cap, expanded, onToggle }: {
           return (
           <Section key={ld.no} title={`Truck ${ld.no} · ${ld.truckid}`}
             subtitle={sub}
-            count={ld.skus.length} color="#D98A00" tint="#fdf6e3" defaultOpen={ld.no === 1}
+            count={ld.skus.length} color="#D04A02" tint="#FDEDE3" defaultOpen={ld.no === 1}
             extra={showSoFlag ? <Chip label={soLabel} size="small"
               sx={{ height: 18, fontSize: '0.62rem', fontWeight: 700, letterSpacing: '.02em',
                 bgcolor: soTone.bg, color: soTone.fg, border: `1px solid ${soTone.border}` }} /> : undefined}>

@@ -17,7 +17,7 @@ export default function CfaSelect({
       <Box component="span" sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: C.muted }}>{label}</Box>
       <Box component="select" value={value} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onChange(e.target.value)}
         title="Scope this page to one CFA"
-        sx={{ fontSize: 14, fontWeight: 800, color: '#10365A', background: C.white, border: `1.5px solid ${C.navy}`,
+        sx={{ fontSize: 14, fontWeight: 800, color: '#2D2D2D', background: C.white, border: `1.5px solid ${C.navy}`,
           borderRadius: '8px', px: 1.25, py: 0.6, cursor: 'pointer', fontFamily: SANS, outline: 'none' }}>
         {allowAll && <option value="">{allLabel}</option>}
         {cfas.map((c) => <option key={c} value={c}>CFA {c}</option>)}

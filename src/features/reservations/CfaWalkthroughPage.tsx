@@ -41,22 +41,22 @@ function upcomingDays(todayIso: string, n: number) {
 const cell = { py: 0.4, px: 1, fontSize: '0.72rem', whiteSpace: 'nowrap' as const };
 const YesNo = ({ v }: { v: boolean }) => (
   <Chip size="small" label={v ? 'Yes' : 'No'} sx={{ height: 18, fontSize: '0.62rem', fontWeight: 700,
-    bgcolor: v ? '#dcfce7' : '#f1f5f9', color: v ? '#15803d' : '#7A756D' }} />
+    bgcolor: v ? '#DCFCE7' : '#F5F5F5', color: v ? '#15803D' : '#6B6B6B' }} />
 );
 
 function Section({ n, title, desc, count, children }: { n: number; title: string; desc: string; count?: string; children: ReactNode }) {
   return (
     <Paper variant="outlined" sx={{ mb: 2, overflow: 'hidden' }}>
-      <Box sx={{ px: 2, py: 1.25, bgcolor: '#f8fafc', borderBottom: '1px solid #E5E2DB' }}>
+      <Box sx={{ px: 2, py: 1.25, bgcolor: '#FAFAFA', borderBottom: '1px solid #DEDEDE' }}>
         <Stack direction="row" spacing={1.5} alignItems="flex-start">
-          <Box sx={{ width: 26, height: 26, borderRadius: '50%', bgcolor: '#10365A', color: '#fff', mt: 0.25,
+          <Box sx={{ width: 26, height: 26, borderRadius: '50%', bgcolor: '#2D2D2D', color: '#fff', mt: 0.25,
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.78rem', flexShrink: 0 }}>{n}</Box>
           <Box sx={{ flex: 1 }}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <Typography sx={{ fontWeight: 800, fontSize: '0.92rem' }}>{title}</Typography>
-              {count && <Chip size="small" label={count} sx={{ bgcolor: '#e0e7ff', color: '#10365A', fontWeight: 700, fontSize: '0.64rem' }} />}
+              {count && <Chip size="small" label={count} sx={{ bgcolor: '#F0F0F0', color: '#2D2D2D', fontWeight: 700, fontSize: '0.64rem' }} />}
             </Stack>
-            <Typography sx={{ fontSize: '0.72rem', color: '#1C1C1C', mt: 0.25 }}>{desc}</Typography>
+            <Typography sx={{ fontSize: '0.72rem', color: '#2D2D2D', mt: 0.25 }}>{desc}</Typography>
           </Box>
         </Stack>
       </Box>
@@ -72,7 +72,7 @@ function Collapsible({ label, children }: { label: string; children: ReactNode }
     <Box>
       <Box onClick={() => setOpen((o) => !o)}
         sx={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 0.25, py: 0.5,
-          color: '#10365A', fontWeight: 700, fontSize: '0.74rem', userSelect: 'none' }}>
+          color: '#2D2D2D', fontWeight: 700, fontSize: '0.74rem', userSelect: 'none' }}>
         {open ? <ExpandMoreIcon fontSize="small" /> : <ChevronRightIcon fontSize="small" />}
         {open ? 'Hide' : label}
       </Box>
@@ -82,14 +82,14 @@ function Collapsible({ label, children }: { label: string; children: ReactNode }
 }
 
 const Stat = ({ label, value, hi }: { label: string; value: string | number; hi?: boolean }) => (
-  <Box sx={{ px: 1.5, py: 0.75, border: '1px solid #E5E2DB', borderRadius: 1, minWidth: 130, bgcolor: hi ? '#eff6ff' : '#fff' }}>
-    <Typography sx={{ fontSize: '0.6rem', color: '#7A756D', textTransform: 'uppercase', letterSpacing: '.03em' }}>{label}</Typography>
-    <Typography sx={{ fontWeight: 800, fontSize: '1.05rem', color: hi ? '#10365A' : '#0f172a' }}>{value}</Typography>
+  <Box sx={{ px: 1.5, py: 0.75, border: '1px solid #DEDEDE', borderRadius: 1, minWidth: 130, bgcolor: hi ? '#F7F7F7' : '#fff' }}>
+    <Typography sx={{ fontSize: '0.6rem', color: '#6B6B6B', textTransform: 'uppercase', letterSpacing: '.03em' }}>{label}</Typography>
+    <Typography sx={{ fontWeight: 800, fontSize: '1.05rem', color: hi ? '#2D2D2D' : '#1C1C1C' }}>{value}</Typography>
   </Box>
 );
 
 function Head({ cols }: { cols: string[] }) {
-  return <TableHead><TableRow sx={{ '& th': { fontWeight: 700, bgcolor: '#F1F1F0', color: '#7A756D', textTransform: 'uppercase', letterSpacing: '.04em', ...cell } }}>
+  return <TableHead><TableRow sx={{ '& th': { fontWeight: 700, bgcolor: '#F2F2F2', color: '#6B6B6B', textTransform: 'uppercase', letterSpacing: '.04em', ...cell } }}>
     {cols.map((c, i) => <TableCell key={c} align={i === 0 || c === 'Description' ? 'left' : 'right'}>{c}</TableCell>)}
   </TableRow></TableHead>;
 }
@@ -161,14 +161,14 @@ export default function CfaWalkthroughPage({ date }: { date?: string }) {
       </Stack>
 
       {/* Run 1 banner */}
-      <Paper variant="outlined" sx={{ p: 1.5, mb: 2, bgcolor: '#eff6ff', borderColor: '#bfdbfe' }}>
+      <Paper variant="outlined" sx={{ p: 1.5, mb: 2, bgcolor: '#F7F7F7', borderColor: '#DEDEDE' }}>
         <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap" useFlexGap>
           <Chip label={`RUN ${r.run_no}`} color="primary" sx={{ fontWeight: 800 }} />
           <Typography sx={{ fontWeight: 700 }}>{r.channel} · Band {r.band} ({r.band_desc}) · {r.pct}% reserved</Typography>
           <Box sx={{ flex: 1 }} />
-          <Typography sx={{ fontSize: '0.74rem', color: '#1C1C1C' }}>run day <b>{d.weekday} {d.run_day}</b></Typography>
+          <Typography sx={{ fontSize: '0.74rem', color: '#2D2D2D' }}>run day <b>{d.weekday} {d.run_day}</b></Typography>
         </Stack>
-        <Typography sx={{ fontSize: '0.72rem', color: '#1C1C1C', mt: 0.75 }}>
+        <Typography sx={{ fontSize: '0.72rem', color: '#2D2D2D', mt: 0.75 }}>
           Run {r.run_no} allocates {r.pct}% of stock to the <b>{r.channel}</b> channel for <b>Band {r.band}</b> reg-zskus (<b>{r.band_desc}</b> — e.g.
           MRP {r.band_mrps.slice(0, 6).map((m) => `₹${m}`).join(', ')}…). Only {r.channel} DBs and Band-{r.band} reg-zskus are considered here.
         </Typography>
@@ -209,8 +209,8 @@ export default function CfaWalkthroughPage({ date }: { date?: string }) {
                   <TableCell align="right">
                     <Chip size="small" label={x.valid_via}
                       sx={{ height: 18, fontSize: '0.62rem', fontWeight: 700,
-                        bgcolor: x.valid_via === 'PDP' ? '#dbeafe' : x.valid_via === 'below-threshold' ? '#FBF4E1' : '#fee2e2',
-                        color: x.valid_via === 'PDP' ? '#10365A' : x.valid_via === 'below-threshold' ? '#b45309' : '#DC2C25' }} />
+                        bgcolor: x.valid_via === 'PDP' ? '#ECECEC' : x.valid_via === 'below-threshold' ? '#FBEBE1' : '#FEE2E2',
+                        color: x.valid_via === 'PDP' ? '#2D2D2D' : x.valid_via === 'below-threshold' ? '#A33A02' : '#E0301E' }} />
                   </TableCell>
                 </TableRow>
               ))}
@@ -235,7 +235,7 @@ export default function CfaWalkthroughPage({ date }: { date?: string }) {
                   <TableCell align="right">{x.mrp != null ? `₹${x.mrp}` : '—'}</TableCell>
                   <TableCell align="right">{fmt(x.stock)}</TableCell>
                   <TableCell align="right">{fmt(x.earmark)}</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 700, color: '#10365A' }}>{fmt(x.cap)}</TableCell>
+                  <TableCell align="right" sx={{ fontWeight: 700, color: '#2D2D2D' }}>{fmt(x.cap)}</TableCell>
                   <TableCell align="right" sx={{ color: '#21A366' }}>{fmt(x.remaining_after)}</TableCell>
                 </TableRow>
               ))}
@@ -265,7 +265,7 @@ export default function CfaWalkthroughPage({ date }: { date?: string }) {
                     <Tooltip title={`threshold = ${x.threshold_cases} cs (${thrPct}% of Norm)`}><span><YesNo v={x.below_threshold} /></span></Tooltip>
                   </TableCell>
                   <TableCell align="right" sx={{ fontWeight: 700 }}>{fmt(x.soq)}</TableCell>
-                  <TableCell align="right" sx={{ color: '#10365A' }}>{fmt(x.max_norm)}</TableCell>
+                  <TableCell align="right" sx={{ color: '#2D2D2D' }}>{fmt(x.max_norm)}</TableCell>
                   <TableCell align="right"><YesNo v={x.pdp_today} /></TableCell>
                 </TableRow>
               ))}

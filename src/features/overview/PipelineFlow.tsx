@@ -1,25 +1,28 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, Typography } from '@mui/material';
-import mermaid from 'mermaid';
+// mermaid (~2 MB with its diagram chunks) is NOT bundled: it is fetched from the jsDelivr CDN the first time this
+// diagram renders, so the deployed site stays small. Pinned to the exact version the (dev-only) types come from.
+type Mermaid = typeof import('mermaid').default;
+const MERMAID_URL = 'https://cdn.jsdelivr.net/npm/mermaid@11.16.0/dist/mermaid.esm.min.mjs';
 import { C, SERIF } from '../../theme/pdartTokens';
 import { EmptyState, ErrorState, PageSkeleton } from '../../shared/LoadState';
 import { useOeParams, pct, type OeParams } from '../../shared/OeParams';
 
-/* Interactive pan + zoom render of the ATOM-OER pipeline — the CURRENT flow (api/production.py _execute_run →
+/* Interactive pan + zoom render of the allocation pipeline — the CURRENT flow (api/production.py _execute_run →
    services.cfa_runner → services.allocation.run per CFA → secondary-CFA shift → RLM rollup), checked against develop.
    Drag the canvas to pan, mouse-wheel or the +/- buttons to zoom, Fit to frame it. */
 const buildDiagram = (P: OeParams) => `flowchart TD
-  classDef s3   fill:#FBF1E0,stroke:#D98A00,color:#7a4d00;
-  classDef pg   fill:#EAF0F8,stroke:#10365A,color:#10365A;
-  classDef proc fill:#FFFFFF,stroke:#D98A00,color:#1C1C1C,stroke-width:1.4px;
-  classDef out  fill:#E9F4EC,stroke:#21A366,color:#14532d;
-  classDef gate fill:#F4F3F1,stroke:#7A756D,color:#1C1C1C;
+  classDef s3   fill:#FBEBE0,stroke:#D04A02,color:#8A3A0C;
+  classDef pg   fill:#F1F1F1,stroke:#2D2D2D,color:#2D2D2D;
+  classDef proc fill:#FFFFFF,stroke:#D04A02,color:#2D2D2D,stroke-width:1.4px;
+  classDef out  fill:#E9F4EC,stroke:#21A366,color:#14532D;
+  classDef gate fill:#F6F6F6,stroke:#6B6B6B,color:#2D2D2D;
 
   RUN{{"0 · RUN · run date = TODAY (IST) · data date = the SOQ date picked<br/>lock the run date · re-read oe_parameters · clear today's outputs + SAP orders"}}:::gate
 
   subgraph SRC["1 · S3 SOURCES (fetched for the data date)"]
     direction TB
-    S3M[("S3 · 13 MASTERS (full loads, in parallel)<br/>db_master · material_master · network_master · truck_master<br/>substitution_master · filler_master (latest load) · transhipment_master<br/>plant_master · lead_time_master · db_tier · region_sku_master<br/>aiden_brand_material_master · pdp_master")]:::s3
+    S3M[("S3 · 13 MASTERS (full loads, in parallel)<br/>db_master · material_master · network_master · truck_master<br/>substitution_master · filler_master (latest load) · transhipment_master<br/>plant_master · lead_time_master · db_tier · region_sku_master<br/>brand_material_master · pdp_master")]:::s3
     S3SOQ[("S3 · soq @data date<br/>demand + gate FLAGS · DB on-hand + in-transit")]:::s3
     S3DRR[("S3 · OE_DAILY_RUN_RATE @data date<br/>DRR = L3M primary cases ÷ 90")]:::s3
     S3CI[("S3 · cfa_inventory @data date<br/>batch level, expiry (FEFO source)")]:::s3
@@ -47,7 +50,7 @@ const buildDiagram = (P: OeParams) => `flowchart TD
   SCOPE --> tDI[("db_inventory @today<br/>SOH = on-hand + in-transit")]:::pg
 
   tFSOQ --> SCPM["3 · PRE-FILTER · build_soq_scoped_masters()<br/>slice the sub/filler masters to the demanded CFA × DB"]:::proc
-  SCPM --> tSDS[("soq_db_substitution<br/>CFA × DB × exact MRP × AIDEN category")]:::pg
+  SCPM --> tSDS[("soq_db_substitution<br/>CFA × DB × exact MRP × brand category")]:::pg
   SCPM --> tSDF[("soq_db_filler<br/>CFA × DB ranked fillers, any MRP")]:::pg
   S3SCR --> SCRL["load_sub_channel_reservation(run date)"]:::proc
   SCRL --> tSCR[("sub_channel_reservation<br/>DATE-WISE: one row-set per run date + source_run_date")]:::pg
@@ -63,8 +66,8 @@ const buildDiagram = (P: OeParams) => `flowchart TD
     RES["5b · Reserve CFA stock<br/>reserved = pool × band % (% for the run date, latest stored if missing)"]:::proc
     tCI -.pool per reg-zsku.-> RES
     tSCR -.channel × band %.-> RES
-    tMAST -.MRP · AIDEN category.-> RES
-    RES --> tCR[("cfa_reservation<br/>physical · reserved · reservation_pct · aiden_category")]:::out
+    tMAST -.MRP · brand category.-> RES
+    RES --> tCR[("cfa_reservation<br/>physical · reserved · reservation_pct · brand_category")]:::out
 
     INTK["5c · Intake<br/>demand · SOH · ${P.NORM_MULTIPLIER}×Norm room (Non-PACE uncapped)<br/>DRR + RF (PDP freq) · tier · subs · fillers · truck caps · clusters"]:::proc
     tDI -.SOH.-> INTK
@@ -79,7 +82,7 @@ const buildDiagram = (P: OeParams) => `flowchart TD
     CAS["5d · CASCADE · Run 1 Non-PACE → 2 Hub &amp; Spoke → 3 AFH → 4 Retail<br/>leftover stock carries forward"]:::proc
 
     CAS --> S1["5e-1 · STEP 1 Original · DRR × RF fair share<br/>Floor first · common level λ (bisection) · whole cases"]:::proc
-    S1 --> S2["5e-2 · STEP 2 Substitute<br/>exact MRP + AIDEN category · neediest first · ${P.NORM_MULTIPLIER}×Norm / ${pct(P.ADDON_CAP_PCT)}"]:::proc
+    S1 --> S2["5e-2 · STEP 2 Substitute<br/>exact MRP + brand category · neediest first · ${P.NORM_MULTIPLIER}×Norm / ${pct(P.ADDON_CAP_PCT)}"]:::proc
     S2 --> S3S["5e-3 · STEP 3 Filler + Truck<br/>fill to ${pct(P.TRUCK_FILL_TARGET_PCT)} · ${pct(P.TRUCK_KEEP_PCT)} truck floor · tail trim / lane drop"]:::proc
     S3S --> CTR["5f · Cluster primary trim (after ALL channel runs)<br/>transshipment clusters · ${pct(P.TRUCK_KEEP_PCT)} primary floor"]:::proc
     CTR --> PERS["5g · persist outputs"]:::proc
@@ -129,15 +132,20 @@ const buildDiagram = (P: OeParams) => `flowchart TD
   RSHF --> BORD
   ROLL -.is_active supersede.-> tORD`;
 
-let inited = false;
-function initMermaid() {
-  if (inited) return;
-  mermaid.initialize({
-    startOnLoad: false, securityLevel: 'loose', theme: 'base',
-    themeVariables: { fontFamily: "'Inter','Segoe UI',system-ui,sans-serif", fontSize: '13px', lineColor: '#7A756D' },
-    flowchart: { htmlLabels: false, curve: 'basis', nodeSpacing: 45, rankSpacing: 55 },
-  });
-  inited = true;
+let mermaidP: Promise<Mermaid> | null = null;
+function loadMermaid(): Promise<Mermaid> {
+  if (!mermaidP) {
+    mermaidP = (import(/* @vite-ignore */ MERMAID_URL) as Promise<{ default: Mermaid }>).then(({ default: mermaid }) => {
+      mermaid.initialize({
+        startOnLoad: false, securityLevel: 'loose', theme: 'base',
+        themeVariables: { fontFamily: "'Inter','Segoe UI',system-ui,sans-serif", fontSize: '13px', lineColor: '#6B6B6B' },
+        flowchart: { htmlLabels: false, curve: 'basis', nodeSpacing: 45, rankSpacing: 55 },
+      });
+      return mermaid;
+    });
+    mermaidP.catch(() => { mermaidP = null; });   // offline / CDN hiccup → the Retry button can try again
+  }
+  return mermaidP;
 }
 
 const clampK = (k: number) => Math.min(4, Math.max(0.12, k));
@@ -156,9 +164,8 @@ export default function PipelineFlow() {
 
   useEffect(() => {
     let alive = true;
-    initMermaid();
     setErr(''); setLoading(true);
-    mermaid.render('atom-pipeline-svg', diagram)
+    loadMermaid().then((mermaid) => mermaid.render('atom-pipeline-svg', diagram))
       .then(({ svg }) => {
         if (!alive) return;
         // mermaid sizes the svg ONLY via `style="max-width:…"`. Overriding that leaves the svg at the tiny
@@ -221,13 +228,13 @@ export default function PipelineFlow() {
       const cv = document.createElement('canvas');
       cv.width = dim.w * scale; cv.height = dim.h * scale;
       const ctx = cv.getContext('2d'); if (!ctx) return;
-      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, cv.width, cv.height);
+      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, cv.width, cv.height);
       ctx.drawImage(img, 0, 0, cv.width, cv.height);
       cv.toBlob((blob) => {
         if (!blob) return;
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url; a.download = 'atom-oer-pipeline.png';
+        a.href = url; a.download = 'ai-order-optimizer-pipeline.png';
         document.body.appendChild(a); a.click(); a.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1500);
       }, 'image/png');
@@ -250,7 +257,7 @@ export default function PipelineFlow() {
         Drag to pan · scroll to zoom · use the controls to zoom / fit. Every box names its code function; every cylinder is a real table.
       </Typography>
 
-      <Box sx={{ position: 'relative', border: `1px solid ${C.rule}`, borderRadius: 1.5, bgcolor: '#FAFAF8', overflow: 'hidden', boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.02)' }}>
+      <Box sx={{ position: 'relative', border: `1px solid ${C.rule}`, borderRadius: 1.5, bgcolor: '#FAF9F8', overflow: 'hidden', boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.02)' }}>
         {/* controls */}
         <Box sx={{ position: 'absolute', top: 10, right: 10, zIndex: 5, display: 'flex', flexDirection: 'column', gap: 0.6 }}>
           <Box sx={BtnCss} title="Zoom in" onClick={() => zoom(1.2)}>+</Box>

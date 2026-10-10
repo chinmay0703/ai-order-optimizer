@@ -21,8 +21,8 @@ interface Row {
 interface Data { date: string; cols: string[]; rows: Row[]; regzskus: string[]; shipped: Record<string, number>; }
 
 const N = (v: number) => (v ?? 0).toLocaleString();
-const C = { navy: '#10365A', gold: '#D98A00', green: '#21A366', slate: '#1C1C1C', muted: '#7A756D',
-  cream: '#F4F3F1', border: '#E5E2DB', amber: '#D98A00' };
+const C = { navy: '#2D2D2D', gold: '#D04A02', green: '#21A366', slate: '#2D2D2D', muted: '#6B6B6B',
+  cream: '#F6F6F6', border: '#DEDEDE', amber: '#D04A02' };
 
 // a single node of the end-to-end flow strip
 function FlowStat({ label, value, sub, hue, strong }: { label: string; value: number; sub?: string; hue: string; strong?: boolean }) {
@@ -153,13 +153,13 @@ export default function CfaStockLedgerPage({ date, embedded }: { date?: string; 
           <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
             <Chip size="small" icon={shipOk ? <CheckCircleIcon /> : <WarningIcon />}
               label={shipOk ? 'shipped = allocated' : `shipped ${N(flow.shipped)} ≠ allocated ${N(flow.allocated)}`}
-              sx={{ bgcolor: shipOk ? '#E9F4EC' : '#FBF1E0', color: shipOk ? C.green : C.amber, fontWeight: 700, '& .MuiChip-icon': { color: shipOk ? C.green : C.amber } }} />
+              sx={{ bgcolor: shipOk ? '#E9F4EC' : '#FBEBE0', color: shipOk ? C.green : C.amber, fontWeight: 700, '& .MuiChip-icon': { color: shipOk ? C.green : C.amber } }} />
             <Chip size="small" icon={capOk ? <CheckCircleIcon /> : <WarningIcon />}
               label={capOk ? 'allocated ≤ physical' : 'allocated > physical'}
-              sx={{ bgcolor: capOk ? '#E9F4EC' : '#F8E9E6', color: capOk ? C.green : '#DC2C25', fontWeight: 700, '& .MuiChip-icon': { color: capOk ? C.green : '#DC2C25' } }} />
+              sx={{ bgcolor: capOk ? '#E9F4EC' : '#F8E9E6', color: capOk ? C.green : '#E0301E', fontWeight: 700, '& .MuiChip-icon': { color: capOk ? C.green : '#E0301E' } }} />
             <Chip size="small" icon={flow.reserved <= flow.physical ? <CheckCircleIcon /> : <WarningIcon />}
               label={flow.reserved <= flow.physical ? 'reserved ≤ physical' : `reserved ${N(flow.reserved)} > physical ${N(flow.physical)}`}
-              sx={{ bgcolor: flow.reserved <= flow.physical ? '#E9F4EC' : '#F8E9E6', color: flow.reserved <= flow.physical ? C.green : '#DC2C25', fontWeight: 700, '& .MuiChip-icon': { color: flow.reserved <= flow.physical ? C.green : '#DC2C25' } }} />
+              sx={{ bgcolor: flow.reserved <= flow.physical ? '#E9F4EC' : '#F8E9E6', color: flow.reserved <= flow.physical ? C.green : '#E0301E', fontWeight: 700, '& .MuiChip-icon': { color: flow.reserved <= flow.physical ? C.green : '#E0301E' } }} />
           </Stack>
 
           <Typography sx={{ fontSize: 13, fontWeight: 700, color: C.navy, mb: 0.75 }}>Channel cascade — {sel} @ CFA {selCfa} · how the {N(flow.physical)} cases flow run by run</Typography>
@@ -217,7 +217,7 @@ export default function CfaStockLedgerPage({ date, embedded }: { date?: string; 
             </TableHead>
             <TableBody>
               {fullRows.slice(0, 800).map((r, i) => (
-                <TableRow key={i} hover sx={{ bgcolor: String(r.reg_zsku) === sel ? '#EAF0F8' : '#fff' }}>
+                <TableRow key={i} hover sx={{ bgcolor: String(r.reg_zsku) === sel ? '#F1F1F1' : '#fff' }}>
                   {cols.map((c) => {
                     const v = r[c];
                     const cell = <TableCell key={c} align={typeof v === 'number' ? 'right' : 'left'} sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>{typeof v === 'number' ? N(v) : typeof v === 'boolean' ? (v ? 'true' : '') : String(v ?? '')}</TableCell>;

@@ -163,7 +163,7 @@ function TruckBar({ truck, cases, capacity, fillPct, soFlag, keep, fill, belowOk
         <Box sx={{ px: 0.9, py: 0.2, borderRadius: 999, bgcolor: isSo ? C.successLight : hue === C.alertRed ? C.redP : C.warnLight,
           color: isSo ? C.success : hue, fontSize: 9.5, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{badge}</Box>
       </Box>
-      <Box sx={{ position: 'relative', height: 26, bgcolor: '#F1F1F0', border: `1px solid ${C.rule}`, borderRadius: `${RADIUS.sm}px`,
+      <Box sx={{ position: 'relative', height: 26, bgcolor: '#F2F2F2', border: `1px solid ${C.rule}`, borderRadius: `${RADIUS.sm}px`,
         overflow: 'hidden', boxShadow: 'inset 0 1px 2px rgb(0 0 0 / 0.06)' }}>
         <Box sx={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: `${Math.min(100, Math.max(0, fr))}%`,
           background: `linear-gradient(180deg, ${hue}, ${hue}CC)`, borderRight: fr < 100 ? `2px solid ${hue}` : 'none', transition: 'width .45s ease' }}>
@@ -271,7 +271,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.3 }}>
         <Typography sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 26, color: C.navy }}>Filler Sequence</Typography>
         <IconButton size="small" onClick={() => setHelpOpen(true)} title="How the Filler Sequence works"
-          sx={{ color: C.gold, border: `1px solid ${C.goldLight}`, bgcolor: '#FCF8EE', '&:hover': { bgcolor: '#FBF1DC', borderColor: C.gold } }}>
+          sx={{ color: C.gold, border: `1px solid ${C.goldLight}`, bgcolor: '#FCF4EE', '&:hover': { bgcolor: '#FBE8DC', borderColor: C.gold } }}>
           <HelpOutlineIcon sx={{ fontSize: 19 }} />
         </IconButton>
         <Box component="span" sx={{ fontSize: 11.5, color: C.muted }}>how it works</Box>
@@ -291,15 +291,15 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
       </Box>
       <Dialog open={helpOpen} onClose={() => setHelpOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: `${RADIUS.md}px`, overflow: 'hidden', border: `1px solid ${C.goldLight}` } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, color: '#fff',
-          background: 'linear-gradient(135deg, #E7A93A 0%, #D98A00 55%, #C67D00 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)' }}>
+          background: 'linear-gradient(135deg, #EB8C00 0%, #D04A02 55%, #B33F02 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)' }}>
           <HelpOutlineIcon sx={{ fontSize: 20 }} />
           <Box sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 17 }}>How the Filler Sequence works</Box>
           <Box sx={{ flex: 1 }} />
           <IconButton onClick={() => setHelpOpen(false)} size="small" aria-label="close" sx={{ color: '#fff', '&:hover': { bgcolor: 'rgba(255,255,255,0.18)' } }}><CloseIcon sx={{ fontSize: 20 }} /></IconButton>
         </Box>
-        <Box sx={{ p: 2.75, color: C.slate, bgcolor: '#FCFAF4', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
+        <Box sx={{ p: 2.75, color: C.slate, bgcolor: '#FCF7F4', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
           {/* the goal */}
-          <Box sx={{ p: '11px 13px', borderRadius: `${RADIUS.sm}px`, bgcolor: '#FCF8EE', border: `1px solid ${C.goldLight}`, borderLeft: `3px solid ${C.gold}` }}>
+          <Box sx={{ p: '11px 13px', borderRadius: `${RADIUS.sm}px`, bgcolor: '#FCF4EE', border: `1px solid ${C.goldLight}`, borderLeft: `3px solid ${C.gold}` }}>
             <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.gold, mb: 0.5 }}>🎯 The goal</Box>
             <Box sx={{ fontSize: 13, lineHeight: 1.55 }}>Ship the <b>fewest trucks</b>, add the <b>least filler</b>, leave the <b>least in RLM</b>. Step 3 tops each lane's trucks up with filler, then builds them to do exactly that.</Box>
           </Box>
@@ -368,7 +368,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
         {q && <Box onClick={() => setQ('')} title="Clear the search field"
           sx={{ cursor: 'pointer', px: 1.5, py: 0.6, fontSize: 13, fontWeight: 700, borderRadius: `${RADIUS.sm}px`, border: `1px solid ${C.rule}`, bgcolor: '#fff', color: C.muted, '&:hover': { borderColor: C.navy, color: C.navy } }}>✕ Clear</Box>}
         <Box sx={{ fontSize: 12.5, color: C.muted }}>
-          <b style={{ color: C.navy }}>{visibleDbs.length}</b>{q.trim() ? ` / ${dbs.length}` : ''} DBs · <b style={{ color: C.success }}>{shipped}</b> shipped · <b style={{ color: '#DC2C25' }}>{dropped}</b> dropped
+          <b style={{ color: C.navy }}>{visibleDbs.length}</b>{q.trim() ? ` / ${dbs.length}` : ''} DBs · <b style={{ color: C.success }}>{shipped}</b> shipped · <b style={{ color: '#E0301E' }}>{dropped}</b> dropped
           <Box component="span" sx={{ ml: 0.75, color: C.gold, fontWeight: 700 }}>· click a DB → detail opens on the right</Box>
         </Box>
         <ExportXlsxButton label="Export Excel" onClick={() => downloadXlsx('filler_sequence',
@@ -382,7 +382,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
         const inCluster = !!ct;                                       // this DB belongs to a transshipment cluster
         const hasClusterTrim = !!ct && ct.trimmed > 0;               // a real cluster primary-truck trim landed on this DB
         const st = d.dropped
-          ? { label: 'dropped', bg: '#F8E9E6', fg: '#DC2C25' }
+          ? { label: 'dropped', bg: '#F8E9E6', fg: '#E0301E' }
           : d.filler > 0 ? { label: 'filled', bg: C.successLight, fg: C.success }
             : d.total > 0 ? { label: 'shipped · no filler', bg: C.navyP, fg: C.navy }
               : { label: 'no fill', bg: C.grayP, fg: C.muted };
@@ -404,7 +404,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
               {inCluster && (
                 <Box component="span" title={`Transshipment / cluster DB — ships via cluster ${ct!.cluster_code}'s shared primary trucks`}
                   sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.3, px: 0.85, py: 0.2, borderRadius: 999, bgcolor: C.navyP,
-                    color: C.navy, fontSize: 10, fontWeight: 800, letterSpacing: '.03em', textTransform: 'uppercase', border: `1px solid #CBD9EC`, whiteSpace: 'nowrap' }}>
+                    color: C.navy, fontSize: 10, fontWeight: 800, letterSpacing: '.03em', textTransform: 'uppercase', border: `1px solid #DCDCDC`, whiteSpace: 'nowrap' }}>
                   🔗 Transship{ct!.cluster_code ? ` · ${ct!.cluster_code}` : ''}
                 </Box>
               )}
@@ -427,9 +427,9 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
                 )}
                 <Box sx={{ flex: 1 }} />
                 <Box sx={{ px: 1, py: 0.25, borderRadius: `${RADIUS.sm}px`, bgcolor: st.bg, color: st.fg, fontWeight: 800, fontSize: 11.5, textTransform: 'uppercase', letterSpacing: '.03em' }}>{st.label}</Box>
-                <IconButton onClick={() => setSelectedKey(null)} size="small" aria-label="close" sx={{ color: '#fff', border: '1px solid rgba(255,255,255,0.25)', '&:hover': { bgcolor: 'rgba(217,138,0,0.25)', borderColor: C.gold } }}><CloseIcon sx={{ fontSize: 20 }} /></IconButton>
+                <IconButton onClick={() => setSelectedKey(null)} size="small" aria-label="close" sx={{ color: '#fff', border: '1px solid rgba(255,255,255,0.25)', '&:hover': { bgcolor: 'rgba(208,74,2,0.25)', borderColor: C.gold } }}><CloseIcon sx={{ fontSize: 20 }} /></IconButton>
               </Box>
-              <Box sx={{ px: 1.75, pb: 3, pt: 0.5, bgcolor: '#fcfdfe', minHeight: '100%' }}>
+              <Box sx={{ px: 1.75, pb: 3, pt: 0.5, bgcolor: '#FDFDFD', minHeight: '100%' }}>
 
               {/* 2 · the NEW truck build: MIN trucks → FILL / TRIM / SHIP-AS-IS decision → PACK (engine numbers, or_filler_sequence) */}
               {(() => {
@@ -444,7 +444,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
                 const rlmCount = d.trucks.filter((t) => (t.so_flag || '').startsWith('RLM')).length;
                 // the one-line outcome — SPELL OUT the optimisation (fewer trucks · less filler · less RLM)
                 const outcome = d.dropped
-                  ? { hue: '#DC2C25', text: `Dropped — the ${f.load_l}-case load can't fill even one truck to ${pct(P.TRUCK_KEEP_PCT)} of ${f.cap}; the reserved filler is returned and Original + Substitute cascade to the next run.` }
+                  ? { hue: '#E0301E', text: `Dropped — the ${f.load_l}-case load can't fill even one truck to ${pct(P.TRUCK_KEEP_PCT)} of ${f.cap}; the reserved filler is returned and Original + Substitute cascade to the next run.` }
                   : f.decision === 2
                     ? { hue: C.success, text: `Trimmed the ${f.leftover}-case spill instead of adding ${f.filler_needed} filler → ${f.truck_count} full truck${plural(f.truck_count)} @ 100% (all SO), no RLM. Less filler, less RLM.` }
                     : rlmCount === 0
@@ -452,7 +452,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
                       : { hue: C.warnText, text: `${soCount} truck${plural(soCount)} packed to ≥${pct(P.TRUCK_FILL_TARGET_PCT)} (SO); the ${f.last_truck_cases}-case remainder ships as ${rlmCount} RLM truck (couldn't reach ${pct(P.TRUCK_FILL_TARGET_PCT)} even with filler).` };
                 const dec2Icon = f.decision === 1 ? '➕' : f.decision === 2 ? '✂️' : '✅';
                 return (
-                  <Box sx={{ my: 1.25, p: 1.35, bgcolor: '#F7F7FB', border: `1px solid #D6DBEA`, borderLeft: `4px solid ${C.navy}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm }}>
+                  <Box sx={{ my: 1.25, p: 1.35, bgcolor: '#FCF4F5', border: `1px solid #E0E0E0`, borderLeft: `4px solid ${C.navy}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1, flexWrap: 'wrap' }}>
                       <Box sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase', color: C.navy }}>🚛 How the trucks build</Box>
                       <Box sx={{ px: 0.9, py: 0.2, borderRadius: 999, bgcolor: C.navyP, color: C.muted, fontSize: 9.5, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase' }}>
@@ -506,7 +506,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
                       </>
                     )}
                     <Box sx={{ mt: 0.75, p: '8px 12px', borderRadius: `${RADIUS.sm}px`, fontSize: 12.5, lineHeight: 1.45,
-                      bgcolor: outcome.hue === '#DC2C25' ? '#FCF2F1' : outcome.hue === C.warnText ? C.warnLight : C.successLight,
+                      bgcolor: outcome.hue === '#E0301E' ? '#FCF2F1' : outcome.hue === C.warnText ? C.warnLight : C.successLight,
                       border: `1px solid ${C.rule}`, borderLeft: `3px solid ${outcome.hue}`, color: C.slate }}>
                       <b style={{ color: outcome.hue }}>▸ {d.dropped ? `Lane dropped — ${d.dropped.reason}.` : f.decision === 2 ? 'Trimmed, not filled.' : rlmCount === 0 ? 'All SO.' : 'Packed — one RLM tail.'}</b> {outcome.text}
                     </Box>
@@ -529,12 +529,12 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
                 // it, and order used-as-substitute → own-original. So a reg-zsku shows what ITS material is used as, and the
                 // trim reads as "cut the reg-zskus used as substitute first, then originals" — not the demand that received.
                 const orows = ownerStep3Rows(cands, d.filler_donors);
-                const hue = isDrop ? '#DC2C25' : C.warnText;
+                const hue = isDrop ? '#E0301E' : C.warnText;
                 const th = { background: C.headBg, color: C.muted, fontFamily: SANS, fontWeight: 700, fontSize: 10,
                   letterSpacing: '.04em', textTransform: 'uppercase' as const, padding: '7px 10px', whiteSpace: 'nowrap' as const,
                   borderBottom: `1px solid ${C.rule}` };
                 return (
-                  <Box sx={{ my: 1.25, p: 1.35, bgcolor: isDrop ? '#FCF2F1' : '#FEFBF0', border: `1px solid ${isDrop ? '#F0C9C7' : C.goldLight}`, borderLeft: `4px solid ${hue}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm }}>
+                  <Box sx={{ my: 1.25, p: 1.35, bgcolor: isDrop ? '#FCF2F1' : '#FEF6F0', border: `1px solid ${isDrop ? '#F0C9C7' : C.goldLight}`, borderLeft: `4px solid ${hue}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm }}>
                     <Box onClick={() => setTrimOpen((p) => ({ ...p, [k]: !(p[k] ?? false) }))}
                       sx={{ display: 'flex', alignItems: 'center', gap: 0.4, flexWrap: 'wrap', cursor: 'pointer', userSelect: 'none' }}>
                       <ChevronRightIcon sx={{ fontSize: 17, color: hue, transition: 'transform .15s', transform: (trimOpen[k] ?? false) ? 'rotate(90deg)' : 'none' }} />
@@ -571,7 +571,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
                             const td = { fontFamily: MONO, fontSize: 11.5, padding: '6px 10px', whiteSpace: 'nowrap' as const,
                               borderBottom: `1px solid ${C.rowLine}`, color: C.slate } as const;
                             return (
-                              <tr key={t.z} style={{ background: isCut ? (isDrop ? '#FBEAEA' : '#FDF3D3') : (i % 2 ? C.cream : '#fff') }}>
+                              <tr key={t.z} style={{ background: isCut ? (isDrop ? '#FBEAEA' : '#FCE4D4') : (i % 2 ? C.cream : '#fff') }}>
                                 <td style={{ ...td, textAlign: 'right', color: C.muted, fontWeight: 700 }}>{i + 1}</td>
                                 <td style={{ ...td, fontWeight: 700, color: C.navy }}>{t.z}</td>
                                 <td style={{ ...td, fontFamily: SANS, color: C.muted, whiteSpace: 'normal' }} title={descOf(t.z) || t.name}>{descOf(t.z) || t.name || '—'}</td>
@@ -580,9 +580,9 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
                                     ? <span style={{ color: C.muted }}>—</span>
                                     : (
                                       <span style={{ display: 'inline-flex', gap: 3, flexWrap: 'wrap' }}>
-                                        {o.asOrg > 0 && <span style={usedTag('#e9eef4', '#10365A')}>original</span>}
-                                        {o.asSub > 0 && <span style={usedTag('#e6f3ec', '#1E8E5A')}>substitute · {o.asSub}</span>}
-                                        {o.asFil > 0 && <span style={usedTag('#fdf6e3', '#D98A00')}>filler · {o.asFil}</span>}
+                                        {o.asOrg > 0 && <span style={usedTag('#EEEEEE', '#2D2D2D')}>original</span>}
+                                        {o.asSub > 0 && <span style={usedTag('#E6F3EC', '#1E8E5A')}>substitute · {o.asSub}</span>}
+                                        {o.asFil > 0 && <span style={usedTag('#FDEDE3', '#D04A02')}>filler · {o.asFil}</span>}
                                       </span>
                                     )}
                                 </td>
@@ -621,7 +621,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
                 const share = load ? Math.round(ct!.shipped_after / load * 100) : 0;
                 const statusHue = clusterDropped ? C.alertRed : hasClusterTrim ? C.warnText : C.success;
                 return (
-                  <Box sx={{ my: 1.25, p: 1.35, bgcolor: '#F1F4FA', border: `1px solid #CBD9EC`, borderLeft: `4px solid ${C.navy}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm }}>
+                  <Box sx={{ my: 1.25, p: 1.35, bgcolor: '#F5F5F5', border: `1px solid #DCDCDC`, borderLeft: `4px solid ${C.navy}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm }}>
                     <Box onClick={() => setClusterOpen((p) => ({ ...p, [k]: !(p[k] ?? false) }))}
                       sx={{ display: 'flex', alignItems: 'center', gap: 0.6, flexWrap: 'wrap', cursor: 'pointer', userSelect: 'none' }}>
                       <ChevronRightIcon sx={{ fontSize: 17, color: C.muted, transition: 'transform .15s', transform: (clusterOpen[k] ?? false) ? 'rotate(90deg)' : 'none' }} />
@@ -685,7 +685,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
 
               {/* draw-priority score — shown right before the filler fill, because the priority is what decides the ORDER
                   DBs draw the shared CFA filler pool, checked BEFORE any filler is added. Exact engine values. */}
-              <Box sx={{ my: 1.25, p: 1.35, bgcolor: '#FCF8EE', border: `1px solid ${C.goldLight}`, borderLeft: `4px solid ${C.gold}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm }}>
+              <Box sx={{ my: 1.25, p: 1.35, bgcolor: '#FCF4EE', border: `1px solid ${C.goldLight}`, borderLeft: `4px solid ${C.gold}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.85, flexWrap: 'wrap' }}>
                   <Box sx={{ fontSize: 11, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase', color: C.gold }}>🎯 Filler draw priority</Box>
                   <Box sx={{ px: 0.9, py: 0.2, borderRadius: 999, bgcolor: C.navyP, color: C.navy, fontSize: 10, fontWeight: 800, letterSpacing: '.03em', textTransform: 'uppercase' }}>rank {d.rank || '—'} / {d.n_in_cfa}</Box>
@@ -705,7 +705,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
                     </Box>
                   ))}
                   <Box component="span" sx={{ color: C.muted, fontWeight: 800 }}>=</Box>
-                  <Box component="span" sx={{ display: 'inline-flex', alignItems: 'baseline', gap: 0.4, px: 0.85, py: '2px', borderRadius: 999, bgcolor: '#FFF9EC', border: `1px solid ${C.goldLight}`, ...mono, fontSize: 11 }}>
+                  <Box component="span" sx={{ display: 'inline-flex', alignItems: 'baseline', gap: 0.4, px: 0.85, py: '2px', borderRadius: 999, bgcolor: '#FEF4ED', border: `1px solid ${C.goldLight}`, ...mono, fontSize: 11 }}>
                     <span style={{ color: C.muted, fontSize: 10 }}>Σheld</span><b style={{ color: C.gold }}>{d.sum_held}</b>
                   </Box>
                   <Box component="span" sx={{ color: C.muted, mx: 0.1 }}>·</Box>
@@ -742,7 +742,7 @@ export default function FillerSequencePage({ date, cfa = '' }: { date?: string; 
                       <Box component="span" sx={{ ...mono, color: C.muted }}>× {pct(P.ADDON_CAP_PCT)} =</Box>
                       <Chip size="small" label={`${cap} cap`} sx={{ ...chip, fontWeight: 700, color: C.navy, bgcolor: C.navyP }} />
                       <Box component="span" sx={{ ...mono, color: C.muted }}>−&nbsp;{usedBySub}&nbsp;substitute&nbsp;=</Box>
-                      <Chip size="small" label={`${startAddon} left for filler`} sx={{ ...chip, fontWeight: 700, color: C.gold, bgcolor: '#FFF9EC', borderColor: C.goldLight }} />
+                      <Chip size="small" label={`${startAddon} left for filler`} sx={{ ...chip, fontWeight: 700, color: C.gold, bgcolor: '#FEF4ED', borderColor: C.goldLight }} />
                     </Box>
                     <Box component="span" sx={{ display: 'block', fontSize: 11, color: C.muted, mt: 0.5 }}>→ where the “add-on left” column below starts — Substitute + Filler stay ≤ {pct(P.ADDON_CAP_PCT)} of the DB's SOQ.</Box>
                   </Box>

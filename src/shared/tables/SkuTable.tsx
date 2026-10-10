@@ -11,9 +11,9 @@ const HEAD = ['Order ID', 'DB Code', 'DB Name', 'reg-zsku', 'Description', 'Used
 const expTone = (d: number) => (d < 30 ? status.error : d < 60 ? status.warning : null);
 const roleOf = (isSub: number, isFil: number) => (isFil ? 'Filler' : isSub ? 'Sub' : 'Original');
 const ROLE: Record<string, { bg: string; fg: string; rank: number }> = {
-  Original: { bg: '#e9eef4', fg: '#10365A', rank: 0 },
-  Sub:      { bg: '#e6f3ec', fg: '#1E8E5A', rank: 1 },
-  Filler:   { bg: '#fdf6e3', fg: '#D98A00', rank: 2 },
+  Original: { bg: '#EEEEEE', fg: '#2D2D2D', rank: 0 },
+  Sub:      { bg: '#E6F3EC', fg: '#1E8E5A', rank: 1 },
+  Filler:   { bg: '#FDEDE3', fg: '#D04A02', rank: 2 },
 };
 
 interface Grp { owner: string; sku: string; batch: string; mrp: number | null; days: number; pdp: string; qty: number; roles: Set<string>; }
@@ -41,7 +41,7 @@ export default function SkuTable({ skus, dbCode, dbName, order }: {
     <Box sx={{ bgcolor: '#fff', borderRadius: 1, overflowX: 'auto' }}>
       <Table size="small" sx={{ '& td, & th': { py: 0.75, px: 1.25, fontSize: '0.8rem', whiteSpace: 'nowrap' } }}>
         <TableHead>
-          <TableRow sx={{ bgcolor: '#F1F1F0' }}>
+          <TableRow sx={{ bgcolor: '#F2F2F2' }}>
             {HEAD.map((h, i) => (
               <TableCell key={h} align={i <= 6 ? 'left' : 'right'}
                 sx={{ color: 'text.secondary', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.04em', fontSize: '0.68rem' }}>
@@ -59,7 +59,7 @@ export default function SkuTable({ skus, dbCode, dbName, order }: {
                 <TableCell sx={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600, color: '#21A366' }}>{order}</TableCell>
                 <TableCell sx={{ fontVariantNumeric: 'tabular-nums', color: 'text.secondary' }}>{dbCode}</TableCell>
                 <TableCell sx={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', color: 'text.secondary' }} title={dbName}>{dbName}</TableCell>
-                <TableCell sx={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: '#10365A' }}>{g.owner}</TableCell>
+                <TableCell sx={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: '#2D2D2D' }}>{g.owner}</TableCell>
                 <TableCell sx={{ color: 'text.secondary', whiteSpace: 'normal' }} title={descOf(g.owner)}>{descOf(g.owner) || '—'}</TableCell>
                 <TableCell>
                   <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
@@ -72,16 +72,16 @@ export default function SkuTable({ skus, dbCode, dbName, order }: {
                 <TableCell sx={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>{g.sku}</TableCell>
                 <TableCell align="right"><b>{g.qty}</b></TableCell>
                 <TableCell align="right" sx={{ color: 'text.secondary' }}>{g.mrp != null ? `₹${g.mrp}` : '—'}</TableCell>
-                <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums', color: '#7A756D' }}>{g.batch}</TableCell>
+                <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums', color: '#6B6B6B' }}>{g.batch}</TableCell>
                 <TableCell align="right">
                   {tone
                     ? <Chip label={`${g.days} d`} size="small" sx={{ height: 18, fontSize: '0.68rem', fontWeight: 700, bgcolor: tone.bg, color: tone.fg }} />
-                    : <span style={{ color: '#1C1C1C' }}>{g.days} d</span>}
+                    : <span style={{ color: '#2D2D2D' }}>{g.days} d</span>}
                 </TableCell>
                 <TableCell align="right">
                   {g.pdp.toLowerCase() === 'yes'
-                    ? <Chip label="PDP" size="small" sx={{ height: 18, fontSize: '0.64rem', fontWeight: 700, bgcolor: '#e9f4ec', color: '#21A366' }} />
-                    : <span style={{ color: '#7A756D', fontSize: '0.72rem' }}>{g.pdp ? 'non-PDP' : '—'}</span>}
+                    ? <Chip label="PDP" size="small" sx={{ height: 18, fontSize: '0.64rem', fontWeight: 700, bgcolor: '#E9F4EC', color: '#21A366' }} />
+                    : <span style={{ color: '#6B6B6B', fontSize: '0.72rem' }}>{g.pdp ? 'non-PDP' : '—'}</span>}
                 </TableCell>
               </TableRow>
             );

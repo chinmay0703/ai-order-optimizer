@@ -11,7 +11,7 @@ import { SANS, MONO } from '../../theme/pdartTokens';
 
 type VersionInfo = { version?: string; describe?: string; branch?: string; built_at?: string };
 
-const GOLD = '#D98A00';
+const GOLD = '#EB8C00';   // PwC Tangerine — readable on the charcoal header
 
 /** Deploy branch → environment label. Production is the `prod` branch (NOT `main`) — handled ahead of it existing;
     any other/unknown branch shows its own name uppercased. */
@@ -50,7 +50,7 @@ export default function VersionChip() {
   const tip = (
     <Box sx={{ fontFamily: SANS, fontSize: 12, lineHeight: 1.6, py: 0.25 }}>
       <Box sx={{ fontWeight: 800, letterSpacing: '.04em' }}>{env}</Box>
-      {ver && <Box>AIDEN {ver}</Box>}
+      {ver && <Box>AI Order Optimizer {ver}</Box>}
       {describe && describe !== ver && <Box sx={{ fontFamily: MONO, opacity: 0.8 }}>{describe}</Box>}
       {built && <Box sx={{ opacity: 0.85 }}>{built}</Box>}
     </Box>
@@ -63,10 +63,10 @@ export default function VersionChip() {
         fontFamily: MONO, fontSize: 11, lineHeight: 1, letterSpacing: '.02em', whiteSpace: 'nowrap',
         color: 'rgba(255,255,255,0.82)', bgcolor: 'rgba(255,255,255,0.08)',
         border: '1px solid rgba(255,255,255,0.20)', borderRadius: '7px', padding: '5px 9px', cursor: 'default',
-        '&:hover': { borderColor: GOLD, bgcolor: 'rgba(217,138,0,0.14)' },
+        '&:hover': { borderColor: GOLD, bgcolor: 'rgba(208,74,2,0.14)' },
       }}>
         <Box component="span" sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: GOLD, flexShrink: 0,
-          boxShadow: '0 0 0 2px rgba(217,138,0,0.28)' }} />
+          boxShadow: '0 0 0 2px rgba(208,74,2,0.28)' }} />
         {label}
       </Box>
     </Tooltip>

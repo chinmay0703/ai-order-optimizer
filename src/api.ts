@@ -1,18 +1,9 @@
-// api.ts — the ONE place the frontend talks to the backend (FastAPI, Postgres). The backend URL comes ONLY from
-// config.apiBase (VITE_API_BASE), read at RUNTIME from /config.js (window.__APP_CONFIG__) with a build-time .env
-// fallback for local dev — no hardcoded URL. When it's unset/blank the app calls the SAME ORIGIN "/api/*", which the
-// Vite dev server and the prod nginx both reverse-proxy to the backend. The v1 router is at /api/v1, so the value is
-// normalised to end in /api/v1:
-//   unset / "" (same-origin) -> /api/v1              (vite/nginx proxies /api/* to the backend)
-//   "https://host"           -> https://host/api/v1  (direct to the backend)
-//   "https://host/api/v1"    -> unchanged
-import { config } from './config';
+// api.ts — the ONE place the frontend asks for data. There is NO backend and no backend URL: every request goes to
+// the same-origin "/api/*" namespace, which src/mock/install.ts answers inside the browser from the dummy dataset
+// (src/mock/dataset.ts). The v1 routes live under /api/v1, the production-contract routes under /api/production.
 import { authHeader, clearSession, getToken } from './shared/auth';
 
-const ENV_BASE = config.apiBase;   // RUNTIME value (window.__APP_CONFIG__ from /config.js) → build-time .env fallback
-if (!ENV_BASE) console.info('[api] VITE_API_BASE not set — using same-origin /api/v1 (proxied to the backend)');
-const _base = ENV_BASE.replace(/\/+$/, '');
-const BASE = _base === '' ? '/api/v1' : (/\/api\/v1$/.test(_base) ? _base : `${_base}/api/v1`);
+const BASE = '/api/v1';
 
 // EVERY request carries the Bearer token (api.authHeader). A 401 means no/expired token → drop the session so the
 // app falls back to the login screen; a 4xx body's {detail} becomes the thrown message so dialogs show a real reason.

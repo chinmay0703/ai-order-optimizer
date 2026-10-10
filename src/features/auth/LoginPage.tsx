@@ -6,14 +6,14 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { api } from '../../api';
 import { setSession, type AuthUser } from '../../shared/auth';
 
-// The login gate — a faithful match of the oe-frontend "Final Designs" login: full-bleed navy (#12365E) with the brand
-// pattern + a bottom-up gradient, the AIDEN product hero on the left, the white auth card on the right, and a footer.
+// The login gate — a faithful match of the oe-frontend "Final Designs" login: full-bleed navy (#2D2D2D) with the brand
+// pattern + a bottom-up gradient, the product hero on the left, the white auth card on the right, and a footer.
 // SSO is intentionally omitted (this deployment is simple username/password only). Colors are the oe-frontend tokens:
-// surface-auth #12365E · brand-secondary #3680CE (accent bar) · brand-primary #02355A (button) · card #FFFFFF.
-const NAVY = '#12365E';
-const ACCENT = '#3680CE';
-const PRIMARY = '#02355A';
-const PRIMARY_HOVER = '#1B466E';
+// surface-auth #2D2D2D · brand-secondary #464646 (accent bar) · brand-primary #2D2D2D (button) · card #FFFFFF.
+const NAVY = '#2D2D2D';
+const ACCENT = '#464646';
+const PRIMARY = '#2D2D2D';
+const PRIMARY_HOVER = '#3A3A3A';
 const FONT = "'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif";
 
 function useIstClock(): string {
@@ -69,8 +69,14 @@ export default function LoginPage() {
   return (
     <Box sx={{ position: 'relative', height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', overflowY: 'auto', overflowX: 'hidden',
       bgcolor: NAVY, fontFamily: FONT }}>
-      {/* backdrop: brand pattern + bottom-up gradient (exactly as the oe-frontend AuthBackdrop) */}
-      <Box aria-hidden sx={{ position: 'absolute', inset: 0, background: "url('/brand/auth-pattern.png') center/cover no-repeat" }} />
+      {/* backdrop: a pure-CSS pattern (no image download) — soft diagonal bands echoing the PwC logo bars + a faint grid */}
+      <Box aria-hidden sx={{ position: 'absolute', inset: 0, opacity: 0.9, background: [
+        'radial-gradient(60% 55% at 85% 12%, rgba(253,81,8,0.16), transparent 70%)',
+        'radial-gradient(50% 60% at 10% 90%, rgba(235,140,0,0.18), transparent 70%)',
+        'repeating-linear-gradient(-58deg, rgba(255,255,255,0.035) 0 46px, transparent 46px 120px)',
+        'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px) 0 0/32px 32px',
+        'linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px) 0 0/32px 32px',
+      ].join(', ') }} />
       <Box aria-hidden sx={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '66%',
         background: `linear-gradient(to top, ${NAVY}, transparent)` }} />
 
@@ -79,10 +85,9 @@ export default function LoginPage() {
         {/* LEFT — product hero */}
         <Box sx={{ width: { xs: '100%', lg: '50%' }, display: { xs: 'none', lg: 'flex' }, alignItems: 'center', justifyContent: 'center', px: { lg: 8 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 2.5, md: 3 }, maxWidth: 520 }}>
-            <Box sx={{ width: 8, height: 208, borderRadius: 999, bgcolor: ACCENT, flexShrink: 0 }} />
+            <Box sx={{ width: 8, height: 150, borderRadius: 999, bgcolor: ACCENT, flexShrink: 0 }} />
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Box sx={{ color: '#fff', fontSize: { lg: 72 }, fontWeight: 800, lineHeight: 1, letterSpacing: '.01em' }}>AIDEN</Box>
-              <Box sx={{ color: '#fff', fontSize: { lg: 30 }, fontWeight: 600, lineHeight: 1.15 }}>AI-Assisted Distribution Engine</Box>
+              <Box sx={{ color: '#fff', fontSize: { lg: 60 }, fontWeight: 800, lineHeight: 1.05, letterSpacing: '-.01em' }}>AI Order Optimizer</Box>
             </Box>
           </Box>
         </Box>
@@ -93,22 +98,22 @@ export default function LoginPage() {
             boxShadow: '0 24px 64px -20px rgba(0,0,0,0.55)', p: { xs: 4, sm: 5 } }}>
             {/* logo + live IST clock */}
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5 }}>
-              <Box component="img" src="/brand/pepsico-logo-horizontal.svg" alt="PepsiCo" sx={{ height: 44 }} />
+              <Box component="img" src="brand/pwc-logo.svg" alt="PwC" sx={{ height: 52 }} />
               <Box aria-hidden sx={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '.08em', color: '#6B7280', fontVariantNumeric: 'tabular-nums' }}>{clock}</Box>
             </Box>
 
-            <Box sx={{ mt: 3, mb: 2.5, textAlign: 'center', fontFamily: FONT, fontSize: 15, fontWeight: 700, letterSpacing: '.08em', color: '#6B7280' }}>Sign in to AIDEN</Box>
+            <Box sx={{ mt: 3, mb: 2.5, textAlign: 'center', fontFamily: FONT, fontSize: 15, fontWeight: 700, letterSpacing: '.08em', color: '#6B7280' }}>Sign in to AI Order Optimizer</Box>
 
             {err && (
-              <Box role="alert" sx={{ mb: 2, px: 1.5, py: 1, borderRadius: '6px', bgcolor: '#FDECEC', color: '#B3261E',
+              <Box role="alert" sx={{ mb: 2, px: 1.5, py: 1, borderRadius: '6px', bgcolor: '#FDECEC', color: '#A32020',
                 fontSize: 13, fontWeight: 600, border: '1px solid #F3C7C4' }}>{err}</Box>
             )}
 
-            <Box sx={{ mb: 0.5, fontSize: 13, fontWeight: 600, color: '#374151' }}>Username</Box>
+            <Box sx={{ mb: 0.5, fontSize: 13, fontWeight: 600, color: '#444444' }}>Username</Box>
             <TextField fullWidth value={username} onChange={(e) => setUsername(e.target.value)} autoFocus autoComplete="username"
               size="small" placeholder="Enter your username" sx={{ mb: 2 }} />
 
-            <Box sx={{ mb: 0.5, fontSize: 13, fontWeight: 600, color: '#374151' }}>Password</Box>
+            <Box sx={{ mb: 0.5, fontSize: 13, fontWeight: 600, color: '#444444' }}>Password</Box>
             <TextField fullWidth type={show ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password" size="small" placeholder="Enter your password" sx={{ mb: 3 }}
               InputProps={{ endAdornment: <InputAdornment position="end"><IconButton size="small" edge="end" onClick={() => setShow((s) => !s)} aria-label="toggle password visibility">
@@ -116,7 +121,7 @@ export default function LoginPage() {
 
             <Button type="submit" fullWidth disabled={busy} variant="contained" sx={{ py: 1.15, fontWeight: 700, fontSize: 14.5,
               textTransform: 'none', borderRadius: '6px', bgcolor: PRIMARY, color: '#fff', boxShadow: 'none',
-              '&:hover': { bgcolor: PRIMARY_HOVER, boxShadow: 'none' }, '&.Mui-disabled': { bgcolor: '#9CA3AF', color: '#fff' } }}>
+              '&:hover': { bgcolor: PRIMARY_HOVER, boxShadow: 'none' }, '&.Mui-disabled': { bgcolor: '#A6A6A6', color: '#fff' } }}>
               {busy ? <CircularProgress size={20} sx={{ color: '#fff' }} /> : 'Sign in'}
             </Button>
           </Box>
@@ -132,8 +137,8 @@ export default function LoginPage() {
           </Box>
         )}
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 0.5, fontSize: 12 }}>
-          <Box sx={{ width: { xs: '100%', lg: '50%' }, textAlign: 'center', px: { lg: 8 } }}>© {new Date().getFullYear()} PepsiCo India Holdings Pvt Ltd. All Rights Reserved.</Box>
-          <Box sx={{ width: { xs: '100%', lg: '50%' }, textAlign: 'center', px: { lg: 8 } }}>ATOM-OER · Order Orchestration Engine</Box>
+          <Box sx={{ width: { xs: '100%', lg: '50%' }, textAlign: 'center', px: { lg: 8 } }}>© {new Date().getFullYear()} PwC. All rights reserved. · Demo build with sample data</Box>
+          <Box sx={{ width: { xs: '100%', lg: '50%' }, textAlign: 'center', px: { lg: 8 } }}>AI Order Optimizer</Box>
         </Box>
       </Box>
     </Box>

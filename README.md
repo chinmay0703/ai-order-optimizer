@@ -1,20 +1,41 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# AIDEN — AI Order Optimizer (demo)
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+A React + MUI front end for an order-allocation engine: it takes distributor demand (SOQ), allocates CFA stock in
+three steps (original fair share → substitutes → fillers), applies truck-fill rules, and produces the final order,
+SAP hand-off and validation reports.
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+**This build runs entirely in the browser on sample data — there is no backend.** Every `/api/*` request is answered
+locally by `src/mock/` from one synthetic dataset: 1 CFA, 10 distributors, 40 reg-zskus and two cascade runs, so the
+numbers agree from page to page.
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+**Live demo:** https://chinmay0703.github.io/ai-order-optimizer/
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+## Sign in
+
+| Username | Password | Access |
+|---|---|---|
+| `admin` | `admin` | everything, incl. User Management |
+| `planner` | `planner` | can start runs |
+| `viewer` | `viewer` | read-only |
+
+User and parameter edits are saved in your browser (localStorage) only.
+
+## Run locally
+
+```bash
+npm install
+npm run dev        # http://localhost:5199
+npm run build      # static site in dist/
+```
+
+## Deploy
+
+`.github/workflows/deploy.yml` builds and publishes to GitHub Pages on every push to `main`.
+One-time setup: **Settings → Pages → Source: GitHub Actions**.
+
+## Where things live
+
+- `src/features/` — the pages (engine steps, reservations, outputs, reports, run, admin)
+- `src/mock/dataset.ts` — the sample universe and the simplified allocation every page reads
+- `src/mock/handlers/` — the API routes, grouped by page area
+- `src/mock/install.ts` — wires the routes into `fetch`, `EventSource` (live run progress) and Excel downloads

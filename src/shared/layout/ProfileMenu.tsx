@@ -15,12 +15,12 @@ import { C, RADIUS, SANS, SERIF } from '../../theme/pdartTokens';
  * Replaces the sidebar-footer logout, which was unreachable on mobile once the sidebar became a bottom nav.
  * Two actions only, as specified: My profile (edit username / password) and Sign out.
  *
- * The avatar is a GOLD PASTEL disc (soft #FBEBC8 fill) with the deep gold partner tone for the initial, so the
+ * The avatar is a GOLD PASTEL disc (soft #FBDCC8 fill) with the deep gold partner tone for the initial, so the
  * contrast still reads on the navy masthead — a pastel is a surface, never the text colour.
  */
 
-const PASTEL_GOLD = '#FBEBC8';   // soft tint — the surface
-const DEEP_GOLD = '#7A5210';     // its partner tone — the ink on top (AA on the pastel)
+const PASTEL_GOLD = '#FBDCC8';   // soft tint — the surface
+const DEEP_GOLD = '#8A3A0C';     // its partner tone — the ink on top (AA on the pastel)
 
 export default function ProfileMenu({ user }: { user: AuthUser }) {
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);

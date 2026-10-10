@@ -17,7 +17,7 @@ export default function HomePage({ onNav }: { onNav: (p: Page) => void }) {
 
         {/* hero */}
         <Box sx={{ fontSize: 11.5, fontWeight: 800, letterSpacing: '.09em', textTransform: 'uppercase', color: C.gold }}>
-          PepsiCo AIDEN · ATOM-OER
+          PwC · AI Order Optimizer
         </Box>
         <Box component="h1" sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: { xs: 27, md: 34 }, m: '6px 0 8px', letterSpacing: '-.4px' }}>
           Order Engine — every page, in run order
@@ -103,7 +103,7 @@ export default function HomePage({ onNav }: { onNav: (p: Page) => void }) {
         ))}
 
         <Box sx={{ borderTop: `1px solid ${C.rule}`, mt: 4, pt: 1.25, fontSize: 10.5, color: C.muted }}>
-          ATOM-OER Order Engine · pages in pipeline order · click a card to open
+          AI Order Optimizer · pages in pipeline order · click a card to open
         </Box>
       </Box>
     </Box>

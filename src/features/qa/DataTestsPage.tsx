@@ -28,11 +28,11 @@ const PHASES: { key: Phase; label: string; blurb: string }[] = [
 ];
 
 const STY: Record<Status, { bg: string; fg: string; label: string }> = {
-  pass:  { bg: '#e9f4ec', fg: '#21A366', label: 'Passed' },
-  fail:  { bg: '#f8e9e6', fg: '#DC2C25', label: 'Failed' },
-  warn:  { bg: '#fbf1e0', fg: '#D98A00', label: 'Warning' },
-  skip:  { bg: '#f1f5f9', fg: '#7A756D', label: 'Skipped' },
-  error: { bg: '#3a1414', fg: '#ffb4a2', label: 'Error' },
+  pass:  { bg: '#E9F4EC', fg: '#21A366', label: 'Passed' },
+  fail:  { bg: '#F8E9E6', fg: '#E0301E', label: 'Failed' },
+  warn:  { bg: '#FBEBE0', fg: '#D04A02', label: 'Warning' },
+  skip:  { bg: '#F5F5F5', fg: '#6B6B6B', label: 'Skipped' },
+  error: { bg: '#3D1A16', fg: '#FFB4A2', label: 'Error' },
 };
 const GRID = '52px minmax(0,1.35fr) 104px minmax(0,1.75fr)';   // #  ·  Test case  ·  Status  ·  Reason
 const nf = (n: number) => (Number(n) || 0).toLocaleString();
@@ -43,7 +43,7 @@ function ComplexCard({ q }: { q: ComplexQ }) {
   const [showSql, setShowSql] = useState(false);
   return (
     <Box sx={{ border: `1px solid ${C.rule}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm, overflow: 'hidden' }}>
-      <Box onClick={() => setOpen((v) => !v)} sx={{ cursor: 'pointer', px: 2, py: 1.1, bgcolor: '#F4F3F1', borderBottom: open ? `1px solid ${C.rule}` : 'none', '&:hover': { bgcolor: '#eceae6' } }}>
+      <Box onClick={() => setOpen((v) => !v)} sx={{ cursor: 'pointer', px: 2, py: 1.1, bgcolor: '#F6F6F6', borderBottom: open ? `1px solid ${C.rule}` : 'none', '&:hover': { bgcolor: '#ECE8E6' } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
           <Box sx={{ fontFamily: MONO, fontWeight: 800, color: C.navy, fontSize: 13, width: 12, textAlign: 'center' }}>{open ? '▾' : '▸'}</Box>
           <Box sx={{ fontFamily: MONO, fontWeight: 800, color: C.navy, fontSize: 13 }}>{q.id}</Box>
@@ -62,7 +62,7 @@ function ComplexCard({ q }: { q: ComplexQ }) {
       </Box>
       {open && (<>
       {showSql && (
-        <Box component="pre" sx={{ m: 0, px: 2, py: 1.5, bgcolor: '#0F1E33', color: '#d7e3f4', fontFamily: MONO, fontSize: 11.5, lineHeight: 1.5, overflowX: 'auto', whiteSpace: 'pre' }}>{q.sql}</Box>
+        <Box component="pre" sx={{ m: 0, px: 2, py: 1.5, bgcolor: '#1E1E1E', color: '#E6E6E6', fontFamily: MONO, fontSize: 11.5, lineHeight: 1.5, overflowX: 'auto', whiteSpace: 'pre' }}>{q.sql}</Box>
       )}
       {q.status === 'error'
         ? <Box sx={{ p: 2, color: STY.error.fg, fontSize: 12.5, fontFamily: MONO }}>{q.detail}</Box>
@@ -80,9 +80,9 @@ function ComplexCard({ q }: { q: ComplexQ }) {
                 {q.rows.length === 0
                   ? <Box component="tr"><Box component="td" colSpan={q.columns.length} sx={{ px: 1.25, py: 1.25, color: C.muted }}>No rows.</Box></Box>
                   : q.rows.map((row, i) => (
-                    <Box component="tr" key={i} sx={{ bgcolor: i % 2 ? '#faf6ee' : '#fff' }}>
+                    <Box component="tr" key={i} sx={{ bgcolor: i % 2 ? '#FAF3EE' : '#fff' }}>
                       {row.map((v, j) => (
-                        <Box component="td" key={j} sx={{ px: 1.25, py: 0.6, borderTop: '1px solid #eef2f7', whiteSpace: 'nowrap', textAlign: typeof v === 'number' ? 'right' : 'left', fontVariantNumeric: 'tabular-nums', color: C.slate }}>
+                        <Box component="td" key={j} sx={{ px: 1.25, py: 0.6, borderTop: '1px solid #F2F2F2', whiteSpace: 'nowrap', textAlign: typeof v === 'number' ? 'right' : 'left', fontVariantNumeric: 'tabular-nums', color: C.slate }}>
                           {typeof v === 'boolean'
                             ? <Box component="span" sx={{ px: 0.8, py: 0.15, borderRadius: 1, fontSize: 11, fontWeight: 800, bgcolor: v ? STY.pass.bg : STY.fail.bg, color: v ? STY.pass.fg : STY.fail.fg }}>{v ? 'TRUE' : 'FALSE'}</Box>
                             : (v === null ? <Box component="span" sx={{ color: C.muted }}>—</Box> : String(v))}
@@ -233,19 +233,19 @@ export default function DataTestsPage({ date }: { date?: string }) {
                   const warns = ts.filter((t) => t.status === 'warn').length;
                   return (
                     <Box key={table} sx={{ border: `1px solid ${C.rule}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm, overflow: 'hidden' }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, py: 1.1, bgcolor: '#F4F3F1', borderBottom: `1px solid ${C.rule}` }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, py: 1.1, bgcolor: '#F6F6F6', borderBottom: `1px solid ${C.rule}` }}>
                         <Box sx={{ fontFamily: MONO, fontWeight: 800, color: C.navy, fontSize: 14 }}>{table}</Box>
                         <Box sx={{ flex: 1 }} />
                         {fails > 0 && <Box sx={{ px: 1, py: 0.2, borderRadius: 1, fontSize: 11, fontWeight: 800, bgcolor: STY.fail.bg, color: STY.fail.fg }}>{fails} fail</Box>}
                         {warns > 0 && <Box sx={{ px: 1, py: 0.2, borderRadius: 1, fontSize: 11, fontWeight: 800, bgcolor: STY.warn.bg, color: STY.warn.fg }}>{warns} warn</Box>}
                         <Box sx={{ fontSize: 11.5, color: C.muted }}>{ts.length} checks</Box>
                       </Box>
-                      <Box sx={{ display: 'grid', gridTemplateColumns: GRID, gap: 1.25, px: 2, py: 0.55, borderTop: `1px solid #eef2f7`,
-                        fontSize: 10.5, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase', color: C.muted, bgcolor: '#fcfcfa' }}>
+                      <Box sx={{ display: 'grid', gridTemplateColumns: GRID, gap: 1.25, px: 2, py: 0.55, borderTop: `1px solid #F2F2F2`,
+                        fontSize: 10.5, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase', color: C.muted, bgcolor: '#FCFBFA' }}>
                         <Box>#</Box><Box>Test case</Box><Box>Status</Box><Box>Reason</Box>
                       </Box>
                       {ts.map((t) => (
-                        <Box key={t.id} sx={{ display: 'grid', gridTemplateColumns: GRID, gap: 1.25, alignItems: 'center', px: 2, py: 0.85, borderTop: `1px solid #eef2f7` }}>
+                        <Box key={t.id} sx={{ display: 'grid', gridTemplateColumns: GRID, gap: 1.25, alignItems: 'center', px: 2, py: 0.85, borderTop: `1px solid #F2F2F2` }}>
                           <Box sx={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: C.muted }}>{t.number}</Box>
                           <Box sx={{ fontSize: 13.5, color: C.slate, fontWeight: (t.status === 'fail' || t.status === 'error') ? 700 : 500, minWidth: 0 }}>{t.title}</Box>
                           <Box sx={{ justifySelf: 'start', px: 1, py: 0.28, borderRadius: 1, fontSize: 11, fontWeight: 800, whiteSpace: 'nowrap', bgcolor: STY[t.status].bg, color: STY[t.status].fg }}>{t.status_label || STY[t.status].label}</Box>
@@ -255,7 +255,7 @@ export default function DataTestsPage({ date }: { date?: string }) {
                               <Box component="button" onClick={() => downloadDetail(t)} disabled={dl === t.id}
                                 sx={{ flexShrink: 0, cursor: dl === t.id ? 'wait' : 'pointer', border: `1px solid ${C.rule}`, bgcolor: '#fff',
                                   color: C.navy, fontFamily: SANS, fontSize: 11, fontWeight: 700, px: 1, py: 0.3, borderRadius: `${RADIUS.sm}px`,
-                                  whiteSpace: 'nowrap', '&:hover': { bgcolor: '#f4f3f1' } }}>
+                                  whiteSpace: 'nowrap', '&:hover': { bgcolor: '#F6F6F6' } }}>
                                 {dl === t.id ? '…' : '⬇ Excel'}
                               </Box>
                             )}
@@ -288,7 +288,7 @@ export default function DataTestsPage({ date }: { date?: string }) {
       )}
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', borderTop: `1px solid ${C.rule}`, mt: 3, pt: 1, fontSize: 9, color: C.muted }}>
-        <span>PepsiCo AIDEN · Data QA (live, not stored) · /api/v1/data_tests · QA-only, not production</span>
+        <span>AI Order Optimizer · Data QA (live, not stored) · /api/v1/data_tests · QA-only, not production</span>
         <span>{data.total} checks · {data.date}</span>
       </Box>
     </Shell>

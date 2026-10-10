@@ -131,7 +131,7 @@ export default function OrderStatusPage({ date }: { date?: string }) {
       </Box>
 
       {total === 0 ? (
-        <Box sx={{ border: `1px solid ${C.rule}`, borderRadius: `${RADIUS.md}px`, p: 5, textAlign: 'center', bgcolor: '#fafafa' }}>
+        <Box sx={{ border: `1px solid ${C.rule}`, borderRadius: `${RADIUS.md}px`, p: 5, textAlign: 'center', bgcolor: '#FAFAFA' }}>
           <Box sx={{ fontFamily: SERIF, fontSize: 18, color: C.navy, mb: 0.5 }}>
             No order status{qq ? ` matching “${qq}”` : ''} for {data.date}
           </Box>
@@ -179,7 +179,7 @@ export default function OrderStatusPage({ date }: { date?: string }) {
       )}
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', borderTop: `1px solid ${C.rule}`, mt: 3, pt: 1, fontSize: 9, color: C.muted }}>
-        <span>PepsiCo AIDEN · Order Status (de_sap.order_status · SAP write-back) · live from Postgres</span>
+        <span>AI Order Optimizer · Order Status (de_sap.order_status · SAP write-back) · sample data</span>
         <span>server-paginated · created_on (IST)</span>
       </Box>
     </Shell>

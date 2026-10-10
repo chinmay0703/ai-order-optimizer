@@ -98,7 +98,7 @@ export default function SapOrdersPage({ date }: { date?: string }) {
       </Box>
 
       {data.rows.length === 0 ? (
-        <Box sx={{ border: `1px solid ${C.rule}`, borderRadius: `${RADIUS.md}px`, p: 5, textAlign: 'center', bgcolor: '#fafafa' }}>
+        <Box sx={{ border: `1px solid ${C.rule}`, borderRadius: `${RADIUS.md}px`, p: 5, textAlign: 'center', bgcolor: '#FAFAFA' }}>
           <Box sx={{ fontFamily: SERIF, fontSize: 18, color: C.navy, mb: 0.5 }}>No SAP orders for {data.date}</Box>
           <Box sx={{ fontSize: 13, color: C.muted, maxWidth: 640, mx: 'auto' }}>
             <b>de_sap.orders</b> only holds <b>SO_CREATION</b> lines. This run produced none — either 0 demand,
@@ -146,7 +146,7 @@ export default function SapOrdersPage({ date }: { date?: string }) {
       )}
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', borderTop: `1px solid ${C.rule}`, mt: 3, pt: 1, fontSize: 9, color: C.muted }}>
-        <span>PepsiCo AIDEN · SAP Orders (de_sap.orders · SO_CREATION hand-off) · live from Postgres</span>
+        <span>AI Order Optimizer · SAP Orders (de_sap.orders · SO_CREATION hand-off) · sample data</span>
         <span>date-scoped · oeid · zposnr</span>
       </Box>
     </Shell>

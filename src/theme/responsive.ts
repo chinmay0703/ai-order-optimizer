@@ -1,5 +1,5 @@
 /* =====================================================================
-   Responsive layout tokens — the SINGLE source of truth for how AIDEN
+   Responsive layout tokens — the SINGLE source of truth for how the app
    adapts from a phone to a 4K desktop.
    ---------------------------------------------------------------------
    The app has two shells, switched at ONE breakpoint (`MOBILE_BP`):

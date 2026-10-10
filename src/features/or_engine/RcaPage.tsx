@@ -34,7 +34,7 @@ function Section({ title, sub, count, children, open: openInit = false }: { titl
   const [open, setOpen] = useState(openInit);
   return (
     <Box sx={{ border: `1px solid ${C.rule}`, borderRadius: `${RADIUS.md}px`, boxShadow: SHADOW.sm, overflow: 'hidden', mb: 1.5, background: C.white }}>
-      <Box onClick={() => setOpen(o => !o)} sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, py: 1.1, cursor: 'pointer', bgcolor: C.cream, '&:hover': { bgcolor: '#F1EAD9' } }}>
+      <Box onClick={() => setOpen(o => !o)} sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, py: 1.1, cursor: 'pointer', bgcolor: C.cream, '&:hover': { bgcolor: '#F1E3D9' } }}>
         <Box sx={{ flex: 1 }}>
           <Box sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: 15 }}>{title}{count != null && <Box component="span" sx={{ ml: 1, fontSize: 12, color: C.muted, fontFamily: SANS }}>· {count}</Box>}</Box>
           {sub && <Box sx={{ fontSize: 11.5, color: C.muted }}>{sub}</Box>}

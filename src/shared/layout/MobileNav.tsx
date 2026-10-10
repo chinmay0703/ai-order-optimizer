@@ -23,9 +23,9 @@ export default function MobileNav({ page, onNav, user }: {
       sx={{
         position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 1200,
         height: `${MOBILE_NAV_H}px`, display: { xs: 'flex', md: 'none' }, alignItems: 'stretch',
-        background: 'linear-gradient(178deg, #12395F 0%, #0E2F4E 55%, #0B2842 100%)',
-        borderTop: '1px solid rgba(217,138,0,0.28)',
-        boxShadow: '0 -6px 20px -8px rgba(6,20,38,0.65)',
+        background: 'linear-gradient(178deg, #2D2D2D 0%, #262626 55%, #222222 100%)',
+        borderTop: '1px solid rgba(208,74,2,0.28)',
+        boxShadow: '0 -6px 20px -8px rgba(0,0,0,0.65)',
         overflowX: 'auto', overflowY: 'hidden',
         // the bar sits above the iOS home indicator
         pb: 'env(safe-area-inset-bottom)',
@@ -47,10 +47,10 @@ export default function MobileNav({ page, onNav, user }: {
               flex: '0 0 auto', minWidth: 76, minHeight: 44, px: 1.25, py: 0.75, scrollSnapAlign: 'start',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0.25,
               cursor: locked ? 'not-allowed' : 'pointer', opacity: locked ? 0.42 : 1,
-              color: active ? '#FDD666' : 'rgba(255,255,255,0.78)',
-              borderTop: active ? '2px solid #D98A00' : '2px solid transparent',
-              bgcolor: active ? 'rgba(217,138,0,0.14)' : 'transparent',
-              '&:focus-visible': { outline: '2px solid #FDD666', outlineOffset: '-2px' },
+              color: active ? '#FFB600' : 'rgba(255,255,255,0.78)',
+              borderTop: active ? '2px solid #D04A02' : '2px solid transparent',
+              bgcolor: active ? 'rgba(208,74,2,0.14)' : 'transparent',
+              '&:focus-visible': { outline: '2px solid #FFB600', outlineOffset: '-2px' },
               '& svg': { fontSize: 20 },
             }}>
             {locked ? <LockOutlinedIcon /> : it.icon}

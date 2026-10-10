@@ -9,7 +9,7 @@ import { EmptyState, ErrorState, PageSkeleton } from '../../shared/LoadState';
 import { C, SANS, MONO, RADIUS, SHADOW } from '../../theme/pdartTokens';
 
 /* ---------------------------------------------------------------------------
-   Data Model — every table · column · data type, live from Postgres, grouped
+   Data Model — every table · column · data type, sample data, grouped
    by the 6 logical domains (masters · transaction · processed · engine · orders · rlm) +
    the SAP hand-off. App tables are shown under the production schema ds_app.
 --------------------------------------------------------------------------- */
@@ -19,8 +19,8 @@ interface Dom { domain: string; desc: string; tables: Tbl[]; }
 interface Payload { app_schema: string; sap_schema: string; total_tables: number; total_columns: number; domains: Dom[]; }
 
 const DOMAIN_COLOR: Record<string, string> = {
-  masters: '#10365A', transaction: '#21A366', processed: '#6D28D9', engine: '#7A756D',
-  orders: '#D98A00', rlm: '#D98A00', sap: '#DC2C25',
+  masters: '#2D2D2D', transaction: '#21A366', processed: '#D93954', engine: '#6B6B6B',
+  orders: '#D04A02', rlm: '#D04A02', sap: '#E0301E',
 };
 
 const Shell = ({ children }: { children: React.ReactNode }) => (
@@ -74,7 +74,7 @@ export default function SchemaPage() {
   return (
     <Shell>
       <Box sx={{ fontSize: 14, color: C.slate, lineHeight: 1.5, maxWidth: 940, mb: 1.5 }}>
-        Every table used end to end, <b>live from Postgres</b> — grouped by the six logical domains plus the SAP
+        Every table used end to end, <b>sample data</b> — grouped by the six logical domains plus the SAP
         hand-off. App tables live in schema <b>ds_app</b>; the SAP order table lives in <b>de_sap</b>.
         &nbsp;<b>{data.total_tables}</b> tables · <b>{data.total_columns}</b> columns.
       </Box>
@@ -99,11 +99,11 @@ export default function SchemaPage() {
               sx={{ border: `1px solid ${C.rule}`, borderRadius: `${RADIUS.sm}px !important`, mb: 0.75,
                 boxShadow: SHADOW.sm, '&:before': { display: 'none' }, overflow: 'hidden' }}>
               <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: C.navy }} />}
-                sx={{ bgcolor: C.white, minHeight: 46, '&:hover': { bgcolor: 'rgba(16,54,90,0.04)' },
+                sx={{ bgcolor: C.white, minHeight: 46, '&:hover': { bgcolor: 'rgba(45,45,45,0.04)' },
                   '& .MuiAccordionSummary-content': { alignItems: 'center', gap: 1.25, my: 0.75 } }}>
                 <Box component="span" sx={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: C.navy }}>{t.table}</Box>
                 <Box component="span" sx={{ fontFamily: MONO, fontSize: 10, px: 0.7, py: 0.15, borderRadius: 1,
-                  bgcolor: '#eef2f7', color: C.muted, border: `1px solid ${C.rule}` }}>{t.schema}</Box>
+                  bgcolor: '#F2F2F2', color: C.muted, border: `1px solid ${C.rule}` }}>{t.schema}</Box>
                 <Box sx={{ flex: 1 }} />
                 <Box component="span" sx={{ fontSize: 11.5, color: C.muted }}>{t.columns.length} cols</Box>
               </AccordionSummary>
@@ -131,7 +131,7 @@ export default function SchemaPage() {
       ))}
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', borderTop: `1px solid ${C.rule}`, mt: 3, pt: 1, fontSize: 9, color: C.muted }}>
-        <span>PepsiCo AIDEN · Data Model (ds_app · de_sap) · live from Postgres</span>
+        <span>AI Order Optimizer · Data Model (ds_app · de_sap) · sample data</span>
         <span>{data.total_tables} tables · {data.total_columns} columns</span>
       </Box>
     </Shell>

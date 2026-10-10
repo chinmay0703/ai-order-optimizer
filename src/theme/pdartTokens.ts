@@ -1,30 +1,31 @@
 /* =====================================================================
-   P-DART visual theme — TypeScript tokens (skill: pdart-theme)
+   PwC visual theme — TypeScript tokens
    Single source of truth for inline-styled pages (EvalPage, MastersPage,
    StoryPage, …). MUI pages get the identical values via theme/muiTheme.ts.
    Mirrors html/tokens.css — keep them in sync.
    ===================================================================== */
 
 export const C = {
-  // ── structure (reference palette — navy #10365A + warm neutrals) ──
-  navy: '#10365A', navyDark: '#0C1D33',
-  gold: '#D98A00', goldLight: '#FDD666',            // "golden" now the palette amber
-  cream: '#F4F3F1', panelBg: '#EDEBE6', white: '#FFFFFF',
+  // ── structure — PwC palette: charcoal greys + PwC Orange / Tangerine / Yellow accents ──
+  navy: '#2D2D2D', navyDark: '#1A1A1A',              // (token names kept for back-compat: "navy" is now PwC charcoal)
+  gold: '#D04A02', goldLight: '#FFB600',             // PwC Orange · PwC Yellow
+  tangerine: '#EB8C00', rose: '#D93954', burgundy: '#A32020', maroon: '#602320',
+  cream: '#F6F6F6', panelBg: '#EDEDED', white: '#FFFFFF',
   canvas: '#F5F5F5',                                 // page background — white cards pop on this gray
-  ink: '#1C1C1C', slate: '#1C1C1C', muted: '#7A756D',
-  rule: '#E5E2DB', border: '#E5E2DB', rowLine: '#EFEEEB', headBg: '#F1F1F0',   // rowLine=divider · headBg=faint-grey table header
-  // ── semantic ───────────────────────────────────────────────
-  success: '#21A366', green: '#21A366', successLight: '#E7F3E7', greenP: '#E7F3E7',
-  warnText: '#D98A00', amber: '#D98A00', warnLight: '#FBF4E1', amberP: '#FBF4E1',   // soft warm amber (was harsh #FEF3C7)
-  alertRed: '#DC2C25', red: '#DC2C25', redP: '#FBEAEA',
-  // ── dashboard reference palette (from the OFR dashboard — the color + font reference) ──
-  pepsiRed: '#DC2C25', crimson: '#DC2C25', amberBright: '#D98A00', orange: '#D98A00',
-  deepRed: '#DC2C25', teal: '#21A366',
-  inkWarm: '#1C1C1C', mutedWarm: '#7A756D', pageWarm: '#F4F3F1', track: '#EDEBE6', allocGray: '#726E68',
+  ink: '#2D2D2D', slate: '#2D2D2D', muted: '#6B6B6B',
+  rule: '#DEDEDE', border: '#DEDEDE', rowLine: '#EEEEEE', headBg: '#F2F2F2',   // rowLine=divider · headBg=faint-grey table header
+  // ── semantic (text-safe inks: every one ≥ 4.5:1 on white AND on its own pale tint) ──
+  success: '#1B7346', green: '#1B7346', successLight: '#E7F3E7', greenP: '#E7F3E7',
+  warnText: '#A33A02', amber: '#A33A02', warnLight: '#FBEBE1', amberP: '#FBEBE1',   // dark PwC orange on a peach tint
+  alertRed: '#C02A1A', red: '#C02A1A', redP: '#FCEAE8',
+  // ── brand solids (fills, bars, markers — not small text) ──
+  brandRed: '#E0301E', crimson: '#E0301E', amberBright: '#EB8C00', orange: '#D04A02',
+  deepRed: '#A32020', teal: '#1B7346',
+  inkWarm: '#2D2D2D', mutedWarm: '#6B6B6B', pageWarm: '#F6F6F6', track: '#EDEDED', allocGray: '#6B6B6B',
   // ── back-compat aliases (old pdart-ui keys → new theme) ─────
-  navyP: '#F4F3F1',   // navy/neutral callouts now read as warm panels
-  grayP: '#EDEBE6',   // neutral panel → panelBg
-  codeBg: '#0F1E33',  // dark "show-your-work" block
+  navyP: '#F6F6F6',   // neutral callouts → light panels
+  grayP: '#EDEDED',   // neutral panel → panelBg
+  codeBg: '#1E1E1E',  // dark "show-your-work" block
 };
 
 // Cambria serif heads · Inter body/UI (matches the product's other screens) · Consolas mono

@@ -242,7 +242,7 @@ export default function TruckFillPanel({ date, mode }: { date?: string; mode: Mo
       </Box>
 
       <Box sx={{ borderTop: `1px solid ${C.rule}`, mt: 2.5, pt: 1, fontSize: 9, color: C.muted, display: 'flex', justifyContent: 'space-between' }}>
-        <span>PepsiCo AIDEN · {mode === 'step2' ? 'Step-2 Truck Fill (after substitution)' : 'Step-1 Truck Fill (water-fill only)'} · CFA × DB · Fill rate = ÷ SOQ · Truck util = ÷ truck cap</span>
+        <span>AI Order Optimizer · {mode === 'step2' ? 'Step-2 Truck Fill (after substitution)' : 'Step-1 Truck Fill (water-fill only)'} · CFA × DB · Fill rate = ÷ SOQ · Truck util = ÷ truck cap</span>
         <span>CFA × DB · {data.date ?? ''}</span>
       </Box>
     </Box>

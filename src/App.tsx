@@ -12,7 +12,7 @@ import { RUN_DONE_EVENT } from './shared/servedLookup';
 import Sidebar, { type Page } from './shared/layout/Sidebar';
 import { MOBILE_NAV_H, useIsMobile } from './theme/responsive';
 import MobileNav from './shared/layout/MobileNav';
-import PepsicoHeader from './shared/layout/PepsicoHeader';
+import AppHeader from './shared/layout/AppHeader';
 import KeepAlive from './shared/KeepAlive';
 import PageFallback from './shared/PageFallback';
 import HomePage from './features/overview/HomePage';   // landing view — eager (tiny, no heavy deps) so first paint has no spinner
@@ -138,11 +138,11 @@ function AuthedApp({ user }: { user: AuthUser }) {
       // (a nested scroller under `zoom` cannot be scrolled on phones).
       height: { xs: 'auto', md: '100%' }, minHeight: { xs: '100dvh', md: 0 },
       overflow: { xs: 'visible', md: 'hidden' } }}>
-      <PepsicoHeader sidebarOpen={sidebarOpen} onToggleSidebar={() => setSidebarOpen((o) => !o)} user={user} />
+      <AppHeader sidebarOpen={sidebarOpen} onToggleSidebar={() => setSidebarOpen((o) => !o)} user={user} />
       {/* BOOT bar: while the first api.dates() is loading (server can be slow to wake), a thin animated bar tells the
           user the app is starting — so first load never reads as a hang. Drops the moment the run dates resolve. */}
       {booting && (
-        <LinearProgress sx={{ height: 3, bgcolor: 'transparent', '& .MuiLinearProgress-bar': { bgcolor: '#D49E2E' } }} />
+        <LinearProgress sx={{ height: 3, bgcolor: 'transparent', '& .MuiLinearProgress-bar': { bgcolor: '#EB8C00' } }} />
       )}
       <Box sx={{ display: 'flex', flex: 1, minWidth: 0, minHeight: { xs: 'auto', md: 0 } }}>
       <Sidebar open={sidebarOpen} page={page} onNav={setPage}
@@ -152,7 +152,7 @@ function AuthedApp({ user }: { user: AuthUser }) {
         // clears the fixed MobileNav so the last row of ANY page is never hidden behind it
         pb: { xs: `${MOBILE_NAV_H + 28}px`, md: 0 } }}>
         {page !== 'home' && (
-        <Box sx={{ position: 'sticky', top: 0, zIndex: 20, background: 'linear-gradient(90deg, #D98A00 0%, #C67D00 100%)', color: '#fff',
+        <Box sx={{ position: 'sticky', top: 0, zIndex: 20, background: 'linear-gradient(90deg, #D04A02 0%, #B33F02 100%)', color: '#fff',
           px: { xs: 1, sm: 2.5 }, py: { xs: 0.5, sm: 0.9 }, display: 'flex', gap: { xs: 0.6, sm: 1.25 }, alignItems: 'center', flexWrap: 'wrap',
           borderBottom: '1px solid rgba(0,0,0,0.18)', boxShadow: '0 2px 10px -3px rgba(0,0,0,0.3)' }}>
           <Box component="span" sx={{ fontWeight: 800, fontSize: 11, letterSpacing: '.09em', textTransform: 'uppercase',
@@ -160,8 +160,8 @@ function AuthedApp({ user }: { user: AuthUser }) {
 
           {/* RUN DATE — themed dropdown (not a native <select>, whose popup is off-theme) */}
           <RunContextSelect label="Run date" title="The run date every page below reads" value={date} options={dates}
-            onChange={setDate} accent="#C67D00" align="left" minMenuWidth={150} emptyText={booting ? 'Loading…' : '—'}
-            icon={<CalendarTodayIcon sx={{ fontSize: 16, color: '#C67D00' }} />} />
+            onChange={setDate} accent="#B33F02" align="left" minMenuWidth={150} emptyText={booting ? 'Loading…' : '—'}
+            icon={<CalendarTodayIcon sx={{ fontSize: 16, color: '#B33F02' }} />} />
 
           {dataDate[date] && <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 700,
             fontSize: { xs: 10.5, sm: 12 }, bgcolor: 'rgba(255,255,255,0.20)', px: { xs: 0.7, sm: 1 }, py: { xs: 0.35, sm: 0.6 },
@@ -173,8 +173,8 @@ function AuthedApp({ user }: { user: AuthUser }) {
           {/* GLOBAL CFA scope — the CFA-scoped pages read THIS, not a per-page dropdown */}
           {cfaOpts.length > 0 && (
             <RunContextSelect label="CFA scope" title="Scope every CFA-scoped page to one CFA" value={cfa} options={cfaOpts}
-              onChange={setCfa} accent="#10365A" align="right" minMenuWidth={140} format={(v) => `CFA ${v}`}
-              icon={<StorageIcon sx={{ fontSize: 16, color: '#10365A' }} />} />
+              onChange={setCfa} accent="#2D2D2D" align="right" minMenuWidth={140} format={(v) => `CFA ${v}`}
+              icon={<StorageIcon sx={{ fontSize: 16, color: '#2D2D2D' }} />} />
           )}
         </Box>
         )}

@@ -81,7 +81,7 @@ export default function UserManagementPage() {
                       <TableCell sx={{ fontFamily: MONO, fontWeight: 700, color: C.navy }}>
                         {u.username}{me && u.id === me.id && <Box component="span" sx={{ ml: 0.8, fontSize: 10.5, color: C.muted, fontFamily: SANS }}>(you)</Box>}
                       </TableCell>
-                      <TableCell>{u.is_admin ? chip('ADMIN', '#e9eef4', C.navy) : chip('USER', C.headBg, C.muted)}</TableCell>
+                      <TableCell>{u.is_admin ? chip('ADMIN', '#EEEEEE', C.navy) : chip('USER', C.headBg, C.muted)}</TableCell>
                       <TableCell>{u.can_access_run || u.is_admin ? chip('YES', C.successLight, C.success) : chip('NO', C.redP, C.alertRed)}</TableCell>
                       <TableCell sx={{ color: C.muted, fontSize: 12.5, whiteSpace: 'nowrap' }}>{String(u.created_at).slice(0, 19)}</TableCell>
                       <TableCell sx={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
@@ -177,7 +177,7 @@ function DeleteDialog({ row, onClose, onDone }: { row: Row; onClose: () => void;
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onClose} sx={{ textTransform: 'none', color: C.muted }}>Cancel</Button>
         <Button onClick={del} disabled={busy} variant="contained"
-          sx={{ textTransform: 'none', fontWeight: 800, bgcolor: C.alertRed, boxShadow: 'none', '&:hover': { bgcolor: '#B3241E', boxShadow: 'none' } }}>
+          sx={{ textTransform: 'none', fontWeight: 800, bgcolor: C.alertRed, boxShadow: 'none', '&:hover': { bgcolor: '#A32020', boxShadow: 'none' } }}>
           {busy ? <CircularProgress size={18} sx={{ color: '#fff' }} /> : 'Delete'}
         </Button>
       </DialogActions>

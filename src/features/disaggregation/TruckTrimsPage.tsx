@@ -114,21 +114,21 @@ export default function TruckTrimsPage({ date, cfa = '' }: { date?: string; cfa?
             Trimmed &amp; dropped by the truck rule
           </Box>
           <IconButton size="small" onClick={() => setHelpOpen(true)} title="How this page works"
-            sx={{ color: C.gold, border: `1px solid ${C.goldLight}`, bgcolor: '#FCF8EE', '&:hover': { bgcolor: '#FBF1DC', borderColor: C.gold } }}>
+            sx={{ color: C.gold, border: `1px solid ${C.goldLight}`, bgcolor: '#FCF4EE', '&:hover': { bgcolor: '#FBE8DC', borderColor: C.gold } }}>
             <HelpOutlineIcon sx={{ fontSize: 19 }} />
           </IconButton>
           <Box component="span" sx={{ fontSize: 11.5, color: C.muted }}>how it works</Box>
         </Box>
         <Dialog open={helpOpen} onClose={() => setHelpOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: `${RADIUS.md}px`, overflow: 'hidden', border: `1px solid ${C.goldLight}` } }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #E7A93A 0%, #D98A00 55%, #C67D00 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #EB8C00 0%, #D04A02 55%, #B33F02 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
             <HelpOutlineIcon sx={{ fontSize: 20 }} />
             <Box sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 17 }}>How this page works</Box>
             <Box sx={{ flex: 1 }} />
             <IconButton onClick={() => setHelpOpen(false)} size="small" aria-label="close" sx={{ color: '#fff', '&:hover': { bgcolor: 'rgba(255,255,255,0.18)' } }}><CloseIcon sx={{ fontSize: 20 }} /></IconButton>
           </Box>
-          <Box sx={{ p: 2.75, color: C.slate, bgcolor: '#FCFAF4', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
+          <Box sx={{ p: 2.75, color: C.slate, bgcolor: '#FCF7F4', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
             {/* the goal */}
-            <Box sx={{ p: '10px 12px', borderRadius: `${RADIUS.sm}px`, bgcolor: '#FCF8EE', border: `1px solid ${C.goldLight}`, borderLeft: `3px solid ${C.gold}` }}>
+            <Box sx={{ p: '10px 12px', borderRadius: `${RADIUS.sm}px`, bgcolor: '#FCF4EE', border: `1px solid ${C.goldLight}`, borderLeft: `3px solid ${C.gold}` }}>
               <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.gold, mb: 0.4 }}>🎯 The goal</Box>
               <Box sx={{ fontSize: 13, lineHeight: 1.55 }}>Ship as many <b>balanced trucks</b> as a lane needs. Whatever can&apos;t fit a <b>clean truck</b> is trimmed off — and every case removed is listed here.</Box>
             </Box>
@@ -243,7 +243,7 @@ export default function TruckTrimsPage({ date, cfa = '' }: { date?: string; cfa?
                   <TableCell sx={{ fontSize: 12.5, maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={l.db_name}>{l.db_name || '—'}</TableCell>
                   <TableCell sx={{ fontSize: 12.5, color: C.slate }}>
                     {l.truck_type || '—'}{l.truck_cap ? ` · ${l.truck_cap} cs` : ''}
-                    {l.is_transhipment && <Box component="span" title="Transshipment secondary truck (Cluster Master)" sx={{ ml: 0.6, px: 0.6, py: 0.2, borderRadius: 1, fontSize: 10, fontWeight: 800, bgcolor: '#fbf1e0', color: '#D98A00' }}>▸ secondary{l.cluster ? ` · ${l.cluster}` : ''}</Box>}
+                    {l.is_transhipment && <Box component="span" title="Transshipment secondary truck (Cluster Master)" sx={{ ml: 0.6, px: 0.6, py: 0.2, borderRadius: 1, fontSize: 10, fontWeight: 800, bgcolor: '#FBEBE0', color: '#D04A02' }}>▸ secondary{l.cluster ? ` · ${l.cluster}` : ''}</Box>}
                   </TableCell>
                   <TableCell sx={num}>{nf(l.skus)}</TableCell>
                   <TableCell sx={{ ...num, fontWeight: 800, color: C.alertRed }}>{nf(l.cases)}</TableCell>
@@ -289,7 +289,7 @@ export default function TruckTrimsPage({ date, cfa = '' }: { date?: string; cfa?
       </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', borderTop: `1px solid ${C.rule}`, mt: 3, pt: 1, fontSize: 9, color: C.muted }}>
-        <span>PepsiCo AIDEN · truck rule audit</span>
+        <span>AI Order Optimizer · truck rule audit</span>
         <span>tail trim · lane drop → cascade to next run · cluster primary trim → post-cascade, not re-shipped</span>
       </Box>
     </Shell>

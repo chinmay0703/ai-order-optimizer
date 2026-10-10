@@ -115,7 +115,7 @@ const IDLE_POLL_MS = 4000;
 // today as dd-mm-yyyy — the run date every run is stamped with (the backend's run_day, IST)
 const todayLabel = () => { const d = new Date(); return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`; };   // how often an idle Run page checks whether a run started elsewhere (API / cron / another user)
 const SOURCE_LABEL: Record<string, string> = { api: 'started via API', cron: 'started by the daily schedule', manual: 'started from the UI' };
-const RUN_HUES = ['#10365A', '#D98A00', '#21A366', '#DC2C25', '#7A756D', '#1C1C1C'];
+const RUN_HUES = ['#2D2D2D', '#D04A02', '#21A366', '#E0301E', '#6B6B6B', '#2D2D2D'];
 
 /* ---- Pipeline Run Audit: a slim run HEADER + PER-CFA per-stage detail, from GET /api/production/audit ---- */
 interface CfaStage {   // one (cfa, stage) checkpoint; cfa='ALL' = a shared/whole-run stage
@@ -147,11 +147,11 @@ const CFA_LABELS: Record<string, string> = {
 // calm status palette — only a small DOT carries colour (green ok · gold partial/running · red fail · grey idle)
 const ST_TONE: Record<string, { dot: string; fg: string; bg: string }> = {
   SUCCESS: { dot: '#21A366', fg: '#1E7E4B', bg: '#E7F3E7' },
-  RUNNING: { dot: '#D98A00', fg: '#B26A00', bg: '#FBF1E0' },
-  FAILED: { dot: '#DC2C25', fg: '#C0261F', bg: '#FBEAEA' },
-  PARTIAL: { dot: '#D98A00', fg: '#B26A00', bg: '#FBF1E0' },
-  SKIPPED: { dot: '#CBD5E1', fg: '#7A756D', bg: '#F1F5F9' },
-  PENDING: { dot: '#CBD5E1', fg: '#9AA3AD', bg: '#F1F5F9' },
+  RUNNING: { dot: '#D04A02', fg: '#A33A02', bg: '#FBEBE0' },
+  FAILED: { dot: '#E0301E', fg: '#A32020', bg: '#FBEAEA' },
+  PARTIAL: { dot: '#D04A02', fg: '#A33A02', bg: '#FBEBE0' },
+  SKIPPED: { dot: '#D6D6D6', fg: '#6B6B6B', bg: '#F5F5F5' },
+  PENDING: { dot: '#D6D6D6', fg: '#A3A3A3', bg: '#F5F5F5' },
 };
 function AuditSection({ audit, loading }: { audit: AuditRow | null; loading?: boolean }) {
   // celebrate a stage the moment it flips to SUCCESS — a one-shot pop + ring + sparkle burst, ONLY on the live
@@ -382,8 +382,8 @@ function CfaCard({ cfa, s }: { cfa: string; s: PerCfa }) {
 const trucksLabel = (n: number | undefined) => `${nf(n ?? 0)} truck${(n ?? 0) === 1 ? '' : 's'}`;
 
 function FunnelTable({ summary, cfas }: { summary: Record<string, PerCfa>; cfas: string[] }) {
-  const th = { padding: '8px 10px', background: '#F4F3F1', color: C.muted, fontWeight: 700, fontSize: 10, letterSpacing: '.04em', textTransform: 'uppercase' as const, borderBottom: '1px solid #E5E2DB', whiteSpace: 'nowrap' as const, textAlign: 'right' as const };
-  const td = { padding: '9px 10px', borderTop: '1px solid #EDEBE6', fontSize: 13, fontVariantNumeric: 'tabular-nums' as const, textAlign: 'right' as const, verticalAlign: 'top' as const };
+  const th = { padding: '8px 10px', background: '#F6F6F6', color: C.muted, fontWeight: 700, fontSize: 10, letterSpacing: '.04em', textTransform: 'uppercase' as const, borderBottom: '1px solid #DEDEDE', whiteSpace: 'nowrap' as const, textAlign: 'right' as const };
+  const td = { padding: '9px 10px', borderTop: '1px solid #EDEDED', fontSize: 13, fontVariantNumeric: 'tabular-nums' as const, textAlign: 'right' as const, verticalAlign: 'top' as const };
   // a DB count with an optional small second line (truck counts / detail) underneath
   // `sub` = one small line, or a LIST stacked one per line (stays narrow however many parts there are); `tip` = hover text
   const cell = (v: number | undefined, color?: string, bold?: boolean, sub?: string | string[], subColor?: string, tip?: string) => (
@@ -884,10 +884,10 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
             ...(running ? { animation: 'aidenTop 3s linear infinite' } : {}) }} />
           {/* faint rotating aurora + soft corner glows (green/gold on white) */}
           {running && <Box aria-hidden sx={{ position: 'absolute', top: '-45%', left: '-12%', width: '124%', height: '190%', zIndex: 0, pointerEvents: 'none', opacity: 0.10, filter: 'blur(50px)',
-            background: 'conic-gradient(from 0deg, rgba(33,163,102,0), rgba(33,163,102,0.6), rgba(217,138,0,0.5), rgba(33,163,102,0))',
+            background: 'conic-gradient(from 0deg, rgba(33,163,102,0), rgba(33,163,102,0.6), rgba(208,74,2,0.5), rgba(33,163,102,0))',
             animation: 'aidenSpin 10s linear infinite' }} />}
           <Box aria-hidden sx={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
-            background: 'radial-gradient(500px 180px at 10% -20%, rgba(33,163,102,0.08), transparent 60%), radial-gradient(440px 200px at 100% 120%, rgba(217,138,0,0.07), transparent 60%)' }} />
+            background: 'radial-gradient(500px 180px at 10% -20%, rgba(33,163,102,0.08), transparent 60%), radial-gradient(440px 200px at 100% 120%, rgba(208,74,2,0.07), transparent 60%)' }} />
 
           {/* header */}
           <Box sx={{ position: 'relative', zIndex: 2, px: 2.25, pt: 2.25, pb: 1.5 }}>
@@ -965,7 +965,7 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
                 bgcolor: '#fff', color: C.slate, border: `1px solid ${C.border}`, borderLeft: `4px solid ${nothingAllocated ? C.gold : C.green}`, boxShadow: SHADOW.lg }}>
                 {/* soft green/gold corner glows on white */}
                 <Box aria-hidden sx={{ position: 'absolute', inset: 0, pointerEvents: 'none',
-                  background: 'radial-gradient(460px 180px at 92% -25%, rgba(33,163,102,0.10), transparent 60%), radial-gradient(380px 190px at 0% 120%, rgba(217,138,0,0.07), transparent 60%)' }} />
+                  background: 'radial-gradient(460px 180px at 92% -25%, rgba(33,163,102,0.10), transparent 60%), radial-gradient(380px 190px at 0% 120%, rgba(208,74,2,0.07), transparent 60%)' }} />
 
                 {/* top row: status + the number */}
                 <Box sx={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'flex-end', gap: 3, flexWrap: 'wrap' }}>
@@ -1000,7 +1000,7 @@ export default function RunPage({ viewDate, onRan, canRun = true }: { viewDate?:
                     </Box>
                     <Box sx={{ display: 'flex', height: 9, borderRadius: 999, overflow: 'hidden', bgcolor: C.grayP }}>
                       {totals.cases > 0 && <Box sx={{ width: `${cw}%`, background: `linear-gradient(90deg,${C.green},#5EE0A0)` }} />}
-                      {held > 0 && <Box sx={{ width: `${hw}%`, background: `linear-gradient(90deg,${C.gold},#FDD666)` }} />}
+                      {held > 0 && <Box sx={{ width: `${hw}%`, background: `linear-gradient(90deg,${C.gold},#FFB600)` }} />}
                     </Box>
                     <Box sx={{ display: 'flex', gap: 2, mt: 0.7 }}>
                       <HeroLegend color={C.green} label="Sent for SO creation" value={totals.cases} />

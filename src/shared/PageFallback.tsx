@@ -6,8 +6,8 @@ import { Box, CircularProgress } from '@mui/material';
 export default function PageFallback() {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1.2,
-      minHeight: '45vh', color: '#1A3E6F' }}>
-      <CircularProgress size={22} thickness={5} sx={{ color: '#D49E2E' }} />
+      minHeight: '45vh', color: '#3A3A3A' }}>
+      <CircularProgress size={22} thickness={5} sx={{ color: '#EB8C00' }} />
       <Box sx={{ fontSize: 13, fontWeight: 700, letterSpacing: '.02em',
         fontFamily: 'Calibri, "Segoe UI", system-ui, sans-serif' }}>Loading…</Box>
     </Box>

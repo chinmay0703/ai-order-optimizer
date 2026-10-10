@@ -355,7 +355,7 @@ export default function OrderJourneyPage({ date, cfa }: { date?: string; cfa?: s
 
       {loading && <LinearProgress sx={{ position: 'fixed', top: 0, left: 0, right: 0, height: 3, zIndex: 20, bgcolor: 'transparent', '& .MuiLinearProgress-bar': { bgcolor: C.gold } }} />}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', borderTop: `1px solid ${C.rule}`, mt: 3, pt: 1, fontSize: 9, color: C.muted }}>
-        <span>PepsiCo AIDEN · Order Journey · reg-zsku from the Allocation Report · trucks from the engine truck plan · owner-centric</span>
+        <span>AI Order Optimizer · Order Journey · reg-zsku from the Allocation Report · trucks from the engine truck plan · owner-centric</span>
         <span>CFA {cfa || 'all'} · {data.date ?? ''}</span>
       </Box>
     </Shell>

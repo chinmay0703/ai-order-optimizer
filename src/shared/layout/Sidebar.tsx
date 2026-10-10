@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { api } from '../../api';
-import { config } from '../../config';
 import type { AuthUser } from '../auth';
 import { Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, Tooltip } from '@mui/material';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
@@ -61,13 +60,13 @@ const FALLBACK_RUNS: RunOpt[] = [
 
 export const HOME: Item = { key: 'home', label: 'Home', sub: 'all pages · what each one does', icon: <AppsIcon /> };
 const RUN: Item = { key: 'run', label: 'Run', sub: 'run the engine · by date', icon: <PlayCircleOutlineIcon /> };
-const FLOW: Item = { key: 'flow', label: 'How it works', sub: 'AIDEN process story', icon: <SchemaIcon /> };
+const FLOW: Item = { key: 'flow', label: 'How it works', sub: 'process story', icon: <SchemaIcon /> };
 const FINALORDERREPORT: Item = { key: 'finalorderreport', label: 'Final Order · Distributor level', sub: 'one row per CFA × DB · every SOQ DB · download', icon: <SummarizeIcon /> };
 const UATREPORTV2: Item = { key: 'uatreportv2', label: 'Allocation Report', sub: 'reg-zsku × DB × truck · download', icon: <FactCheckIcon /> };
 const ORDERJOURNEY: Item = { key: 'orderjourney', label: 'Order Journey', sub: 'end-to-end · distributor → truck → reg-zsku → batch', icon: <AccountTreeIcon /> };
 const FILTEREDSOQ: Item = { key: 'filteredsoq', label: 'Filtered SOQ', sub: 'demand gate · (PDP/below) & 65%', icon: <FilterAltIcon /> };
 const PREPROC: Item = { key: 'resprefilter', label: 'Pre-processing', sub: 'reserve → run-by-run (workflow)', icon: <TuneIcon /> };
-const MASTERS: Item = { key: 'masters', label: 'Data', sub: 'every table, live from Postgres', icon: <StorageIcon /> };
+const MASTERS: Item = { key: 'masters', label: 'Data', sub: 'every table, sample data', icon: <StorageIcon /> };
 const RESRUNS: Item = { key: 'resruns', label: 'Allocation Summary', sub: 'cascade · CFA × truck × DB', icon: <ViewListIcon /> };
 const CFAREGZSKU: Item = { key: 'cfaregzsku', label: 'CFA × Reg-ZSKU', sub: 'SO created · Inventory · SOQ · AOQ', icon: <SummarizeIcon /> };
 const CFARES: Item = { key: 'cfares', label: 'CFA Stock Reservation', sub: 'step 1 · reserve · MRP validation', icon: <Inventory2Icon /> };
@@ -111,8 +110,7 @@ export interface ShowSection { title: string; blurb: string; items: ShowItem[]; 
 export const SHOWCASE_SECTIONS: ShowSection[] = [
   { title: 'Runs 1.2 & 2', blurb: 'planned phases · not yet live', items: [
     { label: 'Run 1.2 · 2nd RLM Shift', sub: 'planned · not yet live', icon: <PublishedWithChangesIcon /> },
-    // Run 2 reallocation lives in a separate app — open it in a NEW TAB (url from runtime config, QA default)
-    { label: 'Run 2 · Reallocation', sub: 'open the reallocation app ↗', icon: <ReplayIcon />, href: config.reallocationUrl },
+    { label: 'Run 2 · Reallocation', sub: 'planned · not yet live', icon: <ReplayIcon /> },
   ] },
 ];
 
@@ -150,13 +148,13 @@ export default function Sidebar({ page, onNav, preRun, setPreRun, setPreTab, ope
         <span>
         <ListItemButton selected={sel} disabled={disabled} onClick={disabled ? undefined : (onClick ?? (() => onNav(n.key)))}
           sx={{ mx: 1, my: 0.3, pl: indent ? 3 : 2, borderRadius: '9px', borderLeft: '3px solid transparent',
-            color: sel ? '#FBE7C0' : 'rgba(255,255,255,0.82)', transition: 'background-color .12s, color .12s',
-            '&.Mui-selected': { bgcolor: 'rgba(217,138,0,0.16)', borderLeftColor: '#D98A00', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)' },
-            '&.Mui-selected:hover': { bgcolor: 'rgba(217,138,0,0.22)' },
-            '&:hover': { bgcolor: 'rgba(217,138,0,0.10)', color: '#FDD666' },
-            '&:hover .MuiListItemIcon-root': { color: '#FDD666' },
+            color: sel ? '#FAD8C1' : 'rgba(255,255,255,0.82)', transition: 'background-color .12s, color .12s',
+            '&.Mui-selected': { bgcolor: 'rgba(208,74,2,0.16)', borderLeftColor: '#D04A02', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)' },
+            '&.Mui-selected:hover': { bgcolor: 'rgba(208,74,2,0.22)' },
+            '&:hover': { bgcolor: 'rgba(208,74,2,0.10)', color: '#FFB600' },
+            '&:hover .MuiListItemIcon-root': { color: '#FFB600' },
             '&.Mui-disabled': { opacity: 0.42 } }}>
-          <ListItemIcon sx={{ minWidth: 32, color: sel ? '#F0C86A' : 'rgba(255,255,255,0.55)' }}>{disabled ? <LockOutlinedIcon fontSize="small" /> : n.icon}</ListItemIcon>
+          <ListItemIcon sx={{ minWidth: 32, color: sel ? '#FFC94D' : 'rgba(255,255,255,0.55)' }}>{disabled ? <LockOutlinedIcon fontSize="small" /> : n.icon}</ListItemIcon>
           <ListItemText primary={n.label} secondary={disabled ? 'run access required' : n.sub}
             primaryTypographyProps={{ fontWeight: sel ? 700 : 600, fontSize: indent ? '0.85rem' : '0.9rem' }}
             secondaryTypographyProps={{ fontSize: '0.64rem', color: sel ? 'rgba(251,231,192,0.66)' : 'rgba(255,255,255,0.55)' }} />
@@ -175,7 +173,7 @@ export default function Sidebar({ page, onNav, preRun, setPreRun, setPreTab, ope
   // a visible section divider label (gold uppercase) for the new grouped sections
   const sectionHead = (label: string) => (
     <Box key={`sec-${label}`} sx={{ px: 2.5, pt: 2, pb: 0.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-      <Box component="span" sx={{ fontSize: '0.62rem', fontWeight: 800, letterSpacing: '.11em', textTransform: 'uppercase', color: '#E9B84E', whiteSpace: 'nowrap' }}>{label}</Box>
+      <Box component="span" sx={{ fontSize: '0.62rem', fontWeight: 800, letterSpacing: '.11em', textTransform: 'uppercase', color: '#FFB600', whiteSpace: 'nowrap' }}>{label}</Box>
       <Box sx={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, rgba(233,184,78,0.4), transparent)' }} />
     </Box>
   );
@@ -188,13 +186,13 @@ export default function Sidebar({ page, onNav, preRun, setPreRun, setPreTab, ope
         onClick={linked ? () => window.open(it.href, '_blank', 'noopener,noreferrer') : undefined}
         sx={{ mx: 1, my: 0.25, pl: 2, borderRadius: '9px',
           ...(linked
-            ? { '&:hover': { bgcolor: 'rgba(217,138,0,0.10)' }, '&:hover .MuiListItemIcon-root': { color: '#FDD666' } }
+            ? { '&:hover': { bgcolor: 'rgba(208,74,2,0.10)' }, '&:hover .MuiListItemIcon-root': { color: '#FFB600' } }
             : { '&.Mui-disabled': { opacity: 0.75 } }) }}>
         <ListItemIcon sx={{ minWidth: 32, color: linked ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.4)' }}>{it.icon}</ListItemIcon>
         <ListItemText primary={it.label} secondary={it.sub}
           primaryTypographyProps={{ fontWeight: 600, fontSize: '0.9rem', color: linked ? 'rgba(255,255,255,0.82)' : 'rgba(255,255,255,0.62)' }}
           secondaryTypographyProps={{ fontSize: '0.64rem', color: linked ? 'rgba(251,231,192,0.6)' : 'rgba(255,255,255,0.42)' }} />
-        <Box component="span" sx={{ fontSize: '0.52rem', fontWeight: 800, letterSpacing: '.08em', color: '#D98A00', border: '1px solid rgba(217,138,0,0.5)', borderRadius: '4px', px: 0.6, py: 0.15 }}>{linked ? 'OPEN ↗' : 'SOON'}</Box>
+        <Box component="span" sx={{ fontSize: '0.52rem', fontWeight: 800, letterSpacing: '.08em', color: '#EB8C00', border: '1px solid rgba(208,74,2,0.5)', borderRadius: '4px', px: 0.6, py: 0.15 }}>{linked ? 'OPEN ↗' : 'SOON'}</Box>
       </ListItemButton>
     );
   };
@@ -202,12 +200,12 @@ export default function Sidebar({ page, onNav, preRun, setPreRun, setPreTab, ope
   if (isMobile) return null;   // below md the fixed bottom MobileNav is the only nav
   return (
     <Box sx={{ width: open ? 236 : 0, flexShrink: 0, color: '#fff', display: 'flex', flexDirection: 'column',
-      background: 'linear-gradient(178deg, #12395F 0%, #0E2F4E 55%, #0B2842 100%)',
-      borderRight: '1px solid rgba(217,138,0,0.16)',   // faint gilded edge
+      background: 'linear-gradient(178deg, #2D2D2D 0%, #262626 55%, #222222 100%)',
+      borderRight: '1px solid rgba(208,74,2,0.16)',   // faint gilded edge
       height: '100%', minHeight: 0, overflow: 'hidden', transition: 'width .22s ease' }}>
       {/* scrolling nav area (fixed width so labels wrap normally + no reflow while the sidebar collapses) */}
       <Box sx={{ flex: 1, minHeight: 0, overflowY: open ? 'auto' : 'hidden', overflowX: 'hidden',
-        '&::-webkit-scrollbar': { width: 8 }, '&::-webkit-scrollbar-thumb': { bgcolor: 'rgba(217,138,0,0.28)', borderRadius: 8 },
+        '&::-webkit-scrollbar': { width: 8 }, '&::-webkit-scrollbar-thumb': { bgcolor: 'rgba(208,74,2,0.28)', borderRadius: 8 },
         '&::-webkit-scrollbar-track': { bgcolor: 'transparent' } }}>
         <List sx={{ py: 1, width: 236, boxSizing: 'border-box' }}>
           {/* Home pinned at top, then EVERY section with its header — driven by MENU_SECTIONS so it matches the Home page.

@@ -1,17 +1,13 @@
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// base './' so a production build can be served from any path.
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
-  // Same-origin dev: with VITE_API_BASE empty, the app calls /api/... and Vite proxies it to the local backend —
-  // exactly how nginx proxies /api in prod. Target is env-driven (VITE_DEV_API), default the local FastAPI on :8000,
-  // so there is NO hardcoded backend URL in the app itself.
-  const devApi = env.VITE_DEV_API || 'http://localhost:8000';
+// base './' so the static build works from any sub-path — e.g. GitHub Pages at /<repo>/. There is no backend and no
+// proxy: every /api call is answered in the browser from the dummy dataset (src/mock).
+export default defineConfig(() => {
   return {
     plugins: [react()],
     base: './',
-    server: { port: 5188, open: true, proxy: { '/api': devApi } },
+    server: { port: 5199, open: true },
     build: {
       // pages are code-split (React.lazy), so the biggest remaining files are shared vendors — bumped so the
       // build log stays quiet unless something genuinely regresses.
