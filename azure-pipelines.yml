@@ -1,0 +1,67 @@
+trigger:
+  branches:
+    include:
+      - develop
+
+parameters:
+  - name: deployOnly
+    displayName: 'deployOnly'
+    type: boolean
+    default: false
+
+  - name: ImageTag
+    displayName: 'ImageTag'
+    type: string
+    default: $(Build.BuildNumber)
+
+  - name: restartOnly
+    displayName: 'restartOnly'
+    type: boolean
+    default: false
+
+  - name: cr_number
+    displayName: 'cr_number'
+    type: string
+    default: 'null'
+
+  - name: Manual_Approval_Prod
+    displayName: 'Manual_Approval_Prod'
+    type: boolean
+    default: false
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: AMESA_APAC_Data_Digital/templates
+      ref: aws-ml
+    - repository: csp-templates
+      type: git 
+      name: AMESA_APAC_Data_Digital/templates
+      ref: csp-templates
+
+variables:
+  - template: variables.yaml@templates
+  - name: deployOnly
+    value: ${{ parameters.deployOnly }}
+  - name: ImageTag
+    value: ${{ parameters.ImageTag }}
+  - name: restartOnly
+    value: ${{ parameters.restartOnly }}
+  - name: cr_number
+    value: ${{ parameters.cr_number }}
+  - name: Manual_Approval_Prod
+    value: ${{ parameters.Manual_Approval_Prod }}
+
+stages:
+- template: Spring-CICD.yaml@templates
+  parameters:
+    isAKS: false
+    isPython: false
+    isUI: true
+    JavaVers: '1.17'
+    isfortifyScanRequired: false
+    isSnykScanRequired: false
+    isSonarScanRequired: false
+    cr_number: ${{ parameters.cr_number }}
+    Manual_Approval_Prod: ${{ parameters.Manual_Approval_Prod }}

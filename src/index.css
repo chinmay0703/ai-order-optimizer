@@ -1,0 +1,111 @@
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body { margin: 0; overflow: hidden; background: #F5F5F5; }
+/* default the whole app to ~90% zoom so small screens see more and it never looks zoomed-in.
+   IMPORTANT: keep #root at a plain full height (NO 1/0.9 compensation). Coupling the height to the zoom
+   makes #root overflow the viewport, which body:hidden then CLIPS — so the last section becomes unreachable.
+   At height:100% #root can never overflow: it renders at 90% and the app's own scroll region reaches every row. */
+#root { zoom: 0.9; }
+
+/* ── Mobile / tablet-portrait (below MUI `md` = 900px) ─────────────────────────
+   `zoom` is unreliable on mobile browsers: combined with height:100% and a nested
+   overflow:auto scroller it mis-measures the scroll height, so the page cannot be
+   scrolled at all. Below md we therefore drop the zoom and let the DOCUMENT scroll
+   normally instead of relying on an inner fixed-height scroll region. */
+@media (max-width: 899.95px) {
+  html, body, #root { height: auto; min-height: 100%; }
+  body { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+  /* Every size in this app is authored in desktop px. Rather than re-tune hundreds of values per page,
+     scale the whole UI down on small screens — type, padding, cards and tables shrink together, so
+     headings stop squeezing to one word per line and KPI numbers stop clipping. */
+  #root { zoom: 0.82; }
+}
+@media (max-width: 599.95px) {
+  /* 0.80 rather than 0.74: portaled menus/dialogs cannot be zoomed (it breaks their anchoring), so the page
+     scale is kept close enough to them that the two do not read as different sizes. */
+  #root { zoom: 0.80; }
+}
+
+/* MUI portals menus, dialogs, popovers and tooltips to <body>, OUTSIDE #root — so the mobile scale above
+   never reaches them and they render at full desktop size over a scaled-down page. Scale them to match,
+   and hard-cap their width so a long option list can never overflow the viewport. */
+/* NOTE: do NOT put `zoom` on a popover/menu/tooltip root. MUI positions the paper with absolute left/top computed
+   from the anchor's REAL viewport rect; a zoomed root scales those coordinates too, so the menu drifts off its
+   anchor by exactly the zoom factor (measured: a 0.74 zoom moved the account menu 97px left of its avatar).
+   Portaled surfaces therefore render at their natural size — which also keeps their tap targets full-size on a
+   phone — and are only CAPPED so they can never overflow the viewport. */
+/* The page is scaled to 0.82/0.74 on small screens but portaled surfaces are NOT (zoom breaks their anchoring),
+   so at full size they read as oversized against everything behind them. Scale their TYPOGRAPHY and padding to
+   match instead — while holding rows at >=44px so tap targets survive the shrink. */
+/* ── Menu / dropdown options must never be clipped, at ANY width ────────────────
+   A <Select> sizes its menu paper to the INPUT it is anchored to, and MUI's Popover caps that paper at the
+   viewport — but MenuItem defaults to `white-space: nowrap`, so an option longer than the input is simply cut
+   off at the paper edge ("Run 3 · AFH (Away From Home) (Bands 1+2+3) — 0 c…"). Wrapping is what fixes it, and
+   this has nothing to do with screen size: the same label clips on a 1440px desktop. Keep this rule GLOBAL —
+   it lived inside the phone media query at first and so did nothing on the width the bug was reported at. */
+.MuiMenuItem-root, .MuiAutocomplete-option, .MuiMenuItem-root .MuiListItemText-primary {
+  white-space: normal !important;
+  /* break-word, NOT anywhere: `anywhere` also shrinks the element's min-content width, so a flex child holding
+     "194 cs" got crushed to a two-character column and read as "19 / 4 · c / s". break-word only breaks a word
+     that genuinely cannot fit on a line of its own, which is all this needs. */
+  overflow-wrap: break-word;
+  line-height: 1.35;
+}
+/* and never let the paper itself run past the screen edge */
+.MuiPaper-root.MuiMenu-paper, .MuiPaper-root.MuiPopover-paper, .MuiAutocomplete-paper {
+  max-width: calc(100vw - 24px);
+}
+
+@media (max-width: 899.95px) {
+  .MuiMenu-paper, .MuiPopover-paper, .MuiDialog-paper, .MuiAutocomplete-paper { font-size: 12.5px; }
+  .MuiMenuItem-root, .MuiAutocomplete-option {
+    font-size: 12.5px !important;         /* the 12px readability floor — do not go lower to chase the page scale */
+    min-height: 44px !important;          /* touch target floor — never shrink below this */
+    padding-top: 6px !important; padding-bottom: 6px !important;
+  }
+  .MuiMenuItem-root .MuiListItemIcon-root { min-width: 32px !important; }
+  .MuiMenuItem-root .MuiSvgIcon-root, .MuiListItemIcon-root .MuiSvgIcon-root { font-size: 17px !important; }
+  .MuiDialog-paper .MuiInputBase-input { font-size: 13.5px !important; }
+  .MuiDialog-paper .MuiInputLabel-root, .MuiDialog-paper .MuiFormHelperText-root { font-size: 12px !important; }
+  .MuiDialogActions-root .MuiButton-root, .MuiDialog-paper .MuiButton-root { font-size: 13px !important; }
+  .MuiTooltip-tooltip { font-size: 11.5px !important; }
+
+  .MuiPaper-root.MuiMenu-paper,
+  .MuiPaper-root.MuiPopover-paper,
+  .MuiAutocomplete-paper {
+    /* MUI writes the ANCHOR's width onto the paper as an INLINE min-width, and min-width beats max-width in the
+       cascade no matter how important the max is — so on a phone the menu rendered 480px wide inside a 390px
+       viewport and hung off the right edge. Release the floor first, THEN cap. (The anchor measures wide because
+       the page itself is zoom-scaled while portals are not.) */
+    min-width: 0 !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+  .MuiDialog-paper {
+    max-width: calc(100vw - 24px) !important;
+    margin: 12px !important;
+  }
+}
+
+/* ── Dialogs must always be able to reach their own content ─────────────────────
+   Most "how it works" dialogs in this app put their body straight into a Box
+   rather than a <DialogContent>, so nothing supplies a scroll region: cap the
+   height alone and the tail is simply clipped with no way to get to it. Cap the
+   height AND make the paper itself scroll, at EVERY width — a long dialog
+   overflows a laptop just as easily as a phone. overscroll-behavior stops the
+   page behind it scrolling once the dialog hits its end. */
+.MuiDialog-paper {
+  /* !important: MUI injects its own .MuiDialog-paper rule (max-height: calc(100% - 64px);
+     overflow-y: hidden) from emotion AFTER this stylesheet, so an equal-specificity rule loses. */
+  max-height: 90dvh !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+/* No exception for dialogs that use <DialogContent>: letting the paper scroll too is
+   harmless (the inner region consumes the gesture first) and it guarantees the tail is
+   always reachable, which an :has() exception could silently take away again. */
+.MuiDialogContent-root {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+

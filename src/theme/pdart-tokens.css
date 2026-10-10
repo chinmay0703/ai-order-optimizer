@@ -1,0 +1,148 @@
+/* =====================================================================
+   P-DART theme — design tokens
+   ---------------------------------------------------------------------
+   Import this once at the root of any project. Defines CSS custom
+   properties for colors, typography, spacing, shadows, radii.
+   Use the variables in your component CSS, never the raw hex values.
+   ===================================================================== */
+
+:root {
+  /* ── Colors ────────────────────────────────────────────────── */
+  --pdart-navy:        #10365A;
+  --pdart-navy-dark:   #0C1D33;
+  --pdart-gold:        #D98A00;
+  --pdart-gold-light:  #FDD666;
+  --pdart-cream:       #F4F3F1;
+  --pdart-white:       #FFFFFF;
+  --pdart-canvas:      #F5F5F5;
+  --pdart-ink:         #1C1C1C;
+  --pdart-muted:       #7A756D;
+  --pdart-success:     #21A366;
+  --pdart-success-light: #E7F3E7;
+  --pdart-warn-light:  #FEF3C7;
+  --pdart-warn-text:   #D98A00;   /* golden foreground on warn-light */
+  --pdart-rule:        #E5E2DB;
+  --pdart-panel-bg:    #EDEBE6;
+  --pdart-alert-red:   #DC2C25;
+
+  /* ── Typography ────────────────────────────────────────────── */
+  --pdart-font-sans:   'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --pdart-font-serif:  'Cambria', 'Georgia', 'Times New Roman', serif;
+  --pdart-font-mono:   'Consolas', 'Monaco', 'Courier New', monospace;
+
+  /* Type scale (rem, root assumed 16px) */
+  --pdart-text-kicker:  0.6875rem;    /* 11px */
+  --pdart-text-xs:      0.75rem;      /* 12px */
+  --pdart-text-sm:      0.875rem;     /* 14px */
+  --pdart-text-base:    1rem;         /* 16px */
+  --pdart-text-lg:      1.125rem;     /* 18px */
+  --pdart-text-xl:      1.375rem;     /* 22px */
+  --pdart-text-h2:      1.625rem;     /* 26px */
+  --pdart-text-h1:      2.25rem;      /* 36px */
+  --pdart-text-display: 3rem;         /* 48px — for big invariant numbers */
+
+  /* Weights */
+  --pdart-weight-normal: 400;
+  --pdart-weight-bold:   700;
+
+  /* Line heights */
+  --pdart-leading-tight: 1.2;
+  --pdart-leading-body:  1.5;
+  --pdart-leading-loose: 1.7;
+
+  /* Letter spacing */
+  --pdart-tracking-kicker: 0.05em;    /* for ALL-CAPS labels */
+  --pdart-tracking-normal: 0;
+
+  /* ── Spacing scale ─────────────────────────────────────────── */
+  --pdart-space-1: 0.25rem;    /*  4px */
+  --pdart-space-2: 0.5rem;     /*  8px */
+  --pdart-space-3: 0.75rem;    /* 12px */
+  --pdart-space-4: 1rem;       /* 16px */
+  --pdart-space-5: 1.25rem;    /* 20px */
+  --pdart-space-6: 1.5rem;     /* 24px */
+  --pdart-space-8: 2rem;       /* 32px */
+  --pdart-space-10: 2.5rem;    /* 40px */
+  --pdart-space-12: 3rem;      /* 48px */
+  --pdart-space-16: 4rem;      /* 64px */
+
+  /* ── Borders & radii ──────────────────────────────────────── */
+  --pdart-border-thin:   1px solid var(--pdart-rule);
+  --pdart-border-medium: 1.5px solid var(--pdart-rule);
+  --pdart-border-accent: 1.5px solid var(--pdart-gold);
+
+  --pdart-radius-sm: 0.25rem;
+  --pdart-radius-md: 0.5rem;
+  --pdart-radius-lg: 0.75rem;
+
+  /* ── Shadows ──────────────────────────────────────────────── */
+  --pdart-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --pdart-shadow-md: 0 2px 4px 0 rgb(0 0 0 / 0.06), 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --pdart-shadow-lg: 0 4px 8px 0 rgb(0 0 0 / 0.08), 0 2px 4px 0 rgb(0 0 0 / 0.04);
+
+  /* ── Layout ───────────────────────────────────────────────── */
+  --pdart-container-narrow:  720px;   /* for body content */
+  --pdart-container-wide:    1200px;  /* for dashboards / tables */
+
+  /* ── Transitions ──────────────────────────────────────────── */
+  --pdart-transition-fast:   150ms ease;
+  --pdart-transition-medium: 250ms ease;
+}
+
+/* ── Base reset ───────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
+}
+
+body {
+  margin: 0;
+  font-family: var(--pdart-font-sans);
+  font-size: var(--pdart-text-base);
+  line-height: var(--pdart-leading-body);
+  color: var(--pdart-ink);
+  background-color: var(--pdart-canvas);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typographic defaults */
+h1, h2, h3, h4 {
+  font-family: var(--pdart-font-serif);
+  color: var(--pdart-navy);
+  font-weight: var(--pdart-weight-bold);
+  line-height: var(--pdart-leading-tight);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--pdart-navy);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  color: var(--pdart-navy-dark);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--pdart-gold);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+code, pre {
+  font-family: var(--pdart-font-mono);
+  font-size: 0.9em;
+}
