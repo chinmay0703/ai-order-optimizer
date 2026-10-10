@@ -368,7 +368,7 @@ export default function DrilldownPage({ date, cfa = '' }: { date?: string; cfa?:
               served <b style={{ color: C.success }}>{zf.served}</b>/{zf.dbs} DBs · original <b style={{ color: C.navy }}>{nf(zf.orig)}</b> + sub <b style={{ color: C.success }}>{nf(zf.sub)}</b> cs
             </Box>
             {noStock
-              ? <Box sx={{ px: 1, py: 0.3, bgcolor: C.gold, color: C.navy, fontWeight: 800, fontSize: 12, borderRadius: `${RADIUS.sm}px` }}
+              ? <Box sx={{ px: 1, py: 0.3, bgcolor: C.orange100, color: C.gold, fontWeight: 800, fontSize: 12, borderRadius: `${RADIUS.sm}px` }}
                   title={`${zf.z} has no CFA stock in this pool this run, so it never entered the v2 engine — no allocation was possible (not an engine miss).`}>not allocated · CFA stock 0</Box>
               : zf.full
                 ? <Box sx={{ px: 1, py: 0.3, bgcolor: C.successLight, color: C.success, fontWeight: 800, fontSize: 12, borderRadius: `${RADIUS.sm}px` }}
@@ -566,7 +566,7 @@ export default function DrilldownPage({ date, cfa = '' }: { date?: string; cfa?:
                               <TableCell sx={{ ...num, color: C.muted }} title="Step-1 ORIGINAL of this SKU (the DB's own order)">{e.sorig.toLocaleString()}</TableCell>
                               <TableCell sx={{ ...num, color: isUncappedRoom(e.room) ? C.success : C.navy, fontWeight: 800 }} title={isUncappedRoom(e.room) ? NO_CAP_TIP : `= ⌈${mult}×Norm⌉ − On-hand − Step-1 own = room this DB has left for this substitute`}>{isUncappedRoom(e.room) ? NO_CAP_LABEL : e.room.toLocaleString()}</TableCell>
                               <TableCell sx={{ ...num, color: C.muted }} title="Shared CFA pool for this substitute, RUNNING top-to-bottom: what it saw when this line ran → what's left for the next line that wants it">
-                                {e.before.toLocaleString()}<Box component="span" sx={{ color: '#6B6B6B', ml: 0.4 }}>→ {e.after.toLocaleString()}</Box>
+                                {e.before.toLocaleString()}<Box component="span" sx={{ color: '#5C616A', ml: 0.4 }}>→ {e.after.toLocaleString()}</Box>
                               </TableCell>
                               <TableCell sx={{ ...num, color: e.alloc > 0 ? C.success : C.muted, fontWeight: 800 }}>{e.alloc || '—'}</TableCell>
                               <TableCell sx={{ fontSize: 11, color: e.reason === 'demand met' ? (e.alloc > 0 ? C.success : C.muted) : e.alloc > 0 ? C.slate : C.warnText }}>{e.reason === 'demand met' ? (e.alloc > 0 ? 'order filled ✓' : 'order already full') : e.reason}</TableCell>

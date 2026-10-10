@@ -15,12 +15,12 @@ import { C, RADIUS, SANS, SERIF } from '../../theme/pdartTokens';
  * Replaces the sidebar-footer logout, which was unreachable on mobile once the sidebar became a bottom nav.
  * Two actions only, as specified: My profile (edit username / password) and Sign out.
  *
- * The avatar is a GOLD PASTEL disc (soft #FBDCC8 fill) with the deep gold partner tone for the initial, so the
+ * The avatar is a GOLD PASTEL disc (soft #FFCDA8 fill) with the deep gold partner tone for the initial, so the
  * contrast still reads on the navy masthead — a pastel is a surface, never the text colour.
  */
 
-const PASTEL_GOLD = '#FBDCC8';   // soft tint — the surface
-const DEEP_GOLD = '#8A3A0C';     // its partner tone — the ink on top (AA on the pastel)
+const PASTEL_GOLD = '#FFE8D4';   // PwC orange100 — the surface
+const DEEP_GOLD = '#8A2A0A';     // deep orange ink on top (AA on the tint)
 
 export default function ProfileMenu({ user }: { user: AuthUser }) {
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
@@ -70,8 +70,8 @@ export default function ProfileMenu({ user }: { user: AuthUser }) {
         <Tooltip title={user.username} arrow>
           <IconButton onClick={(e) => setAnchor(e.currentTarget)} aria-label="Account menu"
             aria-haspopup="menu" aria-expanded={!!anchor}
-            sx={{ p: 0.4, border: '1px solid rgba(255,255,255,0.28)',
-              '&:hover': { borderColor: PASTEL_GOLD, bgcolor: 'rgba(251,235,200,0.14)' } }}>
+            sx={{ p: 0.4, border: '1px solid #DFE3E6',
+              '&:hover': { borderColor: '#FD5108', bgcolor: '#FFF5ED' } }}>
             <Box sx={{
               width: { xs: 30, sm: 34 }, height: { xs: 30, sm: 34 }, borderRadius: '50%',
               bgcolor: PASTEL_GOLD, color: DEEP_GOLD, fontFamily: SANS, fontWeight: 800,

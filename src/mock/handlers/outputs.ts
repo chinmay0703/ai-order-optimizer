@@ -252,7 +252,7 @@ get('/api/v1/order_status', (ctx) => {
 // ═════════════════════════ S3 hand-off (OE_OUTPUT · order_line_items parquet) ═════════════════════════
 // Reg-zsku level, one row per order × reg-zsku × source (original / substitute / filler); a substitute or filler line is
 // keyed to the reg-zsku that SUPPLIED it. Only SO-created orders land here, so rlm_approved is false for every line.
-const S3_COLS = ['aiden_order_id', 'run_date', 'cfa_code', 'distributor_code', 'distributor_name', 'channel', 'truck_number',
+const S3_COLS = ['engine_order_id', 'run_date', 'cfa_code', 'distributor_code', 'distributor_name', 'channel', 'truck_number',
   'truck_description', 'reg_zsku_code', 'category', 'soq_qty', 'order_qty_cases', 'order_qty_units', 'mrp',
   'zsku_substitution', 'substitute_for', 'zsku_filler', 'so_flag', 'rlm_approved', 'created_at'];
 

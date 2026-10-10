@@ -155,7 +155,7 @@ function dropReason(lane: Lane, x: Line): string | null {
 function kpiOf(lanes: Lane[]) {
   return {
     dbs: lanes.length,
-    input_to_aiden: lanes.length,           // every SOQ distributor in this dataset entered the engine
+    input_to_engine: lanes.length,           // every SOQ distributor in this dataset entered the engine
     dropped_before_engine: 0,
     shipped_dbs: lanes.filter((l) => l.shipped > 0).length,
     dropped_in_engine: lanes.filter((l) => l.dropped).length,
@@ -189,7 +189,7 @@ const forXlsx = (rows: Cell[][]) => rows.map((r) => r.map((v) => (v === '' ? nul
 
 // ═════════ Reporting Format — one row per CFA × DB ═════════
 const FO_COLS = [
-  'SOQ Date', 'CFA', 'DB Code', 'DB Name', 'Customer Type', 'PDP Flag', 'Input to AIDEN', 'AIDEN Input Reason',
+  'SOQ Date', 'CFA', 'DB Code', 'DB Name', 'Customer Type', 'PDP Flag', 'Input to engine', 'Engine Input Reason',
   'Tier', 'Run', 'SOQ Lines', 'SOQ (cs)', 'Norm (cs)', 'DB Stock (cs)',
   'Original Allocated', 'Filler Allocated', 'Substitution Allocated', 'Total Allocated (before truck fill)', 'Original Fill Rate',
   'Truck-fill Trim (cs)', 'Primary Trim (cs)', 'Final Allocated (after truck fill)', 'Fill Rate (AOQ / SOQ)',
@@ -224,9 +224,9 @@ get('/api/v1/final_order_report', (ctx) => {
 // ═════════ Allocation Report — CFA × DB × reg-zsku × truck × SKU-batch ═════════
 // (the Order Journey page reads these headers BY NAME — keep them exact)
 const V2_DB = ['SOQ Date', 'CFA', 'Plant Name', 'Customer Code', 'Customer Description', 'Customer Type_DB', 'Tier_DB',
-  'Order Type (PDP / Non-PDP)_DB', 'Input to AIDEN_DB', 'AIDEN Input Reason_DB', 'Overall_remarks DB_Level',
+  'Order Type (PDP / Non-PDP)_DB', 'Input to engine_DB', 'Engine Input Reason_DB', 'Overall_remarks DB_Level',
   'Shipment type_DB Level', 'Cluster Code_DB'];
-const V2_REG = ['Reg_ZSKU Code', 'Old Material Description', 'AIDEN Category', 'MRP',
+const V2_REG = ['Reg_ZSKU Code', 'Old Material Description', 'Brand Category', 'MRP',
   'SOQ_QTY_RegZSKU', 'Norms_QTY_RegZSKU', 'SOH_QTY_Reg_SKU', 'SIT_QTY_RegZSKU', 'CFA Stock_QTY_RegZSKU', 'CFA Reserved_QTY_RegZSKU',
   'AOQ_Prestine_QTY_RegZSKU', 'AOQ_Substitution_QTY_RegZSKU_Before_Truck fill', 'AOQ_Filler_QTY_RegZSKU_Before_Truck fill',
   'AOQ_Total_QTY_RegZSKU_Before_Truck fill',
@@ -235,7 +235,7 @@ const V2_REG = ['Reg_ZSKU Code', 'Old Material Description', 'AIDEN Category', '
   'AOQ Drop reason Reg_ZSKU Level'];
 const V2_TRUCK = ['Truck No', 'Truck Type', 'Truck Capacity', 'Truck Load', 'Truck Fill rate', 'Truck SO Flag', 'RLM Truck Status'];
 const V2_SKU = ['SKU code', 'SKU Description', 'Batch code', 'Days to Expiry', 'PDP Batch Flag',
-  'AOQ_QTY_Total_after_Truck_Fill_SKU_Level', 'Units_after_Truck_Fill_SKU_Level', 'AiDEN Order ID', 'Order Created At'];
+  'AOQ_QTY_Total_after_Truck_Fill_SKU_Level', 'Units_after_Truck_Fill_SKU_Level', 'Engine Order ID', 'Order Created At'];
 const V2_COLS = [...V2_DB, ...V2_REG, ...V2_TRUCK, ...V2_SKU];
 
 function v2Rows(date: string, lane: Lane): Cell[][] {

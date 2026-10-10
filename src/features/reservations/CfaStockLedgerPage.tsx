@@ -21,20 +21,20 @@ interface Row {
 interface Data { date: string; cols: string[]; rows: Row[]; regzskus: string[]; shipped: Record<string, number>; }
 
 const N = (v: number) => (v ?? 0).toLocaleString();
-const C = { navy: '#2D2D2D', gold: '#D04A02', green: '#21A366', slate: '#2D2D2D', muted: '#6B6B6B',
-  cream: '#F6F6F6', border: '#DEDEDE', amber: '#D04A02' };
+const C = { navy: '#2D2D2D', gold: '#C52B09', green: '#1B7346', slate: '#2D2D2D', muted: '#5C616A',
+  cream: '#F5F7F8', border: '#DFE3E6', amber: '#C52B09' };
 
 // a single node of the end-to-end flow strip
 function FlowStat({ label, value, sub, hue, strong }: { label: string; value: number; sub?: string; hue: string; strong?: boolean }) {
   return (
     <Paper variant="outlined" sx={{ px: 2, py: 1.25, minWidth: 132, borderTop: `3px solid ${hue}`, flex: '0 0 auto' }}>
       <Typography sx={{ fontSize: 10, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: C.muted }}>{label}</Typography>
-      <Typography sx={{ fontFamily: "'Google Sans','Product Sans','Poppins','Segoe UI',system-ui,sans-serif", fontWeight: 700, fontSize: strong ? 26 : 23, color: hue, lineHeight: 1.1 }}>{N(value)}</Typography>
+      <Typography sx={{ fontFamily: "'ITC Charter', Charter, Georgia, serif", fontWeight: 700, fontSize: strong ? 26 : 23, color: hue, lineHeight: 1.1 }}>{N(value)}</Typography>
       {sub && <Typography sx={{ fontSize: 10.5, color: C.muted }}>{sub}</Typography>}
     </Paper>
   );
 }
-const Arrow = () => <ArrowForwardIcon sx={{ color: C.border, fontSize: 20, flex: '0 0 auto' }} />;
+const Arrow = () => <ArrowForwardIcon sx={{ color: '#A1A8B3', fontSize: 20, flex: '0 0 auto' }} />;
 
 const CASC_HEAD: [string, 'left' | 'right'][] = [['Run', 'right'], ['Channel', 'left'],
   ['Earmark', 'right'], ['Reservation cap', 'right'],
@@ -153,7 +153,7 @@ export default function CfaStockLedgerPage({ date, embedded }: { date?: string; 
           <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
             <Chip size="small" icon={shipOk ? <CheckCircleIcon /> : <WarningIcon />}
               label={shipOk ? 'shipped = allocated' : `shipped ${N(flow.shipped)} ≠ allocated ${N(flow.allocated)}`}
-              sx={{ bgcolor: shipOk ? '#E9F4EC' : '#FBEBE0', color: shipOk ? C.green : C.amber, fontWeight: 700, '& .MuiChip-icon': { color: shipOk ? C.green : C.amber } }} />
+              sx={{ bgcolor: shipOk ? '#E9F4EC' : '#FFE8D4', color: shipOk ? C.green : C.amber, fontWeight: 700, '& .MuiChip-icon': { color: shipOk ? C.green : C.amber } }} />
             <Chip size="small" icon={capOk ? <CheckCircleIcon /> : <WarningIcon />}
               label={capOk ? 'allocated ≤ physical' : 'allocated > physical'}
               sx={{ bgcolor: capOk ? '#E9F4EC' : '#F8E9E6', color: capOk ? C.green : '#E0301E', fontWeight: 700, '& .MuiChip-icon': { color: capOk ? C.green : '#E0301E' } }} />
@@ -217,7 +217,7 @@ export default function CfaStockLedgerPage({ date, embedded }: { date?: string; 
             </TableHead>
             <TableBody>
               {fullRows.slice(0, 800).map((r, i) => (
-                <TableRow key={i} hover sx={{ bgcolor: String(r.reg_zsku) === sel ? '#F1F1F1' : '#fff' }}>
+                <TableRow key={i} hover sx={{ bgcolor: String(r.reg_zsku) === sel ? '#F5F7F8' : '#fff' }}>
                   {cols.map((c) => {
                     const v = r[c];
                     const cell = <TableCell key={c} align={typeof v === 'number' ? 'right' : 'left'} sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>{typeof v === 'number' ? N(v) : typeof v === 'boolean' ? (v ? 'true' : '') : String(v ?? '')}</TableCell>;

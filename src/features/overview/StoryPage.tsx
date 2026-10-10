@@ -284,7 +284,7 @@ function Line({ it }: { it: Item }) {
   if (it.t === 'formula')
     return (
       <div style={{ margin: '7px 0', background: C.codeBg, borderRadius: RADIUS.sm, padding: '9px 13px',
-        fontFamily: MONO, fontSize: 12.5, lineHeight: 1.5, color: '#E7E7E7', overflowX: 'auto',
+        fontFamily: MONO, fontSize: 12.5, lineHeight: 1.5, color: '#EEEFF1', overflowX: 'auto',
         borderLeft: `3px solid ${C.gold}` }}>
         <span style={{ color: C.goldLight, fontWeight: 700, marginRight: 8 }}>ƒ</span>{fill(it.v, P)}
       </div>
@@ -303,9 +303,9 @@ function Line({ it }: { it: Item }) {
 // pale-bg + saturated-text tints for emphasised cells (Action / allocation channel) — both colours set directly, high contrast
 const cellTint: Record<Tint, { bg: string; fg: string }> = {
   red: { bg: '#FBEAEA', fg: '#E0301E' },
-  green: { bg: '#E7F3E7', fg: '#21A366' },
-  amber: { bg: '#FBEBE1', fg: '#D04A02' },
-  blue: { bg: '#F1F1F1', fg: C.navy },
+  green: { bg: '#E7F3E7', fg: '#1B7346' },
+  amber: { bg: '#FFE8D4', fg: '#C52B09' },
+  blue: { bg: '#F5F7F8', fg: C.navy },
   violet: { bg: '#F8E9EC', fg: '#9E2A3E' },
 };
 
@@ -363,7 +363,7 @@ export default function StoryPage({ onNav }: { onNav?: (p: Page) => void }) {
   return (
     <div style={{ background: C.canvas, minHeight: '100vh', fontFamily: SANS, color: C.slate }}>
       {/* hero */}
-      <div style={{ background: `linear-gradient(135deg, ${C.navyDark} 0%, ${C.navy} 62%, #464646 100%)`,
+      <div style={{ background: `linear-gradient(135deg, ${C.navyDark} 0%, ${C.navy} 62%, #4C5056 100%)`,
         color: '#fff', padding: '38px 32px 30px', borderBottom: `3px solid ${C.gold}` }}>
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: C.goldLight }}>

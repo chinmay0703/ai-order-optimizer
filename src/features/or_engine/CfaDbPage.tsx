@@ -187,7 +187,7 @@ export default function CfaDbPage({ date }: { date?: string }) {
               return (
                 <Fragment key={rowKey}>
                 <TableRow hover onClick={() => setOpen(isOpen ? null : rowKey)}
-                  sx={{ cursor: 'pointer', bgcolor: isOpen ? '#FAF3EF' : undefined, '& > td': isOpen ? { borderBottom: 'none' } : undefined, ...trackedRowSxFor(r[D.db]) }}>
+                  sx={{ cursor: 'pointer', bgcolor: isOpen ? '#FFF5ED' : undefined, '& > td': isOpen ? { borderBottom: 'none' } : undefined, ...trackedRowSxFor(r[D.db]) }}>
                   <TableCell sx={{ fontFamily: MONO, fontSize: 12 }}>{isOpen ? '▾ ' : '▸ '}{r[D.cfa]}</TableCell>
                   <TableCell sx={{ fontFamily: MONO, fontSize: 12, color: C.navy, fontWeight: 700 }}>{tracked ? TRACK_STAR + ' ' : ''}{r[D.db]}</TableCell>
                   <TableCell sx={{ ...num, color: C.muted }}>T{tier}</TableCell>
@@ -204,19 +204,19 @@ export default function CfaDbPage({ date }: { date?: string }) {
                     {rank > 0
                       ? <Box component="span" title={prioTip}
                           sx={{ display: 'inline-block', px: 0.9, py: 0.2, borderRadius: 999, fontWeight: 800, fontSize: 11.5,
-                            bgcolor: rank === 1 ? '#F5DCCC' : '#F6F6F6', color: rank === 1 ? '#D04A02' : '#2D2D2D' }}>{ordinal(rank)}</Box>
+                            bgcolor: rank === 1 ? '#FFCDA8' : '#F5F7F8', color: rank === 1 ? '#C52B09' : '#2D2D2D' }}>{ordinal(rank)}</Box>
                       : <span style={{ color: C.muted }}>—</span>}
                   </TableCell>
                   <TableCell><Bar o={o} s={s} f={f} /></TableCell>
                 </TableRow>
                 {isOpen && (
                   <TableRow>
-                    <TableCell colSpan={14} sx={{ bgcolor: '#FAF3EF', borderBottom: `2px solid ${C.gold}`, py: 1.75 }}>
+                    <TableCell colSpan={14} sx={{ bgcolor: '#FFF5ED', borderBottom: `2px solid ${C.gold}`, py: 1.75 }}>
                       {hasSeq ? (
                         <Box sx={{ display: 'flex', gap: 3.5, flexWrap: 'wrap', alignItems: 'center' }}>
                           <Box>
                             <Box sx={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: C.muted, letterSpacing: '.05em' }}>Filler draw rank</Box>
-                            <Box sx={{ fontFamily: SERIF, fontSize: 26, fontWeight: 700, color: rank === 1 ? '#D04A02' : C.navy, lineHeight: 1.15 }}>{ordinal(rank)}{ncfa > 0 ? ` of ${ncfa}` : ''}</Box>
+                            <Box sx={{ fontFamily: SERIF, fontSize: 26, fontWeight: 700, color: rank === 1 ? '#C52B09' : C.navy, lineHeight: 1.15 }}>{ordinal(rank)}{ncfa > 0 ? ` of ${ncfa}` : ''}</Box>
                             <Box sx={{ fontSize: 11.5, color: C.muted, maxWidth: 250 }}>in CFA {r[D.cfa]}, DBs sorted by priority ↓ — rank 1 draws the shared filler pool first</Box>
                           </Box>
                           {/* priority = tier weight ÷ (Σheld ÷ Σnorm) — same shape as the Step-1 priority score */}

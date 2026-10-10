@@ -16,14 +16,14 @@ import ReservationPctDate, { type ReservationPctMeta } from '../../shared/Reserv
 // one reservation_detail row = one reg-zsku the CFA holds stock of OR one demanded in the SOQ (union), with its MRP,
 // anomaly note, role (demanded vs donor-only sub/filler), physical/reserved, and status
 interface ResDetail {
-  cfa_id: string; channel: string; reg_zsku: string; zsku: string; aiden_category: string; role: string; in_soq: boolean; soq_cases: number;
+  cfa_id: string; channel: string; reg_zsku: string; zsku: string; brand_category: string; role: string; in_soq: boolean; soq_cases: number;
   mrp: string; mrp_band: string; reservation_pct: number; mrp_note: string; physical_cases: number; reserved_cases: number; shipped: number; status: string;
   in_inventory?: boolean;   // does the CFA carry this reg-zsku in cfa_inventory (vs NA / absent) — for the no-stock breakdown
 }
 type Data = { date: string; reservation_detail?: ResDetail[] } & ReservationPctMeta;
 
 const N = (v: number) => (v ?? 0).toLocaleString();
-const C = { navy: '#2D2D2D', gold: '#D04A02', green: '#21A366', muted: '#6B6B6B', cream: '#F6F6F6', border: '#DEDEDE', amber: '#D04A02' };
+const C = { navy: '#2D2D2D', gold: '#C52B09', green: '#1B7346', muted: '#5C616A', cream: '#F5F7F8', border: '#DFE3E6', amber: '#C52B09' };
 const PAGE_SIZE = 100;   // client-side pagination — a large reservation table (thousands of reg-zsku × channel rows) froze the render
 
 type Col = { label: string; align: 'left' | 'right'; key: keyof ResDetail; num?: boolean };
@@ -32,7 +32,7 @@ const SB_HEAD: Col[] = [
   { label: 'Channel', align: 'left', key: 'channel' },
   { label: 'reg-zsku', align: 'left', key: 'reg_zsku' },
   { label: 'zsku', align: 'left', key: 'zsku' },
-  { label: 'AIDEN Category', align: 'left', key: 'aiden_category' },
+  { label: 'Brand Category', align: 'left', key: 'brand_category' },
   { label: 'MRP', align: 'right', key: 'mrp', num: true },
   { label: 'Band', align: 'left', key: 'mrp_band' },
   { label: 'Physical', align: 'right', key: 'physical_cases', num: true },
@@ -118,7 +118,7 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
   // "554", "b1" all filter to exactly the rows that display them. Space-separated terms AND together (same as UAT V2).
   const roleLabel = (r: ResDetail) => ((r.soq_cases || 0) > 0 ? 'Demanded' : r.in_soq ? 'Feed (SOQ=0)' : 'Donor only');
   const hayOf = (r: ResDetail) => [
-    r.cfa_id, r.channel, r.reg_zsku, r.zsku, r.aiden_category, descOf(r.reg_zsku), r.mrp, r.mrp_band, r.mrp_note,
+    r.cfa_id, r.channel, r.reg_zsku, r.zsku, r.brand_category, descOf(r.reg_zsku), r.mrp, r.mrp_band, r.mrp_note,
     r.physical_cases, r.reserved_cases, r.reservation_pct, roleLabel(r), r.in_soq ? r.soq_cases : '', r.status,
   ].map((v) => String(v ?? '')).join(' ').toLowerCase();   // descOf = the SAME description shown in the table (separate API)
   const shown = terms.length ? rows.filter((r) => terms.every((t) => hayOf(r).includes(t))) : rows;
@@ -135,7 +135,7 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
     });
   })();
   // row tint by outcome: MRP anomaly = amber (action needed), no CFA stock = neutral grey, priced OK = white
-  const tint = (r: ResDetail) => (r.mrp_note ? '#FBEBE0' : r.status === 'No CFA stock' ? '#F6F6F6' : '#fff');
+  const tint = (r: ResDetail) => (r.mrp_note ? '#FFE8D4' : r.status === 'No CFA stock' ? '#F5F7F8' : '#fff');
   // client-side pagination — only the visible page's rows are rendered (a full reservation table is thousands of rows)
   const total = sortedShown.length;
   const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -160,22 +160,22 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
         <Typography variant="h5">CFA Stock Reservation · MRP validation</Typography>
         <IconButton size="small" onClick={() => setHelpOpen(true)} title="How this page works"
-          sx={{ color: C.gold, border: '1px solid #EAC6AE', bgcolor: '#FCF4EE', '&:hover': { bgcolor: '#FBE8DC', borderColor: C.gold } }}>
+          sx={{ color: C.gold, border: '1px solid #FFCDA8', bgcolor: '#FFF5ED', '&:hover': { bgcolor: '#FFE8D4', borderColor: C.gold } }}>
           <HelpOutlineIcon sx={{ fontSize: 19 }} />
         </IconButton>
         <Box component="span" sx={{ fontSize: 11.5, color: C.muted }}>how it works</Box>
       </Box>
       <ReservationPctDate meta={d} />
       <Dialog open={helpOpen} onClose={() => setHelpOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '8px', overflow: 'hidden', border: '1px solid #FFB600' } }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #EB8C00 0%, #D04A02 55%, #B33F02 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #FE7C39 0%, #C52B09 55%, #C52B09 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
           <HelpOutlineIcon sx={{ fontSize: 20 }} />
-          <Box sx={{ fontFamily: "'Google Sans', 'Product Sans', 'Poppins', 'Segoe UI', system-ui, sans-serif", fontWeight: 700, fontSize: 17 }}>How this page works</Box>
+          <Box sx={{ fontFamily: "'ITC Charter', Charter, Georgia, serif", fontWeight: 700, fontSize: 17 }}>How this page works</Box>
           <Box sx={{ flex: 1 }} />
           <IconButton onClick={() => setHelpOpen(false)} size="small" aria-label="close" sx={{ color: '#fff', '&:hover': { bgcolor: 'rgba(255,255,255,0.18)' } }}><CloseIcon sx={{ fontSize: 20 }} /></IconButton>
         </Box>
-        <Box sx={{ p: 2.75, color: '#444444', bgcolor: '#FCF7F4', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
+        <Box sx={{ p: 2.75, color: '#4C5056', bgcolor: '#FFF5ED', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
           {/* the goal */}
-          <Box sx={{ p: '10px 12px', borderRadius: '6px', bgcolor: '#FCF4EE', border: '1px solid #EAC6AE', borderLeft: `3px solid ${C.gold}` }}>
+          <Box sx={{ p: '10px 12px', borderRadius: '6px', bgcolor: '#FFF5ED', border: '1px solid #FFCDA8', borderLeft: `3px solid ${C.gold}` }}>
             <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.gold, mb: 0.4 }}>🎯 The goal</Box>
             <Box sx={{ fontSize: 13, lineHeight: 1.55 }}>The <b>first step</b>, before the engine. <b>Every reg-zsku the CFA holds stock of</b> is priced from the actual materials in CFA inventory, then banded &amp; reserved for the engine to draw.</Box>
           </Box>
@@ -184,7 +184,7 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
           <Box>
             <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.navy, mb: 0.7 }}>How each reg-zsku is priced</Box>
             <Box sx={{ p: '9px 11px', mb: 1, borderRadius: '6px', bgcolor: '#fff', border: `1px solid ${C.border}` }}>
-              <Box sx={{ fontFamily: 'Consolas, monospace', fontSize: 12, color: '#444444' }}><b style={{ color: C.navy }}>cfa_inventory</b> ⋈ <b style={{ color: C.navy }}>material_master</b> → MRP → band → reserve</Box>
+              <Box sx={{ fontFamily: 'Consolas, monospace', fontSize: 12, color: '#4C5056' }}><b style={{ color: C.navy }}>cfa_inventory</b> ⋈ <b style={{ color: C.navy }}>material_master</b> → MRP → band → reserve</Box>
             </Box>
             <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mb: 1 }}>
               <Box component="span" sx={{ px: 0.85, py: '3px', borderRadius: 999, border: `1px solid ${C.green}`, color: C.green, fontSize: 11, fontWeight: 700 }}>one clean MRP → banded &amp; reserved</Box>
@@ -247,7 +247,7 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
               <Box component="span" sx={{ fontWeight: 800, color: C.navy }}>Demanded {nDemanded}</Box>
               <Box component="span" sx={{ color: C.muted }}>reg-zskus (SOQ&gt;0) →</Box>
               <Box component="span" sx={{ px: 0.85, py: '2px', borderRadius: 999, bgcolor: '#E7F3E7', color: C.green, fontWeight: 800 }}>{nDemStock} have CFA stock</Box>
-              <Box component="span" sx={{ px: 0.85, py: '2px', borderRadius: 999, bgcolor: '#FBEBE0', color: C.gold, fontWeight: 800 }}>{nDemNoStock} hold 0 stock</Box>
+              <Box component="span" sx={{ px: 0.85, py: '2px', borderRadius: 999, bgcolor: '#FFE8D4', color: C.gold, fontWeight: 800 }}>{nDemNoStock} hold 0 stock</Box>
             </Box>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.25, flexWrap: 'wrap' }}>
@@ -281,12 +281,12 @@ export default function CfaStockReservationPage({ date, cfa }: { date?: string; 
                     <TableCell sx={{ fontFamily: 'Consolas, monospace' }}>{r.reg_zsku}</TableCell>
                     <TableCell sx={{ whiteSpace: 'normal' }} title={descOf(r.reg_zsku)}>{descOf(r.reg_zsku) || '—'}</TableCell>
                     <TableCell sx={{ fontFamily: 'Consolas, monospace', color: C.muted }}>{r.zsku || '—'}</TableCell>
-                    <TableCell sx={{ color: r.aiden_category ? C.navy : C.muted, fontWeight: r.aiden_category ? 600 : 400 }}>{r.aiden_category || '—'}</TableCell>
+                    <TableCell sx={{ color: r.brand_category ? C.navy : C.muted, fontWeight: r.brand_category ? 600 : 400 }}>{r.brand_category || '—'}</TableCell>
                     <TableCell align="right" sx={{ color: r.mrp ? C.green : C.muted, fontWeight: r.mrp ? 700 : 400 }}>{r.mrp ? `₹${r.mrp}` : '—'}</TableCell>
                     <TableCell>{r.mrp_band || '—'}</TableCell>
                     <TableCell align="right">{N(r.physical_cases)}</TableCell>
                     <TableCell align="right" sx={{ fontWeight: 600, color: C.navy }}>{r.channel ? N(r.reserved_cases) : '—'}</TableCell>
-                    <TableCell align="right" sx={{ color: '#D04A02', fontWeight: 600 }} title="Reservation % for this CFA × channel × band (reserved ≈ physical × this %)">{r.channel ? `${r.reservation_pct}%` : '—'}</TableCell>
+                    <TableCell align="right" sx={{ color: '#C52B09', fontWeight: 600 }} title="Reservation % for this CFA × channel × band (reserved ≈ physical × this %)">{r.channel ? `${r.reservation_pct}%` : '—'}</TableCell>
                     <TableCell sx={{ color: (r.soq_cases || 0) > 0 ? C.navy : C.muted, fontWeight: (r.soq_cases || 0) > 0 ? 600 : 400 }}>{(r.soq_cases || 0) > 0 ? 'Demanded' : (r.in_soq ? 'Feed (SOQ=0)' : 'Donor only')}</TableCell>
                     <TableCell align="right">{r.in_soq ? N(r.soq_cases) : '—'}</TableCell>
                     <TableCell sx={{ color: r.mrp_note ? C.amber : r.status === 'No CFA stock' ? C.muted : C.green, fontWeight: r.mrp_note ? 700 : 600 }}>{r.mrp_note || r.status}</TableCell>

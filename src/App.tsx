@@ -6,7 +6,7 @@ import { api } from './api';
 import RunContextSelect from './shared/RunContextSelect';
 import { OeParamsProvider } from './shared/OeParams';
 import { RegZskuDescProvider } from './shared/RegZskuDesc';
-import { AidenCategoryProvider } from './shared/AidenCategory';
+import { BrandCategoryProvider } from './shared/BrandCategory';
 import { DistributorNameProvider } from './shared/DistributorName';
 import { RUN_DONE_EVENT } from './shared/servedLookup';
 import Sidebar, { type Page } from './shared/layout/Sidebar';
@@ -67,21 +67,21 @@ function AuthedApp({ user }: { user: AuthUser }) {
   // remember the open page across refresh — restore it on load (default Home), persist on every nav
   const [page, setPage] = useState<Page>(() => {
     // a fresh SIGN-IN always lands on Home; a refresh restores wherever the user was
-    if (sessionStorage.getItem('aiden.justLoggedIn')) {
-      sessionStorage.removeItem('aiden.justLoggedIn');
+    if (sessionStorage.getItem('aoo.justLoggedIn')) {
+      sessionStorage.removeItem('aoo.justLoggedIn');
       return 'home';
     }
-    const saved = localStorage.getItem('aiden.page');
+    const saved = localStorage.getItem('aoo.page');
     if (saved === 'uatreport') return 'uatreportv2';   // the original UAT Report page was retired → its successor
     return (saved as Page) || 'home';
   });
-  useEffect(() => { localStorage.setItem('aiden.page', page); }, [page]);
+  useEffect(() => { localStorage.setItem('aoo.page', page); }, [page]);
   // left sidebar collapse — remembered across refresh; the hamburger in the header toggles it (frees width for wide pages / drawers)
   const isMobile = useIsMobile();
   // Desktop remembers the collapse preference; mobile always starts with the Drawer shut so the page owns the screen.
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => localStorage.getItem('aiden.sidebar') !== 'closed');
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => localStorage.getItem('aoo.sidebar') !== 'closed');
   useEffect(() => { if (isMobile) setSidebarOpen(false); }, [isMobile]);
-  useEffect(() => { localStorage.setItem('aiden.sidebar', sidebarOpen ? 'open' : 'closed'); }, [sidebarOpen]);
+  useEffect(() => { localStorage.setItem('aoo.sidebar', sidebarOpen ? 'open' : 'closed'); }, [sidebarOpen]);
   // page-access guards — every user may OPEN the Run page (audit + live progress); only users with run access get an
   // enabled Run button (the backend enforces it too). Only ADMINS can open User Management.
   const canRun = user.can_access_run || user.is_admin;
@@ -131,7 +131,7 @@ function AuthedApp({ user }: { user: AuthUser }) {
   return (
     <OeParamsProvider nonce={paramNonce}>
     <RegZskuDescProvider>
-    <AidenCategoryProvider>
+    <BrandCategoryProvider>
     <DistributorNameProvider>
     <Box sx={{ display: 'flex', flexDirection: 'column', bgcolor: 'background.default',
       // Desktop: a fixed-height shell with its own inner scroller. Mobile: let the document scroll
@@ -142,7 +142,7 @@ function AuthedApp({ user }: { user: AuthUser }) {
       {/* BOOT bar: while the first api.dates() is loading (server can be slow to wake), a thin animated bar tells the
           user the app is starting — so first load never reads as a hang. Drops the moment the run dates resolve. */}
       {booting && (
-        <LinearProgress sx={{ height: 3, bgcolor: 'transparent', '& .MuiLinearProgress-bar': { bgcolor: '#EB8C00' } }} />
+        <LinearProgress sx={{ height: 3, bgcolor: 'transparent', '& .MuiLinearProgress-bar': { bgcolor: '#FD5108' } }} />
       )}
       <Box sx={{ display: 'flex', flex: 1, minWidth: 0, minHeight: { xs: 'auto', md: 0 } }}>
       <Sidebar open={sidebarOpen} page={page} onNav={setPage}
@@ -152,21 +152,21 @@ function AuthedApp({ user }: { user: AuthUser }) {
         // clears the fixed MobileNav so the last row of ANY page is never hidden behind it
         pb: { xs: `${MOBILE_NAV_H + 28}px`, md: 0 } }}>
         {page !== 'home' && (
-        <Box sx={{ position: 'sticky', top: 0, zIndex: 20, background: 'linear-gradient(90deg, #D04A02 0%, #B33F02 100%)', color: '#fff',
+        <Box sx={{ position: 'sticky', top: 0, zIndex: 20, background: '#FFF5ED', color: '#2D2D2D',
           px: { xs: 1, sm: 2.5 }, py: { xs: 0.5, sm: 0.9 }, display: 'flex', gap: { xs: 0.6, sm: 1.25 }, alignItems: 'center', flexWrap: 'wrap',
-          borderBottom: '1px solid rgba(0,0,0,0.18)', boxShadow: '0 2px 10px -3px rgba(0,0,0,0.3)' }}>
+          borderBottom: '1px solid #FFCDA8', boxShadow: '0 2px 8px -6px rgba(0,0,0,0.25)' }}>
           <Box component="span" sx={{ fontWeight: 800, fontSize: 11, letterSpacing: '.09em', textTransform: 'uppercase',
-            opacity: 0.95, display: { xs: 'none', sm: 'inline' } }}>▶&nbsp;Run&nbsp;context</Box>
+            color: '#C52B09', display: { xs: 'none', sm: 'inline' } }}>▶&nbsp;Run&nbsp;context</Box>
 
           {/* RUN DATE — themed dropdown (not a native <select>, whose popup is off-theme) */}
           <RunContextSelect label="Run date" title="The run date every page below reads" value={date} options={dates}
-            onChange={setDate} accent="#B33F02" align="left" minMenuWidth={150} emptyText={booting ? 'Loading…' : '—'}
-            icon={<CalendarTodayIcon sx={{ fontSize: 16, color: '#B33F02' }} />} />
+            onChange={setDate} accent="#C52B09" align="left" minMenuWidth={150} emptyText={booting ? 'Loading…' : '—'}
+            icon={<CalendarTodayIcon sx={{ fontSize: 16, color: '#C52B09' }} />} />
 
           {dataDate[date] && <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 700,
-            fontSize: { xs: 10.5, sm: 12 }, bgcolor: 'rgba(255,255,255,0.20)', px: { xs: 0.7, sm: 1 }, py: { xs: 0.35, sm: 0.6 },
+            fontSize: { xs: 10.5, sm: 12 }, bgcolor: '#FFFFFF', border: '1px solid #FFCDA8', px: { xs: 0.7, sm: 1 }, py: { xs: 0.35, sm: 0.6 },
             borderRadius: '8px', whiteSpace: 'nowrap' }} title="the SOQ snapshot (data date) this run processed">SOQ&nbsp;<b style={{ fontFamily: 'Consolas, monospace' }}>{dataDate[date]}</b></Box>}
-          <Box component="span" sx={{ fontSize: 12, opacity: 0.9, display: { xs: 'none', md: 'inline' } }}>· every page below reads this date</Box>
+          <Box component="span" sx={{ fontSize: 12, color: '#4C5056', display: { xs: 'none', md: 'inline' } }}>· every page below reads this date</Box>
 
           <Box sx={{ flex: { xs: '0 0 0px', sm: 1 } }} />
 
@@ -226,7 +226,7 @@ function AuthedApp({ user }: { user: AuthUser }) {
       <MobileNav page={page} onNav={setPage} user={user} />
     </Box>
     </DistributorNameProvider>
-    </AidenCategoryProvider>
+    </BrandCategoryProvider>
     </RegZskuDescProvider>
     </OeParamsProvider>
   );

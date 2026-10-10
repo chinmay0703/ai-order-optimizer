@@ -160,7 +160,7 @@ export default function CfaRegzskuSummaryPage({ date, cfa = '' }: { date?: strin
         // AOQ = Original + Substitute + Filler exactly, so the three segments always sum to the bar total; when the
         // total exceeds 100% (filler pushes AOQ past SOQ) all three are scaled to fit the track, keeping proportions.
         const p = v as number | null;
-        if (p == null || r.soq <= 0) return <TableCell key={col.h} sx={num}><span style={{ color: C.rule }}>—</span></TableCell>;
+        if (p == null || r.soq <= 0) return <TableCell key={col.h} sx={num}><span style={{ color: C.grey700 }}>—</span></TableCell>;
         const oPct = (100 * r.original) / r.soq;
         const sPct = (100 * r.as_substitute) / r.soq;
         const fPct = (100 * r.as_filler) / r.soq;
@@ -197,7 +197,7 @@ export default function CfaRegzskuSummaryPage({ date, cfa = '' }: { date?: strin
   const helpAdornment = (
     <>
       <IconButton size="small" onClick={() => setHelpOpen(true)} title="How this page works"
-        sx={{ color: C.gold, border: `1px solid ${C.goldLight}`, bgcolor: '#FCF4EE', '&:hover': { bgcolor: '#FBE8DC', borderColor: C.gold } }}>
+        sx={{ color: C.gold, border: `1px solid ${C.goldLight}`, bgcolor: '#FFF5ED', '&:hover': { bgcolor: '#FFE8D4', borderColor: C.gold } }}>
         <HelpOutlineIcon sx={{ fontSize: 19 }} />
       </IconButton>
       <Box component="span" sx={{ fontSize: 11.5, color: C.muted }}>how it works</Box>
@@ -208,15 +208,15 @@ export default function CfaRegzskuSummaryPage({ date, cfa = '' }: { date?: strin
     <Shell title={SUMMARY_TITLE} help={helpAdornment}>
       {tabBar}
       <Dialog open={helpOpen} onClose={() => setHelpOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: `${RADIUS.md}px`, overflow: 'hidden', border: `1px solid ${C.goldLight}` } }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #EB8C00 0%, #D04A02 55%, #B33F02 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, py: 1.5, background: 'linear-gradient(135deg, #FE7C39 0%, #C52B09 55%, #C52B09 100%)', borderBottom: '1px solid rgba(0,0,0,0.10)', color: '#fff' }}>
           <HelpOutlineIcon sx={{ fontSize: 20 }} />
           <Box sx={{ fontFamily: SERIF, fontWeight: 700, fontSize: 17 }}>How this page works</Box>
           <Box sx={{ flex: 1 }} />
           <IconButton onClick={() => setHelpOpen(false)} size="small" aria-label="close" sx={{ color: '#fff', '&:hover': { bgcolor: 'rgba(255,255,255,0.18)' } }}><CloseIcon sx={{ fontSize: 20 }} /></IconButton>
         </Box>
-        <Box sx={{ p: 2.75, color: C.slate, bgcolor: '#FCF7F4', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
+        <Box sx={{ p: 2.75, color: C.slate, bgcolor: '#FFF5ED', display: 'flex', flexDirection: 'column', gap: 2.75 }}>
           {/* the goal */}
-          <Box sx={{ p: '10px 12px', borderRadius: `${RADIUS.sm}px`, bgcolor: '#FCF4EE', border: `1px solid ${C.goldLight}`, borderLeft: `3px solid ${C.gold}` }}>
+          <Box sx={{ p: '10px 12px', borderRadius: `${RADIUS.sm}px`, bgcolor: '#FFF5ED', border: `1px solid ${C.goldLight}`, borderLeft: `3px solid ${C.gold}` }}>
             <Box sx={{ fontSize: 10, fontWeight: 800, letterSpacing: '.05em', textTransform: 'uppercase', color: C.gold, mb: 0.4 }}>🎯 The goal</Box>
             <Box sx={{ fontSize: 13, lineHeight: 1.55 }}>One row per <b>CFA × Reg-ZSKU</b> — the SO-created roll-up you check first: how much of each reg-zsku's demand actually went for <b>SO creation</b> across all DBs.</Box>
           </Box>
@@ -318,7 +318,7 @@ export default function CfaRegzskuSummaryPage({ date, cfa = '' }: { date?: strin
               const unmet = r.soq > 0 && r.aoq === 0;    // demanded but nothing SO-created
               return (
                 // short (inventory < demand) wins the row colour over the unmet/tracked states
-                <TableRow key={i} hover sx={{ bgcolor: unmet ? '#F8F8F8' : undefined, ...trackedSxFor(r.reg_zsku), ...(short ? { bgcolor: C.redP } : {}) }}>
+                <TableRow key={i} hover sx={{ bgcolor: unmet ? '#F5F7F8' : undefined, ...trackedSxFor(r.reg_zsku), ...(short ? { bgcolor: C.redP } : {}) }}>
                   {COLS.map((c) => renderCell(c, r))}
                 </TableRow>
               );

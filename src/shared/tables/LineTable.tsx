@@ -19,7 +19,7 @@ export default function LineTable({ lines }: { lines: Line[] }) {
     <Box sx={{ bgcolor: '#fff', borderRadius: 1, overflowX: 'auto' }}>
       <Table size="small" sx={{ '& td, & th': { py: 0.75, px: 1.25, fontSize: '0.8rem', whiteSpace: 'nowrap' } }}>
         <TableHead>
-          <TableRow sx={{ bgcolor: '#F2F2F2' }}>
+          <TableRow sx={{ bgcolor: '#F5F7F8' }}>
             {HEAD.map((h, i) => (
               <TableCell
                 key={h}
@@ -46,9 +46,9 @@ export default function LineTable({ lines }: { lines: Line[] }) {
                 <TableCell align="right">{l[3]}</TableCell>
                 <TableCell align="right" sx={{ color: 'primary.main' }}>
                   {l[4] || ''}
-                  {l[5] && <Box component="span" sx={{ color: '#6B6B6B', fontSize: '0.72rem', ml: 0.5 }}>({l[5]})</Box>}
+                  {l[5] && <Box component="span" sx={{ color: '#5C616A', fontSize: '0.72rem', ml: 0.5 }}>({l[5]})</Box>}
                 </TableCell>
-                <TableCell align="right" sx={{ color: '#D04A02' }}>
+                <TableCell align="right" sx={{ color: '#C52B09' }}>
                   {l[6] || ''}
                   {l[7] && <Box component="span" sx={{ color: '#C9A27E', fontSize: '0.72rem', ml: 0.5 }}>({l[7]})</Box>}
                 </TableCell>

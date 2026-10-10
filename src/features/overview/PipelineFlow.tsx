@@ -12,11 +12,11 @@ import { useOeParams, pct, type OeParams } from '../../shared/OeParams';
    services.cfa_runner → services.allocation.run per CFA → secondary-CFA shift → RLM rollup), checked against develop.
    Drag the canvas to pan, mouse-wheel or the +/- buttons to zoom, Fit to frame it. */
 const buildDiagram = (P: OeParams) => `flowchart TD
-  classDef s3   fill:#FBEBE0,stroke:#D04A02,color:#8A3A0C;
-  classDef pg   fill:#F1F1F1,stroke:#2D2D2D,color:#2D2D2D;
-  classDef proc fill:#FFFFFF,stroke:#D04A02,color:#2D2D2D,stroke-width:1.4px;
-  classDef out  fill:#E9F4EC,stroke:#21A366,color:#14532D;
-  classDef gate fill:#F6F6F6,stroke:#6B6B6B,color:#2D2D2D;
+  classDef s3   fill:#FFE8D4,stroke:#C52B09,color:#8A3A0C;
+  classDef pg   fill:#F5F7F8,stroke:#2D2D2D,color:#2D2D2D;
+  classDef proc fill:#FFFFFF,stroke:#C52B09,color:#2D2D2D,stroke-width:1.4px;
+  classDef out  fill:#E9F4EC,stroke:#1B7346,color:#14532D;
+  classDef gate fill:#F5F7F8,stroke:#5C616A,color:#2D2D2D;
 
   RUN{{"0 · RUN · run date = TODAY (IST) · data date = the SOQ date picked<br/>lock the run date · re-read oe_parameters · clear today's outputs + SAP orders"}}:::gate
 
@@ -138,7 +138,7 @@ function loadMermaid(): Promise<Mermaid> {
     mermaidP = (import(/* @vite-ignore */ MERMAID_URL) as Promise<{ default: Mermaid }>).then(({ default: mermaid }) => {
       mermaid.initialize({
         startOnLoad: false, securityLevel: 'loose', theme: 'base',
-        themeVariables: { fontFamily: "'Inter','Segoe UI',system-ui,sans-serif", fontSize: '13px', lineColor: '#6B6B6B' },
+        themeVariables: { fontFamily: "'Helvetica Neue',Helvetica,Arial,sans-serif", fontSize: '13px', lineColor: '#5C616A' },
         flowchart: { htmlLabels: false, curve: 'basis', nodeSpacing: 45, rankSpacing: 55 },
       });
       return mermaid;

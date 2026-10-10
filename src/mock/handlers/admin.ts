@@ -150,8 +150,8 @@ get('/api/v1/version', () => ({
 
 // ═════════════════════════════════════════ OE parameters ═════════════════════════════════════════
 // Values live under core.ts's key (other handlers read them via loadParams); who/when lives beside them.
-const PARAMS_KEY = 'aiden.demo.oe_params';
-const PARAMS_META_KEY = 'aiden.demo.oe_params_meta';
+const PARAMS_KEY = 'aoo.demo.oe_params';
+const PARAMS_META_KEY = 'aoo.demo.oe_params_meta';
 const PARAM_RULES: Record<string, { value_type: 'int' | 'float'; min: number | null; max: number | null; label: string }> = {
   DEFAULT_TIER: { value_type: 'int', min: 1, max: 4, label: 'Default tier' },
   ADDON_CAP_PCT: { value_type: 'float', min: 0, max: 1, label: 'Add-on cap' },
@@ -314,10 +314,10 @@ const TABLES: TableDef[] = [
     cols: [['reg_zsku', RZ], ['region', PLANT], ['zsku', CODE], ['material_no', MAT], ['old_material_description', TXT],
       ['mrp', NUM], ['units_per_case', INT], ['variants', SINT], ['is_active', BOOL]],
     rows: () => REG_ZSKUS.map((z) => [z.rz, REGION, z.zsku, z.skus[0].sku, z.desc, z.mrp, z.unitsPerCase, z.skus.length, tf(true)]) },
-  { table: 'aiden_brand_material_master', schema: 'ds_app', group: 'Masters', domain: 'masters', label: 'Brand Material Master',
-    description: 'zsku → brand, AIDEN category and segment (the Step-2 substitute match key)',
-    source: 'Postgres', s3: s3Master('aiden_brand_material_master'),
-    cols: [['zsku', CODE], ['brand', TXT], ['aiden_category', TXT], ['aiden_segment', TXT], ['pack_size', 'varchar(8)'], ['price_point', NUM]],
+  { table: 'brand_material_master', schema: 'ds_app', group: 'Masters', domain: 'masters', label: 'Brand Material Master',
+    description: 'zsku → brand, brand category and segment (the Step-2 substitute match key)',
+    source: 'Postgres', s3: s3Master('brand_material_master'),
+    cols: [['zsku', CODE], ['brand', TXT], ['brand_category', TXT], ['channel_segment', TXT], ['pack_size', 'varchar(8)'], ['price_point', NUM]],
     rows: () => REG_ZSKUS.map((z) => {
       const drink = /Drink|Juice/.test(z.category);
       const size = drink ? (z.packG >= 1000 ? `${z.packG / 1000}L` : `${z.packG}ml`) : (z.packG >= 1000 ? `${z.packG / 1000}kg` : `${z.packG}g`);

@@ -69,7 +69,7 @@ export const api = {
   updateMe: (body: Record<string, string>) => putJson('/auth/me', body),   // the signed-in user's own username / password
   schemaReference: () => get('/schema_reference'),   // Data Model page — every table · column · type, by domain
   regZskuDescriptions: () => get('/reg_zsku_descriptions'),   // reg-zsku -> old_material_description (one per reg-zsku, from region_sku_master)
-  regZskuAidenCategories: () => get('/reg_zsku_aiden_categories'),   // reg-zsku -> AIDEN category (aiden_brand_material_master ⋈ region_sku_master)
+  regZskuBrandCategories: () => get('/reg_zsku_brand_categories'),   // reg-zsku -> brand category (brand_material_master ⋈ region_sku_master)
   distributorNames: () => get('/distributor_names'),          // db code -> Customer Name (served off db_master; nothing stored)
   s3OrderLineItems: (date?: string) => get(wd('/s3_order_line_items', date)),   // S3 hand-off — order_line_items parquet read back from S3
   table: (name: string, limit = 25, offset = 0, q = '') =>

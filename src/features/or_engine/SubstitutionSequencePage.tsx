@@ -14,7 +14,7 @@ import PageIntro from '../../shared/PageIntro';
 import { OE_DEFAULTS } from '../../shared/OeParams';
 import { useRegZskuDesc } from '../../shared/RegZskuDesc';
 import { isUncappedRoom, NO_CAP_LABEL, NO_CAP_TIP } from '../../shared/roomCap';
-import { useAidenCategory } from '../../shared/AidenCategory';
+import { useBrandCategory } from '../../shared/BrandCategory';
 import { useDistributorName } from '../../shared/DistributorName';
 
 /* ---------------------------------------------------------------------------
@@ -58,7 +58,7 @@ export default function SubstitutionSequencePage({ date, cfa = '' }: { date?: st
   const [q, setQ] = useState('');   // free-text filter over the rendered sequence (reg-zsku / DB / tier / substitute)
   const [tab, setTab] = useState<'seq' | 'truck'>('seq');   // ① substitution sequence · ② Step-2 truck fill (CFA×DB)
   const descOf = useRegZskuDesc();
-  const aidenOf = useAidenCategory();   // reg-zsku → AIDEN brand category (the new substitution dimension)
+  const categoryOf = useBrandCategory();   // reg-zsku → brand category (the new substitution dimension)
   const dbNameOf = useDistributorName();   // DB code -> Customer Name (served off db_master via /distributor_names)
 
   useEffect(() => {
@@ -243,9 +243,9 @@ export default function SubstitutionSequencePage({ date, cfa = '' }: { date?: st
                     <Box sx={{ ...mono, fontWeight: 700, color: C.slate, fontSize: 13, whiteSpace: 'nowrap', flexShrink: 0 }}
                       title="MRP — substitution is CFA × DB × MRP-wise">₹{l.mrp}</Box>
                   )}
-                  {aidenOf(l.z) && (
+                  {categoryOf(l.z) && (
                     <Box sx={{ px: 0.75, py: 0.2, borderRadius: `${RADIUS.sm}px`, bgcolor: C.successLight, color: C.success, fontWeight: 700, fontSize: 11, whiteSpace: 'nowrap', flexShrink: 0 }}
-                      title="AIDEN brand category — CFA × DB × MRP × aiden_category">{aidenOf(l.z)}</Box>
+                      title="brand category — CFA × DB × MRP × brand_category">{categoryOf(l.z)}</Box>
                   )}
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.6, minWidth: 0, pl: 0.25 }}>
@@ -334,7 +334,7 @@ export default function SubstitutionSequencePage({ date, cfa = '' }: { date?: st
                         <TableCell sx={mono}>{e.rank}</TableCell>
                         <TableCell sx={{ ...mono, fontWeight: 600, color: C.navy }}>{e.sub}</TableCell>
                         <TableCell sx={{ fontSize: 12, color: C.muted, whiteSpace: 'normal' }} title={descOf(e.sub)}>{descOf(e.sub) || '—'}</TableCell>
-                        <TableCell sx={numCell} title="Shared CFA pool for this substitute, RUNNING top-to-bottom: what it saw when this line ran → what's left for the next line that wants it">{e.pool}<Box component="span" sx={{ color: '#6B6B6B', ml: 0.4 }}>→ {e.poolAfter}</Box></TableCell>
+                        <TableCell sx={numCell} title="Shared CFA pool for this substitute, RUNNING top-to-bottom: what it saw when this line ran → what's left for the next line that wants it">{e.pool}<Box component="span" sx={{ color: '#5C616A', ml: 0.4 }}>→ {e.poolAfter}</Box></TableCell>
                         <TableCell sx={numCell} title="Norm of this substitute zsku at the DB">{e.norm}</TableCell>
                         <TableCell sx={{ ...numCell, color: isUncappedRoom(e.room) ? C.success : C.warnText, fontWeight: 700 }} title={isUncappedRoom(e.room) ? NO_CAP_TIP : `floor(${mult} × Norm ${e.norm}) = ${Math.floor(mult * e.norm)}`}>{isUncappedRoom(e.room) ? NO_CAP_LABEL : Math.floor(mult * e.norm)}</TableCell>
                         <TableCell sx={numCell} title={`SOH — the DB's physical on-hand for this substitute (from db_inventory), exactly as the ${mult}×Norm cap uses it`}>{e.soh}</TableCell>

@@ -11,7 +11,7 @@ import { SANS, MONO } from '../../theme/pdartTokens';
 
 type VersionInfo = { version?: string; describe?: string; branch?: string; built_at?: string };
 
-const GOLD = '#EB8C00';   // PwC Tangerine — readable on the charcoal header
+const GOLD = '#FD5108';   // PwC signature orange (status dot + hover rule)
 
 /** Deploy branch → environment label. Production is the `prod` branch (NOT `main`) — handled ahead of it existing;
     any other/unknown branch shows its own name uppercased. */
@@ -61,12 +61,12 @@ export default function VersionChip() {
       <Box sx={{
         display: { xs: 'none', sm: 'inline-flex' }, alignItems: 'center', gap: 0.75, flexShrink: 0,
         fontFamily: MONO, fontSize: 11, lineHeight: 1, letterSpacing: '.02em', whiteSpace: 'nowrap',
-        color: 'rgba(255,255,255,0.82)', bgcolor: 'rgba(255,255,255,0.08)',
-        border: '1px solid rgba(255,255,255,0.20)', borderRadius: '7px', padding: '5px 9px', cursor: 'default',
-        '&:hover': { borderColor: GOLD, bgcolor: 'rgba(208,74,2,0.14)' },
+        color: '#4C5056', bgcolor: '#F5F7F8',
+        border: '1px solid #DFE3E6', borderRadius: '7px', padding: '5px 9px', cursor: 'default',
+        '&:hover': { borderColor: GOLD, bgcolor: '#FFF5ED' },
       }}>
         <Box component="span" sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: GOLD, flexShrink: 0,
-          boxShadow: '0 0 0 2px rgba(208,74,2,0.28)' }} />
+          boxShadow: '0 0 0 2px rgba(253,81,8,0.22)' }} />
         {label}
       </Box>
     </Tooltip>

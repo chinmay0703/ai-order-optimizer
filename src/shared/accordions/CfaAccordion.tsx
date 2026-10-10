@@ -40,11 +40,11 @@ export default function CfaAccordion({ cfa, defaultOpen }: { cfa: Cfa; defaultOp
         sx={{
           flexDirection: 'row-reverse', gap: 1.25, px: 2.25,
           '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': { transform: 'rotate(90deg)' },
-          '&:hover': { bgcolor: '#F5F5F5' },
+          '&:hover': { bgcolor: '#F5F7F8' },
           '& .MuiAccordionSummary-content': { alignItems: 'center', gap: 1.5, my: 1.5, flexWrap: 'wrap' },
         }}
       >
-        <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#1C1C1C' }}>CFA {cfa.cfa}</Typography>
+        <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#303236' }}>CFA {cfa.cfa}</Typography>
         {/* alerts stay as colored chips — they're exceptions worth surfacing */}
         {held > 0 && (
           <Chip label={`🚫 ${held} held`} size="small"
@@ -54,7 +54,7 @@ export default function CfaAccordion({ cfa, defaultOpen }: { cfa: Cfa; defaultOp
         {rlmApproval > 0 && (
           <Chip label={`⚠ ${rlmApproval} RLM truck approval`} size="small"
             title={`DBs whose truck is a partial (<${pct(P.TRUCK_FILL_TARGET_PCT)}) load — needs RLM sign-off before the SO is created (RLM_TRUCK_APPROVAL)`}
-            sx={{ height: 22, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#FBEBE0', color: '#D04A02' }} />
+            sx={{ height: 22, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#FFE8D4', color: '#C52B09' }} />
         )}
         {rlmSecCfa > 0 && (
           <Chip label={`⚠ ${rlmSecCfa} RLM 2nd CFA`} size="small"
@@ -66,11 +66,11 @@ export default function CfaAccordion({ cfa, defaultOpen }: { cfa: Cfa; defaultOp
         <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', rowGap: 0.75 }}>
           <Metric label="DBs">{shipped}</Metric>
           {nTrucks > 0 && <Metric label="Trucks">{nTrucks}</Metric>}
-          <Metric label="Allocated" color="#1C1C1C">{fmt(cfa.tot)} cs</Metric>
+          <Metric label="Allocated" color="#303236">{fmt(cfa.tot)} cs</Metric>
           <Metric label="SOQ · demand">{fmt(cfa.soq)} cs</Metric>
           <Metric label="Fill" color={fillT.fg}>{fill}%</Metric>
           {atp > 0 && (
-            <Metric label="Stock drawn" color="#21A366" tip={`CFA stock ${fmt(atp)} → ${fmt(atp - cfa.tot)} remaining after allocation`}>{drawn}%</Metric>
+            <Metric label="Stock drawn" color="#1B7346" tip={`CFA stock ${fmt(atp)} → ${fmt(atp - cfa.tot)} remaining after allocation`}>{drawn}%</Metric>
           )}
         </Box>
       </AccordionSummary>

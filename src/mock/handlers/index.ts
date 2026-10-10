@@ -4,5 +4,6 @@ import './engine';
 import './sequences';
 import './reservations';
 import './outputs';
+import './validate';
 import './run';
 import './admin';

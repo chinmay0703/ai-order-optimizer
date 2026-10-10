@@ -132,7 +132,7 @@ export default function FinalOrderPage({ date }: { date?: string }) {
               // integer full primary trucks — NOT a plain fair-share loss. Flag it so the green SO_CREATION isn't misread.
               const undershipTrim = isTr && trimmed > 0 && Number(r[F.tot]) < Number(r[F.soq]);
               return (
-                <TableRow key={i} sx={{ bgcolor: isTr ? '#FBF3EE' : undefined, ...trackedRowSxFor(db) }}>
+                <TableRow key={i} sx={{ bgcolor: isTr ? '#FFF5ED' : undefined, ...trackedRowSxFor(db) }}>
                   <TableCell sx={{ fontFamily: MONO, fontSize: 12 }}>{r[F.cfa]}</TableCell>
                   <TableCell sx={{ fontFamily: MONO, fontSize: 12, color: C.navy, fontWeight: 700 }}>{tracked ? TRACK_STAR + ' ' : ''}{db}</TableCell>
                   <TableCell sx={{ fontFamily: MONO, fontSize: 12, color: C.slate }}>{r[F.rz]}</TableCell>
@@ -148,21 +148,21 @@ export default function FinalOrderPage({ date }: { date?: string }) {
                     {undershipTrim && (
                       <Box component="span"
                         title={`Trimmed ${nf(trimmed)} cs to fit cluster ${String(r[F.cluster] || '')}'s ${nf(Number(r[F.prim]))} full primary truck(s) — not a fair-share loss`}
-                        sx={{ ml: 0.6, px: 0.6, py: 0.15, borderRadius: 1, fontWeight: 800, fontSize: 9.5, verticalAlign: 'middle', bgcolor: '#FBEBE0', color: C.warnText, cursor: 'help' }}>
+                        sx={{ ml: 0.6, px: 0.6, py: 0.15, borderRadius: 1, fontWeight: 800, fontSize: 9.5, verticalAlign: 'middle', bgcolor: '#FFE8D4', color: C.warnText, cursor: 'help' }}>
                         −{nf(trimmed)} trim
                       </Box>
                     )}
                   </TableCell>
                   <TableCell sx={{ ...num, color: C.slate }} title="Max cases of the truck the order is created on — the cluster's PRIMARY truck cap for a transshipment lane, else this DB's own truck-master cap">{nf(r[F.truckMax] as number)}</TableCell>
                   <TableCell align="center">{isTr
-                    ? <Box component="span" title="Order created on the cluster's PRIMARY truck (transshipment)" sx={{ px: 0.9, py: 0.2, borderRadius: 1, fontWeight: 800, fontSize: 11, bgcolor: '#FBEBE0', color: '#D04A02' }}>▸ primary</Box>
+                    ? <Box component="span" title="Order created on the cluster's PRIMARY truck (transshipment)" sx={{ px: 0.9, py: 0.2, borderRadius: 1, fontWeight: 800, fontSize: 11, bgcolor: '#FFE8D4', color: '#C52B09' }}>▸ primary</Box>
                     : <span style={{ color: C.muted }}>—</span>}</TableCell>
                   <TableCell align="center" sx={{ fontFamily: MONO, fontSize: 11.5, color: C.muted }}>{isTr ? String(r[F.cluster] || '—') : '—'}</TableCell>
                   <TableCell align="center" sx={{ ...num, textAlign: 'center', color: C.muted }} title="CLUSTER primary trucks (INTEGER full trucks, shared across the cluster's DBs) — the truck count emitted to the order">{isTr && Number(r[F.prim]) > 0 ? nf(r[F.prim] as number) : '—'}</TableCell>
                   <TableCell align="center">{(() => {
                     const f = String(r[F.soFlag] || ''); const green = f === 'SO_CREATION';
                     return f
-                      ? <Box component="span" title="SO disposition (from the shipped order)" sx={{ px: 0.8, py: 0.2, borderRadius: 1, fontWeight: 800, fontSize: 10, whiteSpace: 'nowrap', bgcolor: green ? '#E9F4EC' : '#FBEBE0', color: green ? C.success : '#D04A02' }}>{f}</Box>
+                      ? <Box component="span" title="SO disposition (from the shipped order)" sx={{ px: 0.8, py: 0.2, borderRadius: 1, fontWeight: 800, fontSize: 10, whiteSpace: 'nowrap', bgcolor: green ? '#E9F4EC' : '#FFE8D4', color: green ? C.success : '#C52B09' }}>{f}</Box>
                       : <span style={{ color: C.muted }}>—</span>;
                   })()}</TableCell>
                 </TableRow>

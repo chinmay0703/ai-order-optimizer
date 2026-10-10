@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
      • RETRIES until it loads a non-empty map (backend down / mid-staging);
      • RELOADS after every pipeline run (the RUN_DONE window event, fired by the app when a run completes);
      • REFETCHES (throttled) when a code is looked up that the map does not have yet. */
-export const RUN_DONE_EVENT = 'aiden:run-done';   // window event: a pipeline run finished → served masters may have changed
+export const RUN_DONE_EVENT = 'aoo:run-done';   // window event: a pipeline run finished → served masters may have changed
 
 const RETRY_MS = 5000;          // retry interval while the map is still empty / the fetch failed
 const MAX_RETRIES = 12;         // ~1 minute of retries, then wait for the next run / miss

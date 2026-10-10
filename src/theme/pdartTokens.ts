@@ -6,35 +6,36 @@
    ===================================================================== */
 
 export const C = {
-  // ── structure — PwC palette: charcoal greys + PwC Orange / Tangerine / Yellow accents ──
-  navy: '#2D2D2D', navyDark: '#1A1A1A',              // (token names kept for back-compat: "navy" is now PwC charcoal)
-  gold: '#D04A02', goldLight: '#FFB600',             // PwC Orange · PwC Yellow
-  tangerine: '#EB8C00', rose: '#D93954', burgundy: '#A32020', maroon: '#602320',
-  cream: '#F6F6F6', panelBg: '#EDEDED', white: '#FFFFFF',
-  canvas: '#F5F5F5',                                 // page background — white cards pop on this gray
-  ink: '#2D2D2D', slate: '#2D2D2D', muted: '#6B6B6B',
-  rule: '#DEDEDE', border: '#DEDEDE', rowLine: '#EEEEEE', headBg: '#F2F2F2',   // rowLine=divider · headBg=faint-grey table header
-  // ── semantic (text-safe inks: every one ≥ 4.5:1 on white AND on its own pale tint) ──
+  // ── PwC palette — taken from pwc.com's live design tokens (--syc-*), 2025 "So You Can" identity ──
+  // structure: charcoal ink + black; accent: PwC orange (solid #FD5108 for fills / large type, #C52B09 for small text)
+  navy: '#2D2D2D', navyDark: '#000000',              // (token names kept for back-compat: "navy" = PwC body-text charcoal)
+  gold: '#C52B09', goldLight: '#FFAA72',             // orange700 (text-safe accent) · orange300 (accent on dark)
+  orange: '#FD5108', orange50: '#FFF5ED', orange100: '#FFE8D4', orange200: '#FFCDA8', orange300: '#FFAA72',
+  orange400: '#FE7C39', orange700: '#C52B09', orangeGradient: 'linear-gradient(90deg, #FE8303, #FD5108)',
+  grey50: '#F5F7F8', grey100: '#EEEFF1', grey200: '#DFE3E6', grey300: '#CBD1D6', grey500: '#A1A8B3', grey700: '#787E8A',
+  grey800: '#4C5056', grey900: '#303236',
+  tangerine: '#FE7C39', rose: '#D93954', burgundy: '#A32020', maroon: '#602320',   // extended PwC hues for data series
+  cream: '#F5F7F8', panelBg: '#EEEFF1', white: '#FFFFFF',
+  canvas: '#FFFFFF',                                 // page background — white (pwc.com); light-grey / peach panels for sections
+  ink: '#2D2D2D', slate: '#2D2D2D', muted: '#5C616A',
+  rule: '#DFE3E6', border: '#DFE3E6', rowLine: '#EEEFF1', headBg: '#F5F7F8',   // rowLine=divider · headBg=table header
+  // ── semantic (text-safe inks: each ≥ 4.5:1 on white AND on its own tint) ──
   success: '#1B7346', green: '#1B7346', successLight: '#E7F3E7', greenP: '#E7F3E7',
-  warnText: '#A33A02', amber: '#A33A02', warnLight: '#FBEBE1', amberP: '#FBEBE1',   // dark PwC orange on a peach tint
-  alertRed: '#C02A1A', red: '#C02A1A', redP: '#FCEAE8',
-  // ── brand solids (fills, bars, markers — not small text) ──
-  brandRed: '#E0301E', crimson: '#E0301E', amberBright: '#EB8C00', orange: '#D04A02',
+  warnText: '#C52B09', amber: '#C52B09', warnLight: '#FFF5ED', amberP: '#FFF5ED',   // PwC orange700 on orange50 (5.3:1)
+  alertRed: '#A32020', red: '#A32020', redP: '#FCEAE8',                              // PwC burgundy on a pink tint (6.5:1)
+  // ── brand solids (fills, bars, markers, large type — not small text) ──
+  brandRed: '#E0301E', crimson: '#E0301E', amberBright: '#FE7C39',
   deepRed: '#A32020', teal: '#1B7346',
-  inkWarm: '#2D2D2D', mutedWarm: '#6B6B6B', pageWarm: '#F6F6F6', track: '#EDEDED', allocGray: '#6B6B6B',
-  // ── back-compat aliases (old pdart-ui keys → new theme) ─────
-  navyP: '#F6F6F6',   // neutral callouts → light panels
-  grayP: '#EDEDED',   // neutral panel → panelBg
-  codeBg: '#1E1E1E',  // dark "show-your-work" block
+  inkWarm: '#2D2D2D', mutedWarm: '#5C616A', pageWarm: '#FFFFFF', track: '#EEEFF1', allocGray: '#5C616A',
+  // ── back-compat aliases ─────
+  navyP: '#F5F7F8', grayP: '#EEEFF1', codeBg: '#303236',
 };
 
-// Cambria serif heads · Inter body/UI (matches the product's other screens) · Consolas mono
-// heading font — now the closest free match to Google Sans (Poppins), with the real Google/Product Sans used where present.
-// (token name kept as SERIF for back-compat; it is used everywhere for page/section headings.)
-// Headings only — Google Sans (Poppins fallback). Body/UI stays Inter; mono stays Consolas.
-export const SERIF = "'Google Sans', 'Product Sans', 'Poppins', 'Segoe UI', system-ui, sans-serif";
-export const SANS = "'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif";
-export const MONO = "'Consolas', 'JetBrains Mono', ui-monospace, monospace";
+// PwC typography (pwc.com): ITC Charter serif for headlines, Helvetica Neue for everything else. Both are licensed, so the
+// stacks fall back to the closest system fonts (Charter ships with macOS; Georgia / Arial elsewhere) — no web-font download.
+export const SERIF = "'ITC Charter', Charter, 'Bitstream Charter', Georgia, 'Times New Roman', serif";
+export const SANS = "'Helvetica Neue', Helvetica, Arial, sans-serif";
+export const MONO = "'Consolas', 'JetBrains Mono', ui-monospace, Menlo, monospace";
 
 // Rounded corners + soft shadows (the new theme is no longer sharp/flat)
 export const RADIUS = { sm: 4, md: 8, lg: 12 };

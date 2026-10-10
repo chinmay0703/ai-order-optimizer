@@ -80,18 +80,18 @@ function mergeByReg(lines: TLine[]): RegGroup[] {
 // the owner-centric used-as triple (original · substitute · filler), like the report
 const Tri = ({ o, s, f }: { o: number; s: number; f: number }) => (
   <Box component="span" sx={{ fontFamily: MONO, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
-    <Box component="span" sx={{ color: o ? C.slate : C.rule, fontWeight: o ? 700 : 400 }} title="used as original">{o}</Box>
-    <Box component="span" sx={{ color: C.rule }}> · </Box>
-    <Box component="span" sx={{ color: s ? C.success : C.rule, fontWeight: s ? 700 : 400 }} title="used as substitute (lent)">{s}</Box>
-    <Box component="span" sx={{ color: C.rule }}> · </Box>
-    <Box component="span" sx={{ color: f ? C.gold : C.rule, fontWeight: f ? 700 : 400 }} title="used as filler (lent)">{f}</Box>
+    <Box component="span" sx={{ color: o ? C.slate : C.grey700, fontWeight: o ? 700 : 400 }} title="used as original">{o}</Box>
+    <Box component="span" sx={{ color: C.grey700 }}> · </Box>
+    <Box component="span" sx={{ color: s ? C.success : C.grey700, fontWeight: s ? 700 : 400 }} title="used as substitute (lent)">{s}</Box>
+    <Box component="span" sx={{ color: C.grey700 }}> · </Box>
+    <Box component="span" sx={{ color: f ? C.gold : C.grey700, fontWeight: f ? 700 : 400 }} title="used as filler (lent)">{f}</Box>
   </Box>
 );
 
 // load every report line for the header CFA (the backend caches the full sheet per date) — never a first-N slice, or the
 // funnel and the distributor list silently miss every distributor whose lines fall past the cut
 const ALL_LINES = 1_000_000;
-// in-engine outcomes, in funnel order — they partition "Input to AIDEN" (Before is the pre-engine branch, shown apart)
+// in-engine outcomes, in funnel order — they partition "Input to engine" (Before is the pre-engine branch, shown apart)
 const ENGINE_OUTCOMES: Status[] = ORDER.filter((s) => s !== 'Before');
 const nf = (n: unknown) => (Number.isFinite(Number(n)) ? Math.round(Number(n)).toLocaleString() : '');
 const num = (v: Cell) => (Number.isFinite(Number(v)) ? Number(v) : 0);
@@ -112,13 +112,13 @@ function groupDists(cols: string[], rows: Cell[][]): Dist[] {
   const at = (name: string) => cols.findIndex((h) => h.trim().toLowerCase() === name.trim().toLowerCase());
   const I = {
     code: at('Customer Code'), name: at('Customer Description'), otype: at('Order Type (PDP / Non-PDP)_DB'),
-    input: at('Input to AIDEN_DB'), remark: at('Overall_remarks DB_Level'), ship: at('Shipment type_DB Level'),
+    input: at('Input to engine_DB'), remark: at('Overall_remarks DB_Level'), ship: at('Shipment type_DB Level'),
     rz: at('Reg_ZSKU Code'), rzdesc: at('Old Material Description'),
     soq: at('SOQ_QTY_RegZSKU'), norm: at('Norms_QTY_RegZSKU'), soh: at('SOH_QTY_Reg_SKU'), sit: at('SIT_QTY_RegZSKU'),
     ob: at('AOQ_Prestine_QTY_RegZSKU'), sb: at('AOQ_Substitution_QTY_RegZSKU_Before_Truck fill'), fb: at('AOQ_Filler_QTY_RegZSKU_Before_Truck fill'),
     oa: at('AOQ_Prestine_QTY_RegZSKU_after_Truckfill'), sa: at('AOQ_Substitution_QTY_RegZSKU_after_truck_fill'), fa: at('AOQ_Filler_QTY_RegZSKU_after_Truckfill'),
     at_sku: at('AOQ_QTY_Total_after_Truck_Fill_SKU_Level'), drop: at('AOQ Drop reason Reg_ZSKU Level'),
-    sku: at('SKU code'), batch: at('Batch code'), skudesc: at('SKU Description'), oeid: at('AiDEN Order ID'),
+    sku: at('SKU code'), batch: at('Batch code'), skudesc: at('SKU Description'), oeid: at('Engine Order ID'),
   };
   const byDb = new Map<string, Dist>();
   const regOf = new Map<string, Map<string, Reg>>();
@@ -209,7 +209,7 @@ export default function OrderJourneyPage({ date, cfa }: { date?: string; cfa?: s
   const cur = useMemo(() => (selCluster ? null : (dists.find((d) => d.code === sel) || list[0] || dists[0] || null)), [dists, list, sel, selCluster]);
   const curTrucks = useMemo(() => (cur ? tm[cur.code] || [] : []), [cur, tm]);
   // default-select the first truck whenever the distributor (or its trucks) change
-  useEffect(() => { setSelTruck(curTrucks.length ? curTrucks[0].truck : null); }, [cur?.code, curTrucks.length]);
+  useEffect(() => { setSelTruck(curTrucks.length ? curTrucks[0].truck : null); }, [cur?.code, curTrucks.length, tm]);   // tm: re-pick after a refetch (it resets the selection)
   const distByCode = useMemo(() => { const m = new Map<string, Dist>(); dists.forEach((d) => m.set(d.code, d)); return m; }, [dists]);
 
   if (err) return <Shell><ErrorState error={err} onRetry={() => setNonce((n) => n + 1)} /></Shell>;
@@ -263,11 +263,11 @@ export default function OrderJourneyPage({ date, cfa }: { date?: string; cfa?: s
               <Step n={1} title="Demand gate (before the engine)">
                 <Card big label="Distributors (SOQ)" v={counts.total} fg={C.navy} hint="every distributor in this CFA's SOQ" />
                 <Op t="=" />
-                <Card big label="Dropped before engine" v={counts.dropped} fg={C.warnText} status="Before" hint="Input to AIDEN = No — combined SOQ not > 65% / single-distributor cluster / no demand" />
+                <Card big label="Dropped before engine" v={counts.dropped} fg={C.warnText} status="Before" hint="Input to engine = No — combined SOQ not > 65% / single-distributor cluster / no demand" />
                 <Op t="+" />
-                <Card big label="Input to AIDEN" v={counts.input} fg={C.success} hint="Input to AIDEN = Yes — entered the allocation engine" />
+                <Card big label="Input to engine" v={counts.input} fg={C.success} hint="Input to engine = Yes — entered the allocation engine" />
               </Step>
-              <Step n={2} title={`What happened to the ${nf(counts.input)} input to AIDEN`}>
+              <Step n={2} title={`What happened to the ${nf(counts.input)} input to the engine`}>
                 {outcomes.length
                   ? outcomes.map((st, i) => (
                     <Fragment key={st}>
@@ -280,7 +280,7 @@ export default function OrderJourneyPage({ date, cfa }: { date?: string; cfa?: s
               <Step n={3} title="Shipped">
                 <Card big label="Shipped (> 0 cases)" v={counts.shipped} fg={C.success} hint="input distributors with at least one case on a truck after the truck fill" />
                 <Box sx={{ alignSelf: 'center', fontSize: 12, color: C.muted }}>
-                  of {nf(counts.input)} input to AIDEN{counts.input - counts.shipped > 0 ? ` · ${nf(counts.input - counts.shipped)} ship nothing (dropped / no stock / held)` : ''}
+                  of {nf(counts.input)} input to the engine{counts.input - counts.shipped > 0 ? ` · ${nf(counts.input - counts.shipped)} ship nothing (dropped / no stock / held)` : ''}
                 </Box>
               </Step>
             </Box>
@@ -559,7 +559,7 @@ function Detail({ d, trucks, selTruck, setSelTruck }: { d: Dist; trucks: Truck[]
                   <Box component="tr" key={r.rz} sx={{ '& td': { p: '6px 9px', borderBottom: `1px solid ${C.rowLine}`, whiteSpace: 'nowrap', fontFamily: MONO, fontVariantNumeric: 'tabular-nums', textAlign: 'right' }, '& td:first-of-type': { textAlign: 'left' } }}>
                     <Box component="td"><Box sx={{ color: C.navy, fontWeight: 700 }}>{r.rz}</Box><Box sx={{ fontFamily: SANS, fontSize: 10.5, color: C.muted, maxWidth: 210, overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.desc}</Box></Box>
                     <Box component="td">{r.soq}</Box><Box component="td" sx={{ color: C.muted }}>{r.norm}</Box><Box component="td" sx={{ color: C.muted }}>{r.soh}</Box><Box component="td" sx={{ color: C.muted }}>{r.sit}</Box>
-                    <Box component="td"><span style={{ color: r.origA ? C.slate : C.rule, fontWeight: r.origA ? 700 : 400 }}>{r.origA}</span><span style={{ color: C.rule }}> · </span><span style={{ color: r.subA ? C.success : C.rule, fontWeight: r.subA ? 700 : 400 }}>{r.subA}</span><span style={{ color: C.rule }}> · </span><span style={{ color: r.filA ? C.gold : C.rule, fontWeight: r.filA ? 700 : 400 }}>{r.filA}</span></Box>
+                    <Box component="td"><span style={{ color: r.origA ? C.slate : C.grey700, fontWeight: r.origA ? 700 : 400 }}>{r.origA}</span><span style={{ color: C.rule }}> · </span><span style={{ color: r.subA ? C.success : C.rule, fontWeight: r.subA ? 700 : 400 }}>{r.subA}</span><span style={{ color: C.rule }}> · </span><span style={{ color: r.filA ? C.gold : C.rule, fontWeight: r.filA ? 700 : 400 }}>{r.filA}</span></Box>
                     <Box component="td" sx={{ fontWeight: 700, color: r.afterTot ? C.success : C.muted }}>{r.afterTot || (r.drop ? <span title={r.drop} style={{ color: C.alertRed, fontFamily: SANS, fontSize: 10 }}>drop</span> : 0)}</Box>
                   </Box>
                 ))}

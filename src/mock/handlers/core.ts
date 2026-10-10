@@ -6,7 +6,7 @@ import {
 
 // ───────── users (persisted in this browser so admin edits survive a refresh) ─────────
 export interface DemoUser { id: number; username: string; password: string; is_admin: boolean; can_access_run: boolean; created_at: string }
-const USERS_KEY = 'aiden.demo.users';
+const USERS_KEY = 'aoo.demo.users';
 const SEED_USERS: DemoUser[] = [
   { id: 1, username: 'admin', password: 'admin', is_admin: true, can_access_run: true, created_at: '2026-09-01T09:00:00+05:30' },
   { id: 2, username: 'planner', password: 'planner', is_admin: false, can_access_run: true, created_at: '2026-09-12T10:15:00+05:30' },
@@ -107,10 +107,10 @@ get('/api/v1/plants', () => ({ plants: PLANTS }));
 // ───────── served lookups ─────────
 get('/api/v1/distributor_names', () => ({ names: Object.fromEntries(DISTRIBUTORS.map((d) => [d.code, d.name])) }));
 get('/api/v1/reg_zsku_descriptions', () => ({ descriptions: Object.fromEntries(REG_ZSKUS.map((z) => [z.rz, z.desc])) }));
-get('/api/v1/reg_zsku_aiden_categories', () => ({ aiden_categories: Object.fromEntries(REG_ZSKUS.map((z) => [z.rz, z.category])) }));
+get('/api/v1/reg_zsku_brand_categories', () => ({ brand_categories: Object.fromEntries(REG_ZSKUS.map((z) => [z.rz, z.category])) }));
 
 // ───────── OE parameters (editable; persisted in this browser) ─────────
-const PARAMS_KEY = 'aiden.demo.oe_params';
+const PARAMS_KEY = 'aoo.demo.oe_params';
 export function loadParams(): Record<string, number> {
   const base = Object.fromEntries(OE_PARAM_DEFS.map((p) => [p.key, p.default]));
   try { return { ...base, ...(JSON.parse(localStorage.getItem(PARAMS_KEY) || '{}') as Record<string, number>) }; } catch { return base; }

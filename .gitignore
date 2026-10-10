@@ -7,3 +7,4 @@ dist/
 
 # local env (internal hostnames) — never commit
 .env
+.vscode/

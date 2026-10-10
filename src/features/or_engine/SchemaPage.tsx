@@ -19,8 +19,8 @@ interface Dom { domain: string; desc: string; tables: Tbl[]; }
 interface Payload { app_schema: string; sap_schema: string; total_tables: number; total_columns: number; domains: Dom[]; }
 
 const DOMAIN_COLOR: Record<string, string> = {
-  masters: '#2D2D2D', transaction: '#21A366', processed: '#D93954', engine: '#6B6B6B',
-  orders: '#D04A02', rlm: '#D04A02', sap: '#E0301E',
+  masters: '#2D2D2D', transaction: '#1B7346', processed: '#D93954', engine: '#5C616A',
+  orders: '#C52B09', rlm: '#C52B09', sap: '#E0301E',
 };
 
 const Shell = ({ children }: { children: React.ReactNode }) => (
@@ -103,7 +103,7 @@ export default function SchemaPage() {
                   '& .MuiAccordionSummary-content': { alignItems: 'center', gap: 1.25, my: 0.75 } }}>
                 <Box component="span" sx={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: C.navy }}>{t.table}</Box>
                 <Box component="span" sx={{ fontFamily: MONO, fontSize: 10, px: 0.7, py: 0.15, borderRadius: 1,
-                  bgcolor: '#F2F2F2', color: C.muted, border: `1px solid ${C.rule}` }}>{t.schema}</Box>
+                  bgcolor: '#F5F7F8', color: C.muted, border: `1px solid ${C.rule}` }}>{t.schema}</Box>
                 <Box sx={{ flex: 1 }} />
                 <Box component="span" sx={{ fontSize: 11.5, color: C.muted }}>{t.columns.length} cols</Box>
               </AccordionSummary>

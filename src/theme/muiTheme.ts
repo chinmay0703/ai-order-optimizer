@@ -25,8 +25,8 @@ export const theme = createTheme({
   },
   typography: {
     fontFamily: SANS,
-    h1: { fontFamily: SERIF, fontWeight: 700, color: NAVY, fontSize: '2.25rem' },
-    h2: { fontFamily: SERIF, fontWeight: 700, color: NAVY, fontSize: '1.625rem' },
+    h1: { fontFamily: SERIF, fontWeight: 400, color: '#000', fontSize: '2.25rem', letterSpacing: '-1px' },
+    h2: { fontFamily: SERIF, fontWeight: 400, color: '#000', fontSize: '1.625rem', letterSpacing: '-.5px' },
     h3: { fontFamily: SERIF, fontWeight: 700, color: NAVY, fontSize: '1.375rem' },
     h4: { fontFamily: SERIF, fontWeight: 700, color: NAVY, fontSize: '1.2rem' },
     h5: { fontFamily: SERIF, fontWeight: 700, color: NAVY, fontSize: '1.1rem' },
@@ -41,7 +41,7 @@ export const theme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        ':focus-visible': { outline: `2px solid ${GOLD}`, outlineOffset: '2px' },   // gold focus ring
+        ':focus-visible': { outline: `2px solid ${C.orange}`, outlineOffset: '2px' },   // PwC orange focus ring
         '@media (prefers-reduced-motion: reduce)': {
           '*, *::before, *::after': { transition: 'none !important', animation: 'none !important' },
         },
@@ -50,6 +50,8 @@ export const theme = createTheme({
     // cards: 1px rule border + a soft shadow (not flat, not heavy)
     MuiPaper: { styleOverrides: { root: { border: `1px solid ${RULE}`, boxShadow: SHADOW.sm, backgroundImage: 'none' } },
       defaultProps: { elevation: 0 } },
+    // contained buttons stay PwC charcoal + white (pages set their own bg on some buttons — a theme text-colour override
+    // would collide with those); the soft-orange pwc.com CTA is applied explicitly where wanted (login, Run).
     MuiButton: { styleOverrides: { root: { textTransform: 'none', fontWeight: 700, borderRadius: RADIUS.sm } } },
     // clean data-table header: WHITE bg + GRAY UPPERCASE labels + thin dividers (reference table format)
     MuiTableHead: {
@@ -69,13 +71,13 @@ export const theme = createTheme({
     MuiTableContainer: { styleOverrides: { root: { border: `1px solid ${RULE}`, borderRadius: RADIUS.md, backgroundColor: C.white } } },
     MuiTab: { styleOverrides: { root: { textTransform: 'none', fontWeight: 600, fontFamily: SANS,
       '&.Mui-selected': { color: NAVY } } } },
-    MuiTabs: { styleOverrides: { indicator: { backgroundColor: GOLD, height: 2 } } },
+    MuiTabs: { styleOverrides: { indicator: { backgroundColor: C.orange, height: 3 } } },
     // chips read as small pills (the pdart badge shape)
     MuiChip: { styleOverrides: { root: { fontWeight: 700, fontSize: 11, letterSpacing: '.02em', fontFamily: SANS, borderRadius: 999 },
       colorPrimary: { backgroundColor: NAVY }, colorSuccess: { backgroundColor: C.successLight, color: GREEN } } },
     MuiAppBar: { styleOverrides: { root: { backgroundColor: NAVY, color: '#fff', boxShadow: 'none' } } },
-    MuiTextField: { styleOverrides: { root: { '& .MuiOutlinedInput-root': { '&:hover fieldset': { borderColor: NAVY } } } } },
-    MuiLinearProgress: { styleOverrides: { bar: { backgroundColor: NAVY } } },
+    MuiTextField: { styleOverrides: { root: { '& .MuiOutlinedInput-root': { '&:hover fieldset': { borderColor: NAVY }, '&.Mui-focused fieldset': { borderColor: C.orange } } } } },
+    MuiLinearProgress: { styleOverrides: { bar: { backgroundColor: C.orange } } },
   },
 });
 

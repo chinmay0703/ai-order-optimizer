@@ -7,7 +7,7 @@ import { isUncappedRoom, NO_CAP_LABEL, NO_CAP_TIP } from '../roomCap';
 // Step-3 filler "show your work": every eligible filler competes for the lane's spare truck room under FOUR caps;
 // allocated = the MIN of them, and "Limited by" is whichever cap bound it. There is no solver — this is the exact min.
 // The cap labels (Norm room, add-on %) are read from oe_parameters — never hardcode 1.2 / 35%.
-const GREEN = '#21A366', RED = '#E0301E', MUTED = '#6B6B6B', RULE = '#DEDEDE', ROWLINE = '#EEEEEE', CREAM = '#FAF8F7', INK = '#2D2D2D';
+const GREEN = '#1B7346', RED = '#E0301E', MUTED = '#5C616A', RULE = '#DFE3E6', ROWLINE = '#EEEFF1', CREAM = '#FAF8F7', INK = '#2D2D2D';
 
 // which of the four caps bound this filler — matches the reason substring so it stays correct when the % values change.
 function isBound(reason: string, key: string): boolean {
@@ -51,7 +51,7 @@ export default function FillerTable({ rows }: { rows: FillerCalc[] }) {
       </Box>
       <Table size="small" sx={{ '& td, & th': { py: 0.7, px: 1.25, fontSize: '0.8rem', whiteSpace: 'nowrap', borderBottom: `1px solid ${ROWLINE}` } }}>
         <TableHead>
-          <TableRow sx={{ bgcolor: '#F2F2F2' }}>
+          <TableRow sx={{ bgcolor: '#F5F7F8' }}>
             {COLS.map((c, i) => (
               <TableCell key={c.h} align={i < 2 ? 'left' : i === COLS.length - 1 ? 'left' : 'right'}
                 title={c.tip || undefined}
@@ -84,12 +84,12 @@ export default function FillerTable({ rows }: { rows: FillerCalc[] }) {
                 <TableCell align="right"><Box component="span" sx={capSx(r.truck, r.reason, 'truck', r.alloc)}>{r.truck}</Box></TableCell>
                 <TableCell align="right">
                   <Box component="span" sx={{ display: 'inline-block', minWidth: 22, textAlign: 'center', px: 0.7, py: '1px', borderRadius: '999px',
-                    bgcolor: on ? GREEN : '#EDEDED', color: on ? '#fff' : MUTED, fontWeight: 800, fontSize: '0.78rem', fontVariantNumeric: 'tabular-nums' }}>{r.alloc}</Box>
+                    bgcolor: on ? GREEN : '#EEEFF1', color: on ? '#fff' : MUTED, fontWeight: 800, fontSize: '0.78rem', fontVariantNumeric: 'tabular-nums' }}>{r.alloc}</Box>
                 </TableCell>
                 <TableCell>
                   <Box component="span" sx={{ display: 'inline-block', px: 0.85, py: '2px', borderRadius: '999px', fontSize: '0.64rem', fontWeight: 700,
                     maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', verticalAlign: 'middle',
-                    bgcolor: on ? '#E7F3E7' : '#F2F2F2', color: on ? GREEN : MUTED, border: `1px solid ${on ? '#B7E0C0' : RULE}` }}>{r.reason}</Box>
+                    bgcolor: on ? '#E7F3E7' : '#F5F7F8', color: on ? GREEN : MUTED, border: `1px solid ${on ? '#B7E0C0' : RULE}` }}>{r.reason}</Box>
                 </TableCell>
               </TableRow>
             );

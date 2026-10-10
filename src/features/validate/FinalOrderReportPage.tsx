@@ -8,19 +8,19 @@ import { C, SERIF, SANS, MONO, RADIUS, SHADOW } from '../../theme/pdartTokens';
 
 /* ---------------------------------------------------------------------------
    Reporting Format — one row per CFA × DB, live from /api/v1/final_order_report.
-   EVERY SOQ distributor is here: the ones that entered the engine (Input to AIDEN = Yes)
+   EVERY SOQ distributor is here: the ones that entered the engine (Input to engine = Yes)
    AND the ones dropped BEFORE it (No, with the drop reason). Run it for the OLD Step-1
    logic vs the EPSILON logic and compare directly. The on-screen table is scoped to the
    header CFA; "Download Excel" always exports EVERY CFA. 100% real — no table is written.
 --------------------------------------------------------------------------- */
 type Cell = string | number | boolean | null;
-type Kpi = { dbs: number; input_to_aiden: number; dropped_before_engine: number; shipped_dbs: number; dropped_in_engine: number; total_shipped: number };
+type Kpi = { dbs: number; input_to_engine: number; dropped_before_engine: number; shipped_dbs: number; dropped_in_engine: number; total_shipped: number };
 interface Payload { date?: string; cols: string[]; rows: Cell[][]; total: number; filtered: number; kpi: Kpi; }
 const PAGE_SIZE = 100;
 
 const nf = (n: unknown) => (Number.isFinite(Number(n)) ? Math.round(Number(n)).toLocaleString() : '');
 // TEXT (left-aligned) columns; everything else is a measure → right-aligned + tabular
-const TEXT_COL = /date|^cfa$|db code|db name|customer type|pdp flag|input to aiden|reason|truck type|shipment type|cluster|remarks/i;
+const TEXT_COL = /date|^cfa$|db code|db name|customer type|pdp flag|input to engine|reason|truck type|shipment type|cluster|remarks/i;
 const isNum = (h: string) => !TEXT_COL.test(h);
 
 const Shell = ({ children }: { children: React.ReactNode }) => (
@@ -66,7 +66,7 @@ export default function FinalOrderReportPage({ date, cfa }: { date?: string; cfa
   const ix = useMemo(() => {
     const c = data?.cols ?? [];
     const at = (name: string) => c.findIndex((h) => h.toLowerCase() === name.toLowerCase());
-    return { input: at('Input to AIDEN'), remarks: at('Remarks') };
+    return { input: at('Input to engine'), remarks: at('Remarks') };
   }, [data]);
 
   const clickSort = (ci: number) => {
@@ -101,7 +101,7 @@ export default function FinalOrderReportPage({ date, cfa }: { date?: string; cfa
     <Box component="button" type="button" disabled={disabled} onClick={onClick}
       sx={{ font: 'inherit', cursor: disabled ? 'default' : 'pointer', minWidth: 34, px: 1, py: 0.5, borderRadius: `${RADIUS.sm}px`,
         border: `1px solid ${active ? C.navy : C.rule}`, bgcolor: active ? C.navy : C.white,
-        color: disabled ? C.rule : active ? '#fff' : C.navy, fontSize: 12.5, fontWeight: 700,
+        color: disabled ? C.grey700 : active ? '#fff' : C.navy, fontSize: 12.5, fontWeight: 700,
         fontVariantNumeric: 'tabular-nums', opacity: disabled ? 0.6 : 1, '&:hover': disabled ? {} : { bgcolor: active ? C.navy : C.cream } }}>
       {children}
     </Box>
@@ -115,14 +115,14 @@ export default function FinalOrderReportPage({ date, cfa }: { date?: string; cfa
     <Shell>
       <PageIntro>
         One row per <b>CFA × DB</b> in the Reporting Format — <b>every distributor that came in the SOQ</b>, including the
-        ones dropped <b>before</b> the engine (<b>Input to AIDEN = No</b>, with the drop <b>reason</b>). For the DBs that ran, it
+        ones dropped <b>before</b> the engine (<b>Input to engine = No</b>, with the drop <b>reason</b>). For the DBs that ran, it
         shows the allocation (Original / Filler / Substitution), <b>Total before</b> vs <b>Final after truck-fill</b>, fill rate,
         truck / cluster shape, and the SO disposition. The table is scoped to the header CFA; <b>Download Excel exports every CFA</b>.
       </PageIntro>
 
       <Box sx={{ display: 'flex', gap: 1.5, mb: 2, flexWrap: 'wrap' }}>
         <Kpi label="Distributors (SOQ)" val={kpi.dbs} fg={C.navy} bar={C.navy} />
-        <Kpi label="Input to AIDEN" val={kpi.input_to_aiden} fg={C.success} bar={C.success} />
+        <Kpi label="Input to engine" val={kpi.input_to_engine} fg={C.success} bar={C.success} />
         <Kpi label="Dropped before engine" val={kpi.dropped_before_engine} fg={C.warnText} bar={C.gold} />
         <Kpi label="Shipped (>0)" val={kpi.shipped_dbs} fg={C.success} bar={C.success} />
         <Kpi label="Dropped in engine" val={kpi.dropped_in_engine} fg={C.alertRed} bar={C.alertRed} />
@@ -162,15 +162,15 @@ export default function FinalOrderReportPage({ date, cfa }: { date?: string; cfa
                 const notInput = ix.input >= 0 && String(r[ix.input]) === 'No';
                 const remark = ix.remarks >= 0 ? String(r[ix.remarks] ?? '') : '';
                 const isDrop = /drop/i.test(remark);
-                const bg = notInput ? '#F8F8F8' : isDrop ? '#FBECEB' : undefined;   // grey = dropped pre-engine, red = dropped in-engine
+                const bg = notInput ? '#F5F7F8' : isDrop ? '#FBECEB' : undefined;   // grey = dropped pre-engine, red = dropped in-engine
                 return (
                   <TableRow key={i} sx={{ bgcolor: bg, '& td': { fontSize: 12, whiteSpace: 'nowrap' } }}>
                     {r.map((v, ci) => {
                       const h = data.cols[ci];
                       const numeric = isNum(h);
-                      const isInputCol = /input to aiden/i.test(h);
+                      const isInputCol = /input to engine/i.test(h);
                       const inputYes = isInputCol && String(v) === 'Yes';
-                      const isReason = /aiden input reason/i.test(h);   // show the FULL reason — never trimmed
+                      const isReason = /engine input reason/i.test(h);   // show the FULL reason — never trimmed
                       const clip = !isReason && /remarks|db name|truck type/i.test(h);
                       return (
                         <TableCell key={ci} align={numeric ? 'right' : 'left'}
@@ -186,7 +186,7 @@ export default function FinalOrderReportPage({ date, cfa }: { date?: string; cfa
                             ...(isReason ? { minWidth: 300, '&&': { whiteSpace: 'normal' } } : {}),   // full text, wraps
                           }}
                           title={clip ? String(v ?? '') : undefined}>
-                          {v === null || v === '' ? <span style={{ color: C.rule }}>—</span>
+                          {v === null || v === '' ? <span style={{ color: C.grey700 }}>—</span>
                             : /fill rate/i.test(h) ? `${Number(v).toFixed(1)}%`   // AOQ/SOQ shown as a percentage
                               : numeric ? nf(v) : String(v)}
                         </TableCell>

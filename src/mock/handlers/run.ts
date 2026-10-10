@@ -136,13 +136,13 @@ function summaryPayload(date: string) {
   }
   const sim = loadSim();
   const isSim = !!sim && sim.date === date;
-  if (isSim && simElapsed(sim!) < T.done) {   // a run for this date is in flight — it cleared the previous output
+  if (isSim && simElapsed(sim!) < PLAN0.done) {   // a run for this date is in flight — it cleared the previous output
     return { available: false, running: true, run_id: sim!.id, date, data_date: SOQ_DATE[date], cfas: [], summary: {}, orders: { count: 0 },
       note: `Run #${sim!.id} for ${date} is in progress — results land when it finishes` };
   }
   return {
     available: true, date, data_date: SOQ_DATE[date], run_id: isSim ? sim!.id : baseRunId(date),
-    finished_at: isSim ? isoIst(sim!.startedAt + T.done) : RUN_TIMESTAMP[date],
+    finished_at: isSim ? isoIst(sim!.startedAt + PLAN0.done) : RUN_TIMESTAMP[date],
     cfas: [CFA], summary: { [CFA]: perCfa(date, rolledUpFor(date)) },
     orders: { count: sum(SO_LANES, skuLines) },
     diagnostics: { soq_rows: DEMAND.length, filtered_soq_rows: DEMAND.length, cfa_inventory_rows: CFA_INV_ROWS },
@@ -150,19 +150,12 @@ function summaryPayload(date: string) {
 }
 
 // ───────────────────────── the simulated live run ─────────────────────────
-// event times (ms after start) — ~21 s end to end
-const T = {
-  start: 0, clear: 600, s3: 1300, pre: 7400, scope: 7900, gate: 8400, cfas: 8900, res: 9500, resInfo: 10000,
-  r1s1: 10600, r1s2: 11200, r1s3: 11800, r1truck: 12400, r1sum: 12900,
-  r2s1: 13500, r2s2: 14100, r2s3: 14700, r2truck: 15300, r2sum: 15800,
-  cluster: 16300, dispo: 16800, disagg: 17300, disaggOut: 17900, sap: 18400, sapOut: 18900,
-  s3up: 19300, s3upOut: 19700, rlm: 20100, cfaDone: 20700, done: 21300, end: 21600,
-};
 const ROLLUP_AFTER_MS = 60_000;    // the RLM rollup cron (15:30 in production) — compressed to 1 min after a demo run
 const ROLLUP_RUN_MS = 8_000;
+const SUMMARY_HOLD_MS = 4_500;     // the finished run's log stays on screen this long before the results card replaces it
 
 interface SimRun { id: number; date: string; startedAt: number; source: string; user: string }
-const SIM_KEY = 'aiden.demo.simrun';
+const SIM_KEY = 'aoo.demo.simrun';
 let simMem: SimRun | null = null;
 function loadSim(): SimRun | null {
   try {
@@ -179,110 +172,161 @@ function saveSim(s: SimRun): void {
   try { localStorage.setItem(SIM_KEY, JSON.stringify(s)); } catch { /* in-memory only */ }
 }
 const simElapsed = (s: SimRun) => Date.now() - s.startedAt;
-const simRunning = (s: SimRun | null): boolean => !!s && simElapsed(s) < T.end;
+/** the worker is busy until the run's `done` event; the stream itself closes a beat later (`_end`) */
+const simRunning = (s: SimRun | null): boolean => !!s && simElapsed(s) < PLAN0.done;
+const simStreaming = (s: SimRun | null): boolean => !!s && simElapsed(s) < PLAN0.end;
+/** Has the latest run date's 15:30 RLM rollup already run? true → the Run page opens fully complete (After-RLM outcome +
+ *  RLM Cron SUCCESS). Flip to false to show the latest date as "RLM decision pending" (what the RLM pages show today). */
+const LATEST_RLM_ROLLED_UP = true;
 /** RLM rollup done for this date? Baseline runs: yes. The demo run: only once its (compressed) rollup has run. */
 function rolledUpFor(date: string): boolean {
   const s = loadSim();
-  if (!s || s.date !== date) return true;
-  return simElapsed(s) >= T.done + ROLLUP_AFTER_MS + ROLLUP_RUN_MS;
+  if (!s || s.date !== date) return date !== LATEST_DATE || LATEST_RLM_ROLLED_UP;
+  return simElapsed(s) >= PLAN0.done + ROLLUP_AFTER_MS + ROLLUP_RUN_MS;
 }
 
-// per-run stats for the event labels
+// per-run stats for the log lines (all from the dataset's cascade)
 const RUN_STATS = RUN_RESULTS.map((r) => {
   const ls = r.lanes;
   return {
-    label: r.run.label, pct: r.run.pct, dbs: ls.length,
+    label: r.run.label, pct: r.run.pct, lanes: ls, dbs: ls.length,
+    lines: sum(ls, (l) => l.lines.filter((x) => x.soq > 0).length),
     soq: sum(ls, (l) => l.soq), orig: sum(ls, (l) => l.orig),
     sub: sum(ls, (l) => l.sub), subLines: sum(ls, (l) => l.lines.filter((x) => x.subGot > 0).length),
     filler: sum(ls, (l) => l.filler), fillerLines: sum(ls, (l) => l.lines.filter((x) => x.filler > 0).length),
     cascaded: sum(ls, (l) => l.cascaded), tails: ls.filter((l) => l.cascaded > 0).length,
-    belowRlm: ls.filter((l) => l.dropped && l.soFlag === 'RLM_TRUCK_APPROVAL').length,
-    belowSecond: ls.filter((l) => l.dropped && l.soFlag === 'RLM_FOR_SECOND_CFA').length,
-    trucks: sum(ls, (l) => l.trucks), built: sum(ls, (l) => l.shipped),
+    trucks: sum(ls, (l) => l.trucks), built: sum(ls, (l) => l.shipped + l.clusterTrim),   // before the cluster-primary trim
     reserved: sum(Object.values(r.reserved), (x) => x), leftover: sum(Object.values(r.leftover), (x) => Math.max(0, x)),
-    ownShare: sum(REG_ZSKUS, (z) => Math.floor((z.cfaStock * r.run.pct) / 100)),
   };
 });
 const ATP = sum(REG_ZSKUS, (z) => z.cfaStock);
 const TRUCK_TYPES = new Set(DISTRIBUTORS.map((d) => d.truckType)).size;
 const CLUSTER_DBS = DISTRIBUTORS.filter((d) => d.cluster).length;
+const SO_LOAD_SKUS = SO_LANES.flatMap((l) => l.loads.flatMap((ld) => ld.skus));
+const FEFO_BATCHES = new Set(SO_LOAD_SKUS.map((x) => `${x.sku}|${x.batch}`)).size;
+const FEFO_MIN_DAYS = SO_LOAD_SKUS.length ? Math.min(...SO_LOAD_SKUS.map((x) => x.daysToExpiry)) : 0;
+const hms = (ms: number) => isoIst(ms).slice(11, 19);
 
-interface TEv { at: number; ev: Record<string, unknown> }
-function timeline(s: SimRun): TEv[] {
-  const soq = SOQ_DATE[s.date];
+/** One run's log as a plan: [ms after start, phase, text, rows?, secs?] + named marks the audit's stage windows hang off.
+ *  The timing never depends on the date / run id (only the text does), so one plan clocks the stream, the snapshot and the audit. */
+interface PlanEv { at: number; phase: string; text: string; rows?: number; secs?: number; date?: string }
+interface Plan { evs: PlanEv[]; marks: Record<string, number>; done: number; end: number }
+function buildPlan(date: string, runId: number, user: string, scale = 1): Plan {
+  const evs: PlanEv[] = [];
+  const marks: Record<string, number> = {};
+  let t = 0;
+  const add = (dt: number, phase: string, text: string, extra: Partial<PlanEv> = {}) => { t += dt; evs.push({ at: t, phase, text, ...extra }); };
+  const mark = (k: string) => { marks[k] = t; };
+  const soq = SOQ_DATE[date] ?? '';
   const pdp = LANES.filter((l) => isPdpDb(l.db.code)).length;
-  const [r1, r2] = RUN_STATS;
-  const so = sum(SO_LANES, (l) => l.shipped), held = sum(RLM_LANES, heldCases) + sum(SECOND_LANES, heldCases);
-  const lines = sum(SO_LANES, skuLines), trucks = sum(SO_LANES, (l) => l.trucks);
-  const tbl = (at: number, label: string, rows: number, secs: number): TEv => ({ at, ev: { phase: 'table', label, rows, secs } });
-  const runEvents = (r: typeof r1, i: number, t: [number, number, number, number, number]): TEv[] => [
-    { at: t[0], ev: { phase: 'engine', label: `CFA ${CFA} · ${r.label} — Step 1 water-fill · ${plural(r.dbs, 'DB')} · SOQ ${nf(r.soq)} → original ${nf(r.orig)} cases (${pct(r.orig, r.soq)}%)` } },
-    { at: t[1], ev: { phase: 'engine', label: `${r.label} · Step 2 substitutes — ${nf(r.sub)} cases cover ${plural(r.subLines, 'short line')} (same category, ≤ 35% add-on)` } },
-    { at: t[2], ev: { phase: 'engine', label: `${r.label} · Step 3 filler — ${nf(r.filler)} cases on ${plural(r.fillerLines, 'line')} to top up truck room` } },
-    { at: t[3], ev: { phase: 'info', label: `${r.label} · Truck rule — ${plural(r.tails, 'last-truck tail')} under 65% trimmed (${nf(r.cascaded)} cases cascade)`
-      + (r.belowRlm ? ` · ${plural(r.belowRlm, 'lane')} can't fill one truck → RLM truck approval` : '')
-      + (r.belowSecond ? ` · ${plural(r.belowSecond, 'lane')} under 50% original fill → offered to CFA ${ALT_CFA}` : '') } },
-    { at: t[4], ev: { phase: 'info', label: `${r.label} · ${plural(r.trucks, 'truck')} built · ${nf(r.built)} cases`
-      + (i === 0 ? ` · ${nf(r.leftover)} cases left in the pool → carried to ${RUN_STATS[1]?.label ?? 'the next run'}` : ` · ${nf(r.leftover)} cases stay at the CFA`) } },
+  const so = sum(SO_LANES, (l) => l.shipped), lines = sum(SO_LANES, skuLines), trucks = sum(SO_LANES, (l) => l.trucks);
+  const held = sum(RLM_LANES, heldCases) + sum(SECOND_LANES, heldCases);
+  const c = `CFA ${CFA}`;
+
+  add(0, 'start', `run #${runId} started by ${user} · run date ${date} · SOQ snapshot ${soq} · ${plural(1, 'CFA')} with delivered demand`, { date });
+  add(300, 'info', `worker picked up run #${runId} · run lock acquired · writing to pipeline_run_audit`);
+  add(400, 'clear', `cleared previous output for ${date} · engine tables · SAP hand-off rows · S3 order archive`);
+  // ── S3 fetch ──
+  const masters: [string, number, number][] = [
+    ['material_master', CFA_INV_ROWS, 1.4], ['region_sku_master', REG_ZSKUS.length, 0.6], ['brand_category_master', REG_ZSKUS.length, 0.5],
+    ['plant_master', PLANTS.length, 0.3], ['db_master', DISTRIBUTORS.length, 0.4], ['db_tier_master', DISTRIBUTORS.length, 0.3],
+    ['truck_type_master', TRUCK_TYPES, 0.3], ['db_truck_lane', DISTRIBUTORS.length, 0.3], ['cluster_master', CLUSTER_DBS, 0.3],
+    ['oe_parameters', OE_PARAM_DEFS.length, 0.2],
   ];
-  const evs: TEv[] = [
-    { at: T.start, ev: { phase: 'start', label: `Run #${s.id} started · run date ${s.date} · SOQ snapshot ${soq}`, date: s.date } },
-    { at: T.clear, ev: { phase: 'clear', label: `Cleared previous output for ${s.date} — engine tables, SAP hand-off rows, S3 order archive` } },
-    { at: T.s3, ev: { phase: 'stage', label: 'S3 fetch — staging the masters + the SOQ feed' } },
-    tbl(T.s3 + 450, 'material_master', CFA_INV_ROWS, 1.4),
-    tbl(T.s3 + 850, 'region_sku_master', REG_ZSKUS.length, 0.6),
-    tbl(T.s3 + 1250, 'brand_category_master', REG_ZSKUS.length, 0.5),
-    tbl(T.s3 + 1600, 'plant_master', PLANTS.length, 0.3),
-    tbl(T.s3 + 1950, 'db_master', DISTRIBUTORS.length, 0.4),
-    tbl(T.s3 + 2300, 'db_tier_master', DISTRIBUTORS.length, 0.3),
-    tbl(T.s3 + 2650, 'truck_type_master', TRUCK_TYPES, 0.3),
-    tbl(T.s3 + 3000, 'cluster_master', CLUSTER_DBS, 0.3),
-    tbl(T.s3 + 3500, `soq_feed · ${soq}`, DEMAND.length, 2.1),
-    tbl(T.s3 + 3950, 'db_norms', DEMAND.length, 0.9),
-    tbl(T.s3 + 4400, 'cfa_inventory', CFA_INV_ROWS * PLANTS.length, 1.2),
-    tbl(T.s3 + 4850, 'db_inventory', DEMAND.length, 0.8),
-    { at: T.s3 + 5450, ev: { phase: 'warning', label: `Daily run-rate not published for data date ${soq} — using the trailing 7-day rate (non-blocking)` } },
-    { at: T.pre, ev: { phase: 'stage', label: 'Pre-filter — the demand gate (PDP day · below-threshold · combined SOQ ≥ 65%)' } },
-    { at: T.scope, ev: { phase: 'scope', label: `Scoped CFA + DB inventory to the SOQ — ${nf(CFA_INV_ROWS * PLANTS.length)} → ${nf(CFA_INV_ROWS)} CFA rows · ${plural(DISTRIBUTORS.length, 'DB')} · ${nf(REG_ZSKUS.length)} reg-zskus`, rows: CFA_INV_ROWS } },
-    { at: T.gate, ev: { phase: 'info', label: `Demand gate — ${nf(LANES.length)} of ${nf(DISTRIBUTORS.length)} DBs passed (${nf(pdp)} PDP · ${nf(LANES.length - pdp)} non-PDP)`, rows: DEMAND.length } },
-    { at: T.cfas, ev: { phase: 'cfas', label: `CFAs with delivered demand: ${CFA} · ${CFA_NAME} (CFA ${ALT_CFA} has stock but no SOQ — standby for 2nd-CFA offers)` } },
-    { at: T.res, ev: { phase: 'stage', label: `CFA ${CFA} · Reservation — CFA stock split across the channel runs` } },
-    { at: T.resInfo, ev: { phase: 'info', label: `ATP ${nf(ATP)} cases → ${r1.label} pool ${nf(r1.reserved)} (${r1.pct}%)`
-      + (r2 ? ` · ${r2.label} pool ${nf(r2.reserved)} (${r2.pct}% + Run 1 leftover)` : '') } },
-    ...runEvents(r1, 0, [T.r1s1, T.r1s2, T.r1s3, T.r1truck, T.r1sum]),
-    ...(r2 ? runEvents(r2, 1, [T.r2s1, T.r2s2, T.r2s3, T.r2truck, T.r2sum]) : []),
-    ...CLUSTERS.map((c): TEv => ({ at: T.cluster, ev: { phase: 'info', label: `Cluster primary ${c.code} — ${plural(c.dbs.length, 'DB')} combined onto ${plural(c.primaryTrucks, 'primary truck')} · ${nf(c.combined)} / ${nf(c.primaryCap * Math.max(1, c.primaryTrucks))} cases · ${nf(c.trimmed)} trimmed` } })),
-    { at: T.dispo, ev: { phase: 'info', label: `SO disposition — ${plural(SO_LANES.length, 'DB')} → SO creation · ${nf(RLM_LANES.length)} → RLM truck approval · ${nf(SECOND_LANES.length)} → 2nd CFA` } },
-    ...SECOND_LANES.map((l): TEv => ({ at: T.dispo + 200, ev: { phase: 'rlm_shift', label: `${l.db.code} · ${l.db.name} — original fill ${l.origFillPct}% < 50% → offered to CFA ${ALT_CFA}` } })),
-    { at: T.disagg, ev: { phase: 'stage', label: `CFA ${CFA} · Final order — FEFO disaggregation to SKU × batch (earliest expiry first)` } },
-    { at: T.disaggOut, ev: { phase: 'info', label: `final_order written — ${plural(trucks, 'truck')} · ${nf(so)} cases`, rows: lines, secs: 0.7 } },
-    { at: T.sap, ev: { phase: 'stage', label: `CFA ${CFA} · SAP hand-off — ${plural(SO_LANES.length, 'order')} (one OEID per CFA × DB)` } },
-    { at: T.sapOut, ev: { phase: 'info', label: 'sap_orders appended', rows: lines, secs: 0.5 } },
-    { at: T.s3up, ev: { phase: 'stage', label: `CFA ${CFA} · S3 upload — order_line_items parquet` } },
-    { at: T.s3upOut, ev: { phase: 'info', label: `order_line_items/${dayOf(s.date)}/cfa=${CFA}.parquet`, rows: lines, secs: 0.9 } },
-    { at: T.rlm, ev: { phase: 'stage', label: `CFA ${CFA} · RLM — ${plural(sum(RLM_LANES, heldTrucks), 'truck')} queued for approval · ${plural(SECOND_LANES.length, 'DB')} offered to a 2nd CFA (rollup at 15:30)` } },
-    { at: T.cfaDone, ev: { phase: 'engine_done', label: `CFA ${CFA} done — ${nf(so)} SO cases · ${plural(trucks, 'truck')} · ${nf(lines)} SKU lines · ${nf(held)} cases on hold for RLM`, secs: Math.round((T.cfaDone - T.res) / 100) / 10 } },
-    { at: T.done, ev: { phase: 'done', label: `Pipeline complete — run #${s.id} · ${s.date}`, date: s.date, secs: Math.round(T.done / 100) / 10 } },
-    { at: T.end, ev: { phase: '_end', label: 'stream closed' } },
+  const feeds: [string, number, number][] = [
+    [`soq_feed · ${soq}`, DEMAND.length, 2.1], ['db_norms', DEMAND.length, 0.9],
+    ['cfa_inventory', CFA_INV_ROWS * PLANTS.length, 1.2], ['db_inventory', DEMAND.length, 0.8],
   ];
-  return evs.sort((a, b) => a.at - b.at);
+  add(500, 'stage', `stage s3_fetch · staging ${plural(masters.length, 'master')} + ${plural(feeds.length, 'feed')} from S3`); mark('s3');
+  for (const [name, rows, secs] of [...masters, ...feeds]) add(300, 'table', `s3_fetch · ${name}`, { rows, secs });
+  add(350, 'warning', `daily run-rate not published for data date ${soq} · using the trailing 7-day rate (non-blocking)`);
+  const fetched = sum([...masters, ...feeds], (m) => m[1]);
+  add(300, 'info', `stage s3_fetch done · ${plural(masters.length, 'master')} loaded (db_master ${nf(DISTRIBUTORS.length)} rows · region_sku_master ${nf(REG_ZSKUS.length)} rows …) · ${nf(fetched)} rows staged`, { secs: 5.1 });
+  // ── pre-filter ──
+  add(450, 'stage', 'stage pre_filter · demand gate (PDP day OR below-threshold) AND combined SOQ > 65% of norm'); mark('pre');
+  add(350, 'scope', `scoped CFA + DB inventory to the SOQ · ${nf(CFA_INV_ROWS * PLANTS.length)} → ${nf(CFA_INV_ROWS)} CFA rows · ${plural(DISTRIBUTORS.length, 'DB')} · ${nf(REG_ZSKUS.length)} reg-zskus`, { rows: CFA_INV_ROWS });
+  add(350, 'info', `demand gate · ${nf(LANES.length)} of ${nf(DISTRIBUTORS.length)} DBs passed (${nf(pdp)} PDP · ${nf(LANES.length - pdp)} non-PDP) · ${nf(DEMAND.length)} SOQ lines kept`, { rows: DEMAND.length });
+  add(350, 'cfas', `CFAs to allocate · ${CFA} ${CFA_NAME} · CFA ${ALT_CFA} has stock but no SOQ (standby for 2nd-CFA offers)`);
+  // ── reservation ──
+  add(450, 'stage', `${c} · stage reservation · ATP ${nf(ATP)} cs across ${nf(REG_ZSKUS.length)} reg-zskus`); mark('res');
+  add(400, 'info', `${c} · reserved ` + RUN_STATS.map((r, i) => `${r.label} ${nf(r.reserved)} cs (${r.pct}%${i > 0 ? ' + leftover' : ''})`).join(' · '));
+  // ── the cascade, run by run ──
+  RUN_STATS.forEach((r, i) => {
+    add(450, 'stage', `${c} · ${r.label} · ${plural(r.dbs, 'DB')} · ${nf(r.lines)} SOQ lines · SOQ ${nf(r.soq)} cs · pool ${nf(r.reserved)} cs`); mark(`run_${i}`);
+    add(450, 'engine', `${c} · step 1 original · ${nf(r.lines)} lines · ${nf(r.orig)} cs (${pct(r.orig, r.soq)}% of SOQ)`, { rows: r.lines }); mark(`s1_${i}`);
+    add(400, 'engine', `${c} · step 2 substitute · ${plural(r.subLines, 'short line')} covered · ${nf(r.sub)} cs (same category, ≤ 35% add-on)`); mark(`s2_${i}`);
+    add(400, 'engine', `${c} · step 3 filler · ${plural(r.fillerLines, 'line')} · ${nf(r.filler)} cs to top up truck room`); mark(`s3_${i}`);
+    add(400, 'info', `${c} · truck rule · ${plural(r.tails, 'last-truck tail')} under 65% trimmed · ${nf(r.cascaded)} cs cascade`);
+    for (const l of r.lanes.filter((x) => x.dropped)) {
+      if (l.soFlag === 'RLM_FOR_SECOND_CFA') {
+        add(350, 'warning', `${c} · ${l.db.code} ${l.db.name} · original fill ${l.origFillPct}% < 50% → offered to 2nd CFA ${ALT_CFA} (${nf(heldCases(l))} cs held)`);
+      } else {
+        add(350, 'warning', `${c} · ${l.db.code} ${l.db.name} · ${nf(heldCases(l))} cs fill ${pct(heldCases(l), l.db.truckCap)}% of one ${nf(l.db.truckCap)}-cs truck (< 65%) → RLM truck approval`);
+      }
+    }
+    add(350, 'info', `${r.label} done · ${plural(r.trucks, 'truck')} · ${nf(r.built)} cs built`
+      + (i < RUN_STATS.length - 1 ? ` · ${nf(r.leftover)} cs left in the pool → ${RUN_STATS[i + 1].label}` : ` · ${nf(r.leftover)} cs stay at the CFA`));
+  });
+  // ── cluster primary · disposition ──
+  add(450, 'stage', `${c} · stage cluster_primary · ${plural(CLUSTERS.length, 'transshipment cluster')}`); mark('cluster');
+  for (const cl of CLUSTERS) {
+    const per = cl.perDb.filter((d) => d.trimmed > 0).map((d) => `${d.db} −${nf(d.trimmed)}`).join(', ');
+    if (cl.trimmed > 0) {
+      add(400, 'warning', `cluster ${cl.code} · ${plural(cl.dbs.length, 'DB')} combine ${nf(cl.combined)} cs → ${plural(cl.primaryTrucks, 'primary truck')} of ${nf(cl.primaryCap)} · ${nf(cl.trimmed)}-cs tail under 65% trimmed (${per})`, { rows: cl.ships });
+    } else {
+      add(400, 'info', `cluster ${cl.code} · ${plural(cl.dbs.length, 'DB')} combine ${nf(cl.combined)} cs → ${plural(cl.primaryTrucks, 'primary truck')} of ${nf(cl.primaryCap)} · no trim`, { rows: cl.ships });
+    }
+  }
+  add(400, 'info', `SO disposition · ${plural(SO_LANES.length, 'DB')} → SO creation · ${nf(RLM_LANES.length)} → RLM truck approval · ${nf(SECOND_LANES.length)} → 2nd CFA`);
+  for (const l of SECOND_LANES) add(300, 'rlm_shift', `${c} · ${l.db.code} ${l.db.name} · 2nd-CFA offer ${CFA} → ${ALT_CFA} queued for RLM`);
+  // ── disaggregation · SAP · S3 · RLM ──
+  add(450, 'stage', `${c} · stage disaggregation · FEFO to SKU × batch (earliest expiry first)`); mark('disagg');
+  add(350, 'info', `FEFO · ${plural(FEFO_BATCHES, 'batch', 'batches')} drawn · shortest shelf life ${nf(FEFO_MIN_DAYS)} days`);
+  add(350, 'info', `final_order · ${nf(lines)} SKU lines · ${plural(trucks, 'truck')} · ${nf(so)} cs`, { rows: lines, secs: 0.7 });
+  add(450, 'stage', `${c} · stage sap_orders · SAP hand-off`); mark('sap');
+  const oeids = SO_LANES.map((l) => oeidOf(date, l.db.code));
+  add(400, 'info', `sap_orders · ${plural(SO_LANES.length, 'order')} (${oeids[0] ?? ''} … ${oeids[oeids.length - 1] ?? ''}) · ${nf(lines)} lines appended`, { rows: lines, secs: 0.5 });
+  add(400, 'stage', `${c} · stage s3_upload · order_line_items parquet`); mark('s3up');
+  add(350, 'info', `s3://oe-demo/order_line_items/run_date=${dayOf(date)}/cfa=${CFA}.parquet written`, { rows: lines, secs: 0.9 });
+  add(400, 'stage', `${c} · stage rlm · ${plural(sum(RLM_LANES, heldTrucks), 'truck')} queued for approval · ${plural(SECOND_LANES.length, 'DB')} offered to a 2nd CFA · rollup at 15:30`); mark('rlm');
+  for (const l of [...RLM_LANES, ...SECOND_LANES]) {
+    add(300, 'info', `rlm_queue · ${l.db.code} ${l.db.name} · ${nf(heldCases(l))} cs · ${l.soFlag === 'RLM_TRUCK_APPROVAL' ? 'truck approval' : `2nd CFA ${ALT_CFA}`} · PENDING`);
+  }
+  add(450, 'engine_done', `${c} complete · ${nf(so)} SO cs · ${plural(trucks, 'truck')} · ${nf(lines)} SKU lines · ${nf(held)} cs on hold for RLM`); mark('cfaDone');
+  add(350, 'info', `pipeline_run_audit #${runId} · ${STAGE_COUNT} stages SUCCESS · 0 failed · RLM cron pending (15:30)`);
+  add(400, 'done', '', { date });
+  const done = t;
+  const last = evs[evs.length - 1];
+  const secs = (done * scale) / 1000;
+  last.text = `run complete in ${secs < 60 ? `${secs.toFixed(1)}s` : `${Math.floor(secs / 60)}m ${Math.round(secs % 60)}s`} · ${nf(so)} SO cases to SAP · ${plural(trucks, 'truck')} · ${plural(1, 'CFA')}`;
+  last.secs = Math.round((done * scale) / 100) / 10;
+  add(150, '_end', 'stream closed');
+  return { evs, marks, done, end: t };
 }
-/** The timeline as numbered SSE payloads (seq = 1-based position; `done` carries the run summary). */
-function events(s: SimRun) {
-  return timeline(s).map((t, i) => {
-    const ev: Record<string, unknown> = { seq: i + 1, ...t.ev, ts: isoIst(s.startedAt + t.at) };
-    if (ev.phase === 'done') ev.summary = { [CFA]: perCfa(s.date, false) };
-    return { at: t.at, ev };
+const STAGE_COUNT = 10;   // s3_fetch · pre_filter · reservation · step1-3 · disaggregation · sap_orders · s3_upload · rlm
+const PLAN0 = buildPlan(LATEST_DATE, 0, 'system');   // the clock (timings + stage marks) — texts are rebuilt per run
+
+/** The run's log as numbered SSE payloads: seq = 1-based position, label = "[HH:MM:SS] text", `done` carries the summary. */
+function events(s: SimRun, scale = 1) {
+  return buildPlan(s.date, s.id, s.user, scale).evs.map((e, i) => {
+    const ts = s.startedAt + e.at * scale;
+    const ev: Record<string, unknown> = { seq: i + 1, phase: e.phase, label: e.phase === '_end' ? e.text : `[${hms(ts)}] ${e.text}`, ts: isoIst(ts) };
+    if (e.rows != null) ev.rows = e.rows;
+    if (e.secs != null) ev.secs = e.secs;
+    if (e.date) ev.date = e.date;
+    if (e.phase === 'done') ev.summary = { [CFA]: perCfa(s.date, false) };
+    return { at: e.at, ev };
   });
 }
 
 // ───────────────────────── pipeline audit (stage checkpoints) ─────────────────────────
-// [stage, shared?, from, to] on the TIMELINE clock; baseline runs scale the same plan to their real wall-clock
+// [stage, shared?, from, to] on the PLAN clock; baseline runs scale the same plan to their real wall-clock
+const M = PLAN0.marks, LAST_RUN = RUN_STATS.length - 1;
 const STAGES: [string, boolean, number, number][] = [
-  ['s3_fetch', true, T.s3, T.pre], ['pre_filter', true, T.pre, T.res],
-  ['reservation', false, T.res, T.r1s1], ['step1', false, T.r1s1, T.r2s2], ['step2', false, T.r1s2, T.r2s3],
-  ['step3', false, T.r1s3, T.disagg], ['disaggregation', false, T.disagg, T.sap], ['sap_orders', false, T.sap, T.s3up],
-  ['s3_upload', false, T.s3up, T.rlm], ['rlm', false, T.rlm, T.cfaDone],
+  ['s3_fetch', true, M.s3, M.pre], ['pre_filter', true, M.pre, M.res],
+  ['reservation', false, M.res, M.s1_0], ['step1', false, M.s1_0, M[`s2_${LAST_RUN}`]], ['step2', false, M.s2_0, M[`s3_${LAST_RUN}`]],
+  ['step3', false, M.s3_0, M.disagg], ['disaggregation', false, M.disagg, M.sap], ['sap_orders', false, M.sap, M.s3up],
+  ['s3_upload', false, M.s3up, M.rlm], ['rlm', false, M.rlm, M.cfaDone],
 ];
 function auditRow(runId: number, date: string, startMs: number, scale: number, elapsed: number,
   cron: { status: string; from: number; to: number }) {
@@ -295,23 +339,24 @@ function auditRow(runId: number, date: string, startMs: number, scale: number, e
   // the daily RLM rollup cron — its cell is listed from the start (PENDING until it runs) so the matrix is always complete
   cfa_stages.push({ cfa: CFA, stage: 'rlm_cron', status: cron.status, error_message: null,
     started_at: cron.status === 'PENDING' ? null : isoIst(cron.from), finished_at: cron.status === 'SUCCESS' ? isoIst(cron.to) : null });
-  const running = elapsed < T.done;
+  const running = elapsed < PLAN0.done;
   return {
     run_id: runId, run_date: date, data_date: SOQ_DATE[date] ?? null, cfa_scope: [CFA],
     overall_status: running ? 'RUNNING' : 'SUCCESS', rlm_cron_status: cron.status,
-    started_at: isoIst(startMs), finished_at: running ? null : isoIst(at(T.done)),
-    duration_secs: Math.round((running ? elapsed : T.done) * scale / 1000),
+    started_at: isoIst(startMs), finished_at: running ? null : isoIst(at(PLAN0.done)),
+    duration_secs: running ? Math.floor(elapsed / 1000) : Math.round((PLAN0.done * scale) / 100) / 10,   // = the log's "run complete in …"
     cfa_stages,
   };
 }
 function baseAudit(date: string) {
   const dur = (BASE_DURATION[date] ?? 350) * 1000, end = finishedMs(date);
   const cronFrom = Date.parse(`${dayOf(date)}T15:30:00+05:30`);
-  return auditRow(baseRunId(date), date, end - dur, dur / T.done, Infinity, { status: 'SUCCESS', from: cronFrom, to: cronFrom + 64_000 });
+  const cron = date !== LATEST_DATE || LATEST_RLM_ROLLED_UP ? 'SUCCESS' : 'PENDING';
+  return auditRow(baseRunId(date), date, end - dur, dur / PLAN0.done, Infinity, { status: cron, from: cronFrom, to: cronFrom + 64_000 });
 }
 function simAudit(s: SimRun) {
   const el = simElapsed(s);
-  const cronFrom = s.startedAt + T.done + ROLLUP_AFTER_MS, cronTo = cronFrom + ROLLUP_RUN_MS;
+  const cronFrom = s.startedAt + PLAN0.done + ROLLUP_AFTER_MS, cronTo = cronFrom + ROLLUP_RUN_MS;
   const now = Date.now();
   const cron = now >= cronTo ? 'SUCCESS' : now >= cronFrom ? 'RUNNING' : 'PENDING';
   return auditRow(s.id, s.date, s.startedAt, 1, el, { status: cron, from: cronFrom, to: cronTo });
@@ -324,7 +369,16 @@ get('/api/production/health', () => {
     cfas: [CFA], latest_run: s ? s.date : LATEST_DATE, mode: 'demo' };
 });
 
-get('/api/v1/last_run_summary', (ctx) => summaryPayload(ctx.date));
+// right after a demo run finishes, the summary "publishes" a beat later — so the finished log stays readable before the
+// page swaps it for the results card
+get('/api/v1/last_run_summary', async (ctx) => {
+  const s = loadSim();
+  if (s && s.date === ctx.date) {
+    const el = simElapsed(s), hold = PLAN0.done + SUMMARY_HOLD_MS - el;
+    if (el >= PLAN0.done && hold > 0) await new Promise((r) => setTimeout(r, hold));
+  }
+  return summaryPayload(ctx.date);
+});
 
 get('/api/production/audit', (ctx) => {
   const want = ctx.query.get('date') || '';
@@ -344,10 +398,14 @@ get('/api/production/run/current', (ctx) => {
       started_by: s.user, started_at: isoIst(s.startedAt), elapsed_secs: Math.floor(el / 1000),
       last_seq: due.length, events: due.filter((e) => Number(e.ev.seq) > since).map((e) => e.ev) };
   }
-  const last = s ?? null;
+  // idle → the last finished run, with its full log (the demo run if there was one, else the latest scheduled run)
+  const dur = (BASE_DURATION[LATEST_DATE] ?? 350) * 1000;
+  const last: SimRun = s ?? { id: baseRunId(LATEST_DATE), date: LATEST_DATE, startedAt: finishedMs(LATEST_DATE) - dur, source: 'cron', user: 'scheduler' };
+  const scale = s ? 1 : dur / PLAN0.done;
   return { status: 'idle', source: null, run_id: null, last_seq: 0, events: [],
-    last_run: last ? { run_id: last.id, date: last.date, status: 'SUCCESS', finished_at: isoIst(last.startedAt + T.done) }
-      : { run_id: baseRunId(LATEST_DATE), date: LATEST_DATE, status: 'SUCCESS', finished_at: RUN_TIMESTAMP[LATEST_DATE] } };
+    last_run: { run_id: last.id, date: last.date, data_date: SOQ_DATE[last.date], status: 'SUCCESS', source: last.source,
+      started_at: isoIst(last.startedAt), finished_at: isoIst(last.startedAt + PLAN0.done * scale),
+      duration_secs: Math.round((PLAN0.done * scale) / 1000), log: events(last, scale).map((e) => e.ev) } };
 });
 
 function startRun(ctx: Ctx) {
@@ -376,7 +434,7 @@ post('/api/production/run/start', (ctx) => {
 stream('/api/production/run/progress', (ctx, send, close) => {
   const since = Math.max(0, Number(ctx.query.get('since')) || 0);
   const s = loadSim();
-  if (!s || !simRunning(s)) { send({ phase: '_idle', seq: since, label: 'no run in progress' }); close(); return; }
+  if (!s || !simStreaming(s)) { send({ phase: '_idle', seq: since, label: 'no run in progress' }); close(); return; }
   const el = simElapsed(s);
   const timers: number[] = [];
   for (const e of events(s)) {
@@ -555,7 +613,7 @@ function evaluate(c: Check, n: number, date: string) {
   const status: Status = !ran || c.skip ? 'skip' : bad === 0 ? 'pass' : c.warn ? 'warn' : 'fail';
   const reason = !ran ? `No data staged for ${date}`
     : c.skip ? c.skip
-      : status === 'pass' ? (c.ok ?? `All ${nf(c.total)} row${c.total === 1 ? '' : 's'} pass`)
+      : status === 'pass' ? (c.ok ?? (c.total === 1 ? '1 of 1 row passes' : `All ${nf(c.total)} rows pass`))
         : (c.reason ?? `${nf(bad)} of ${nf(c.total)} rows fail`);
   const hasDetail = (status === 'fail' || status === 'warn') && !!c.rows?.length;
   return {

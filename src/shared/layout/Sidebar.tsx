@@ -51,7 +51,7 @@ const PREFILTERS: Item[] = [
 const PRETAB: Partial<Record<Page, number>> = { dbmaster: 0, cfainv: 1, cfastock: 1, soq: 2, pdp: 3, dbstock: 4, combined: 5, subs: 6, fillers: 7 };
 interface RunOpt { k: string; label: string; }
 // the cascade's runs are fetched live (api.reservationRuns) so the dropdown never drifts from sub_channel_reservation.
-// fallback = the AIDEN 4-channel order, smallest-reservation first: Non-PACE (Run 1 = Priority 4) … Retail (Run 4).
+// fallback = the 4-channel order, smallest-reservation first: Non-PACE (Run 1 = Priority 4) … Retail (Run 4).
 // each channel combines all three MRP bands into a single truck per DB.
 const FALLBACK_RUNS: RunOpt[] = [
   { k: '1', label: 'Run 1 · Non-PACE' }, { k: '2', label: 'Run 2 · Hub & Spoke' },
@@ -148,16 +148,16 @@ export default function Sidebar({ page, onNav, preRun, setPreRun, setPreTab, ope
         <span>
         <ListItemButton selected={sel} disabled={disabled} onClick={disabled ? undefined : (onClick ?? (() => onNav(n.key)))}
           sx={{ mx: 1, my: 0.3, pl: indent ? 3 : 2, borderRadius: '9px', borderLeft: '3px solid transparent',
-            color: sel ? '#FAD8C1' : 'rgba(255,255,255,0.82)', transition: 'background-color .12s, color .12s',
-            '&.Mui-selected': { bgcolor: 'rgba(208,74,2,0.16)', borderLeftColor: '#D04A02', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)' },
-            '&.Mui-selected:hover': { bgcolor: 'rgba(208,74,2,0.22)' },
-            '&:hover': { bgcolor: 'rgba(208,74,2,0.10)', color: '#FFB600' },
-            '&:hover .MuiListItemIcon-root': { color: '#FFB600' },
+            color: sel ? '#000000' : '#2D2D2D', transition: 'background-color .12s, color .12s',
+            '&.Mui-selected': { bgcolor: '#FFF5ED', borderLeftColor: '#FD5108' },
+            '&.Mui-selected:hover': { bgcolor: '#FFE8D4' },
+            '&:hover': { bgcolor: '#F5F7F8', color: '#000000' },
+            '&:hover .MuiListItemIcon-root': { color: '#C52B09' },
             '&.Mui-disabled': { opacity: 0.42 } }}>
-          <ListItemIcon sx={{ minWidth: 32, color: sel ? '#FFC94D' : 'rgba(255,255,255,0.55)' }}>{disabled ? <LockOutlinedIcon fontSize="small" /> : n.icon}</ListItemIcon>
+          <ListItemIcon sx={{ minWidth: 32, color: sel ? '#C52B09' : '#4C5056' }}>{disabled ? <LockOutlinedIcon fontSize="small" /> : n.icon}</ListItemIcon>
           <ListItemText primary={n.label} secondary={disabled ? 'run access required' : n.sub}
             primaryTypographyProps={{ fontWeight: sel ? 700 : 600, fontSize: indent ? '0.85rem' : '0.9rem' }}
-            secondaryTypographyProps={{ fontSize: '0.64rem', color: sel ? 'rgba(251,231,192,0.66)' : 'rgba(255,255,255,0.55)' }} />
+            secondaryTypographyProps={{ fontSize: '0.68rem', color: '#5C616A' }} />
         </ListItemButton>
         </span>
       </Tooltip>
@@ -173,8 +173,8 @@ export default function Sidebar({ page, onNav, preRun, setPreRun, setPreTab, ope
   // a visible section divider label (gold uppercase) for the new grouped sections
   const sectionHead = (label: string) => (
     <Box key={`sec-${label}`} sx={{ px: 2.5, pt: 2, pb: 0.5, display: 'flex', alignItems: 'center', gap: 1 }}>
-      <Box component="span" sx={{ fontSize: '0.62rem', fontWeight: 800, letterSpacing: '.11em', textTransform: 'uppercase', color: '#FFB600', whiteSpace: 'nowrap' }}>{label}</Box>
-      <Box sx={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, rgba(233,184,78,0.4), transparent)' }} />
+      <Box component="span" sx={{ fontSize: '0.62rem', fontWeight: 800, letterSpacing: '.11em', textTransform: 'uppercase', color: '#C52B09', whiteSpace: 'nowrap' }}>{label}</Box>
+      <Box sx={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, #FFCDA8, transparent)' }} />
     </Box>
   );
   // a showcase item: with an `href` it opens that app in a NEW TAB (tagged OPEN ↗); without one it's the greyed,
@@ -186,26 +186,26 @@ export default function Sidebar({ page, onNav, preRun, setPreRun, setPreTab, ope
         onClick={linked ? () => window.open(it.href, '_blank', 'noopener,noreferrer') : undefined}
         sx={{ mx: 1, my: 0.25, pl: 2, borderRadius: '9px',
           ...(linked
-            ? { '&:hover': { bgcolor: 'rgba(208,74,2,0.10)' }, '&:hover .MuiListItemIcon-root': { color: '#FFB600' } }
+            ? { '&:hover': { bgcolor: '#F5F7F8' }, '&:hover .MuiListItemIcon-root': { color: '#C52B09' } }
             : { '&.Mui-disabled': { opacity: 0.75 } }) }}>
-        <ListItemIcon sx={{ minWidth: 32, color: linked ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.4)' }}>{it.icon}</ListItemIcon>
+        <ListItemIcon sx={{ minWidth: 32, color: linked ? '#4C5056' : '#787E8A' }}>{it.icon}</ListItemIcon>
         <ListItemText primary={it.label} secondary={it.sub}
-          primaryTypographyProps={{ fontWeight: 600, fontSize: '0.9rem', color: linked ? 'rgba(255,255,255,0.82)' : 'rgba(255,255,255,0.62)' }}
-          secondaryTypographyProps={{ fontSize: '0.64rem', color: linked ? 'rgba(251,231,192,0.6)' : 'rgba(255,255,255,0.42)' }} />
-        <Box component="span" sx={{ fontSize: '0.52rem', fontWeight: 800, letterSpacing: '.08em', color: '#EB8C00', border: '1px solid rgba(208,74,2,0.5)', borderRadius: '4px', px: 0.6, py: 0.15 }}>{linked ? 'OPEN ↗' : 'SOON'}</Box>
+          primaryTypographyProps={{ fontWeight: 600, fontSize: '0.9rem', color: linked ? '#2D2D2D' : '#4C5056' }}
+          secondaryTypographyProps={{ fontSize: '0.68rem', color: '#5C616A' }} />
+        <Box component="span" sx={{ fontSize: '0.52rem', fontWeight: 800, letterSpacing: '.08em', color: '#C52B09', bgcolor: '#FFF5ED', border: '1px solid #FFCDA8', borderRadius: '4px', px: 0.6, py: 0.15 }}>{linked ? 'OPEN ↗' : 'SOON'}</Box>
       </ListItemButton>
     );
   };
 
   if (isMobile) return null;   // below md the fixed bottom MobileNav is the only nav
   return (
-    <Box sx={{ width: open ? 236 : 0, flexShrink: 0, color: '#fff', display: 'flex', flexDirection: 'column',
-      background: 'linear-gradient(178deg, #2D2D2D 0%, #262626 55%, #222222 100%)',
-      borderRight: '1px solid rgba(208,74,2,0.16)',   // faint gilded edge
+    <Box sx={{ width: open ? 236 : 0, flexShrink: 0, color: '#2D2D2D', display: 'flex', flexDirection: 'column',
+      background: '#FFFFFF',
+      borderRight: '1px solid #DFE3E6',
       height: '100%', minHeight: 0, overflow: 'hidden', transition: 'width .22s ease' }}>
       {/* scrolling nav area (fixed width so labels wrap normally + no reflow while the sidebar collapses) */}
       <Box sx={{ flex: 1, minHeight: 0, overflowY: open ? 'auto' : 'hidden', overflowX: 'hidden',
-        '&::-webkit-scrollbar': { width: 8 }, '&::-webkit-scrollbar-thumb': { bgcolor: 'rgba(208,74,2,0.28)', borderRadius: 8 },
+        '&::-webkit-scrollbar': { width: 8 }, '&::-webkit-scrollbar-thumb': { bgcolor: '#CBD1D6', borderRadius: 8 },
         '&::-webkit-scrollbar-track': { bgcolor: 'transparent' } }}>
         <List sx={{ py: 1, width: 236, boxSizing: 'border-box' }}>
           {/* Home pinned at top, then EVERY section with its header — driven by MENU_SECTIONS so it matches the Home page.

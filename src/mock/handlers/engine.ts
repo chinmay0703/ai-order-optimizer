@@ -8,7 +8,7 @@
 // BACK-SOLVED from it (DRR is chosen so that the v2 maths reproduces exactly the dataset's Original per DB).
 import { get } from '../router';
 import {
-  CFA, DISTRIBUTORS, REG_ZSKUS, RUNS, RUN_RESULTS, LANES, CLUSTERS, DEMAND, OE_PARAM_DEFS, SOQ_DATE, PRIMARY_CAP,
+  CFA, DISTRIBUTORS, REG_ZSKUS, RUNS, RUN_RESULTS, LANES, CLUSTERS, DEMAND, OE_PARAM_DEFS, SOQ_DATE,
   rng, rzByCode, tierWeight, type Lane, type Line, type RunResult,
 } from '../dataset';
 
@@ -297,7 +297,8 @@ export const cfaDbPayload = () => {
   for (const l of LANES) {
     const cap = l.db.truckCap;
     const cl = l.db.cluster ? CLUSTERS.find((c) => c.code === l.db.cluster) : undefined;
-    const prim = l.db.transship && cl ? r2(cl.combined / PRIMARY_CAP) : 0;
+    // cluster-combined primary trucks (decimal) = Σ Total (shipped) over the cluster's DBs ÷ the primary truck's cases
+    const prim = l.db.transship && cl && cl.dbs.includes(l.db.code) ? r2(cl.ships / cl.primaryCap) : 0;
     const tail = [l.db.transship, prim, l.db.cluster ?? ''] as const;
     if (l.dropped) {   // the planned truck that failed the keep floor — held for RLM approval
       trucks.push([CFA, l.db.code, l.db.truckType, 1, l.planned, cap, r1((l.planned / cap) * 100), l.soFlag, ...tail,

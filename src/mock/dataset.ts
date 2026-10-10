@@ -78,16 +78,17 @@ export interface Distributor {
   salesOffice: string;
 }
 const DB_SEED: [string, string, Channel, number, number, string][] = [
-  ['Shree Ganesh Traders', 'Pune', 'Non-PACE', 1, 800, '19-20 FT Container'],
-  ['Om Sai Distributors', 'Pimpri', 'Non-PACE', 2, 600, '17 FT Container'],
-  ['Vighnaharta Enterprises', 'Chakan', 'Non-PACE', 2, 600, '17 FT Container'],
-  ['Laxmi Agencies', 'Hadapsar', 'Non-PACE', 3, 800, '19-20 FT Container'],
-  ['Ashtavinayak Trading Co', 'Lonavala', 'Non-PACE', 1, 800, '19-20 FT Container'],
-  ['Sahyadri Retail Supply', 'Kothrud', 'Retail', 1, 800, '19-20 FT Container'],
-  ['Deccan Consumer Goods', 'Wakad', 'Retail', 2, 600, '17 FT Container'],
-  ['Mahalaxmi Marketing', 'Baramati', 'Retail', 3, 300, 'ACE Container'],
-  ['Krishna Wholesale', 'Satara', 'Retail', 2, 300, 'ACE Container'],
-  ['Jai Bhavani Supply', 'Karad', 'Retail', 3, 300, 'ACE Container'],
+  // DUMMY distributor names (Greek-letter placeholders) — not real businesses or brands
+  ['Alpha Distributors', 'Pune', 'Non-PACE', 1, 600, '17 FT Container'],
+  ['Beta Traders', 'Pimpri', 'Non-PACE', 2, 600, '17 FT Container'],
+  ['Gamma Enterprises', 'Chakan', 'Non-PACE', 2, 600, '17 FT Container'],
+  ['Delta Agencies', 'Hadapsar', 'Non-PACE', 3, 800, '19-20 FT Container'],
+  ['Epsilon Trading Co', 'Lonavala', 'Non-PACE', 1, 600, '17 FT Container'],
+  ['Zeta Retail Supply', 'Kothrud', 'Retail', 1, 800, '19-20 FT Container'],
+  ['Eta Consumer Goods', 'Wakad', 'Retail', 2, 600, '17 FT Container'],
+  ['Theta Marketing', 'Baramati', 'Retail', 3, 300, 'ACE Container'],
+  ['Iota Wholesale', 'Satara', 'Retail', 2, 300, 'ACE Container'],
+  ['Kappa Supply', 'Karad', 'Retail', 3, 300, 'ACE Container'],
 ];
 export const DISTRIBUTORS: Distributor[] = DB_SEED.map(([name, city, channel, tier, cap, tt], i) => ({
   code: String(710001 + i).padStart(10, '0'),
@@ -102,8 +103,8 @@ export const DISTRIBUTORS: Distributor[] = DB_SEED.map(([name, city, channel, ti
 export const dbByCode = new Map(DISTRIBUTORS.map((d) => [d.code, d]));
 export const bareCode = (c: unknown) => String(c ?? '').replace(/\D/g, '').replace(/^0+/, '');
 export const findDb = (c: unknown) => DISTRIBUTORS.find((d) => bareCode(d.code) === bareCode(c));
-const TIER_W: Record<number, number> = { 1: 1.2, 2: 1.0, 3: 0.8, 4: 0.6 };
-export const tierWeight = (t: number) => TIER_W[t] ?? 0.6;
+const TIER_W: Record<number, number> = { 1: 1.0, 2: 0.85, 3: 0.65, 4: 0.5 };   // the weights the CFA × DB page quotes
+export const tierWeight = (t: number) => TIER_W[t] ?? 0.5;
 
 // ───────────────────────── reg-zskus (40) ─────────────────────────
 export interface SkuVariant {
@@ -120,8 +121,9 @@ export interface RegZsku {
   zsku: string;
   desc: string;          // old_material_description
   brand: string;
-  category: string;      // AIDEN category
-  band: 'Band 1' | 'Band 2' | 'Band 3';
+  category: string;      // brand category
+  band: 'Band 1' | 'Band 2' | 'Band 3';   // MRP band (label only)
+  velocity: 1 | 2 | 3;   // fast / medium / slow mover — drives demand volume
   mrp: number;
   packG: number;
   unitsPerCase: number;
@@ -130,33 +132,33 @@ export interface RegZsku {
   skus: SkuVariant[];
 }
 const CATALOG: [string, string, string, number, number][] = [
-  // brand, product, AIDEN category, MRP, pack grams
-  ['Crunchies', 'Classic Salted', 'Potato Chips', 20, 52], ['Crunchies', 'Magic Masala', 'Potato Chips', 20, 52],
-  ['Crunchies', 'Cream & Onion', 'Potato Chips', 20, 52], ['Crunchies', 'Classic Salted', 'Potato Chips', 50, 115],
-  ['Crunchies', 'Magic Masala', 'Potato Chips', 50, 115], ['Crunchies', 'Tomato Tango', 'Potato Chips', 10, 27],
-  ['Crunchies', 'Chile Lemon', 'Potato Chips', 10, 27], ['Crunchies', 'Peri Peri', 'Potato Chips', 30, 82],
-  ['Kurlz', 'Masala Munch', 'Extruded Snacks', 10, 32], ['Kurlz', 'Cheese Balls', 'Extruded Snacks', 10, 30],
-  ['Kurlz', 'Masala Munch', 'Extruded Snacks', 20, 70], ['Kurlz', 'Tangy Tomato', 'Extruded Snacks', 20, 70],
-  ['Kurlz', 'Puffcorn Butter', 'Extruded Snacks', 10, 28], ['Kurlz', 'Cheese Balls', 'Extruded Snacks', 35, 120],
-  ['Desi Mix', 'Aloo Bhujia', 'Namkeen', 10, 39], ['Desi Mix', 'Navratan Mix', 'Namkeen', 10, 39],
-  ['Desi Mix', 'Aloo Bhujia', 'Namkeen', 55, 200], ['Desi Mix', 'Moong Dal', 'Namkeen', 10, 35],
-  ['Desi Mix', 'Khatta Meetha', 'Namkeen', 45, 180], ['Desi Mix', 'Bikaneri Bhujia', 'Namkeen', 99, 400],
-  ['Nacho Craze', 'Cheese Nachos', 'Corn Chips', 20, 55], ['Nacho Craze', 'Sweet Chilli', 'Corn Chips', 20, 55],
-  ['Nacho Craze', 'Cheese Nachos', 'Corn Chips', 50, 150], ['Nacho Craze', 'Salsa Dip', 'Corn Chips', 99, 175],
-  ['FizzUp', 'Cola', 'Carbonated Drinks', 40, 750], ['FizzUp', 'Lemon Lime', 'Carbonated Drinks', 40, 750],
-  ['FizzUp', 'Orange', 'Carbonated Drinks', 20, 250], ['FizzUp', 'Cola', 'Carbonated Drinks', 95, 2250],
-  ['FizzUp', 'Cola Zero', 'Carbonated Drinks', 40, 300], ['FizzUp', 'Lemon Lime', 'Carbonated Drinks', 20, 250],
-  ['Orchard Gold', 'Mango Delight', 'Juices', 20, 200], ['Orchard Gold', 'Mixed Fruit', 'Juices', 99, 1000],
-  ['Orchard Gold', 'Guava', 'Juices', 20, 200], ['Orchard Gold', 'Mango Delight', 'Juices', 110, 1200],
-  ['VoltX', 'Original Energy', 'Energy Drinks', 60, 250], ['VoltX', 'Berry Blast', 'Energy Drinks', 60, 250],
-  ['VoltX', 'Sugar Free', 'Energy Drinks', 99, 350], ['MorningOats', 'Masala Oats', 'Oats & Cereal', 15, 38],
-  ['MorningOats', 'Classic Oats', 'Oats & Cereal', 199, 1000], ['MorningOats', 'Honey Muesli', 'Oats & Cereal', 299, 500],
+  // GENERIC healthy food & drink items — no brand names. [product line, product, category, MRP ₹, pack g/ml]
+  ['Snacks', 'Baked Multigrain Chips', 'Healthy Snacks', 10, 30], ['Snacks', 'Baked Multigrain Chips', 'Healthy Snacks', 20, 60],
+  ['Snacks', 'Roasted Makhana Lightly Salted', 'Healthy Snacks', 20, 25], ['Snacks', 'Roasted Chana', 'Healthy Snacks', 10, 40],
+  ['Snacks', 'Ragi Crisps', 'Healthy Snacks', 10, 30], ['Snacks', 'Quinoa Puffs', 'Healthy Snacks', 20, 30],
+  ['Snacks', 'Baked Veggie Sticks', 'Healthy Snacks', 20, 40], ['Snacks', 'Multigrain Rice Cakes', 'Healthy Snacks', 45, 60],
+  ['Nuts', 'Roasted Almonds', 'Nuts & Dried Fruit', 99, 50], ['Nuts', 'Mixed Nuts', 'Nuts & Dried Fruit', 199, 100],
+  ['Nuts', 'Trail Mix', 'Nuts & Dried Fruit', 20, 35], ['Nuts', 'Seedless Raisins', 'Nuts & Dried Fruit', 25, 50],
+  ['Nuts', 'Seedless Dates', 'Nuts & Dried Fruit', 120, 200], ['Nuts', 'Pumpkin Seeds', 'Nuts & Dried Fruit', 60, 50],
+  ['Bars', 'Oats & Honey Bar', 'Snack Bars', 20, 30], ['Bars', 'Protein Bar', 'Snack Bars', 60, 40],
+  ['Bars', 'Dark Chocolate 70%', 'Snack Bars', 50, 40], ['Bars', 'Millet Energy Bar', 'Snack Bars', 15, 25],
+  ['Bars', 'Fruit & Nut Bar', 'Snack Bars', 20, 30], ['Cereals', 'Rolled Oats', 'Breakfast Cereals', 99, 500],
+  ['Cereals', 'Masala Oats', 'Breakfast Cereals', 15, 40], ['Cereals', 'Muesli No Added Sugar', 'Breakfast Cereals', 199, 400],
+  ['Cereals', 'Multigrain Flakes', 'Breakfast Cereals', 120, 250], ['Cereals', 'Ragi Flakes', 'Breakfast Cereals', 110, 250],
+  ['Juice', 'Orange Juice No Added Sugar', 'Juices', 20, 200], ['Juice', 'Mixed Fruit Juice', 'Juices', 110, 1000],
+  ['Juice', 'Amla Juice', 'Juices', 90, 500], ['Juice', 'Tender Coconut Water', 'Juices', 40, 200],
+  ['Juice', 'Apple Juice No Added Sugar', 'Juices', 20, 200], ['Tea', 'Green Tea Iced', 'Tea & Infusions', 40, 300],
+  ['Tea', 'Lemon Ginger Infusion', 'Tea & Infusions', 35, 250], ['Tea', 'Herbal Iced Tea', 'Tea & Infusions', 40, 300],
+  ['Water', 'Mineral Water', 'Water & Hydration', 20, 1000], ['Water', 'Electrolyte Drink', 'Water & Hydration', 50, 500],
+  ['Water', 'Sparkling Water Lime', 'Water & Hydration', 40, 300], ['Milk', 'Almond Milk Unsweetened', 'Plant & Dairy Drinks', 45, 200],
+  ['Milk', 'Oat Milk', 'Plant & Dairy Drinks', 199, 1000], ['Milk', 'Soy Milk Plain', 'Plant & Dairy Drinks', 30, 200],
+  ['Milk', 'Spiced Buttermilk', 'Plant & Dairy Drinks', 15, 200], ['Milk', 'Low-Sugar Lassi', 'Plant & Dairy Drinks', 25, 200],
 ];
-const isDrink = (cat: string) => /Drink|Juice/.test(cat);
+const isDrink = (cat: string) => /Drink|Juice|Tea|Water/.test(cat);
 export const REG_ZSKUS: RegZsku[] = CATALOG.map(([brand, prod, cat, mrp, g], i) => {
   const zsku = String(61001 + i * 7);
   const size = isDrink(cat) ? (g >= 1000 ? `${g / 1000}L` : `${g}ml`) : (g >= 1000 ? `${g / 1000}kg` : `${g}g`);
-  const desc = `${brand} ${prod} ${size} MRP ${mrp}`;
+  const desc = `${prod} ${size} MRP ${mrp}`;
   const upc = mrp <= 10 ? 96 : mrp <= 20 ? 48 : mrp <= 60 ? 24 : 12;
   const nVar = R.chance(0.35) ? 2 : 1;
   const skus: SkuVariant[] = Array.from({ length: nVar }, (_, v) => ({
@@ -164,12 +166,13 @@ export const REG_ZSKUS: RegZsku[] = CATALOG.map(([brand, prod, cat, mrp, g], i) 
     desc: v === 0 ? desc.toUpperCase() : `${desc.toUpperCase()} (NEW PACK)`,
     batch: `B26${String(R.int(1001, 9899))}`,
     daysToExpiry: v === 0 ? R.int(25, 160) : R.int(120, 220),
-    mrp, unitsPerCase: upc,
+    mrp: v === 1 && i === 7 ? mrp + 5 : mrp, unitsPerCase: upc,
     isPdp: v === 0 && R.chance(0.2) ? 'Y' : 'N',
   }));
   return {
     rz: `${zsku}-${REGION}`, zsku, desc, brand, category: cat,
-    band: i % 10 < 3 ? 'Band 1' : i % 10 < 7 ? 'Band 2' : 'Band 3',
+    band: mrp <= 10 ? 'Band 1' : mrp <= 30 ? 'Band 2' : 'Band 3',   // MRP bands: ≤₹10 · ₹11–30 · >₹30
+    velocity: i % 10 < 3 ? 1 : i % 10 < 7 ? 2 : 3,
     mrp, packG: g, unitsPerCase: upc,
     isFiller: !isDrink(cat) && mrp <= 20,
     cfaStock: 0,   // set below once demand is known
@@ -191,6 +194,8 @@ export const RUNS: RunDef[] = [
 
 // ───────────────────────── demand (SOQ) + norms ─────────────────────────
 // SCARCE reg-zskus have little stock → fair share, substitutes and a <50% DB. DB #7 (Deccan) leans on them.
+// stocked but never demanded: Quinoa Puffs (a filler / same-MRP substitute donor) and Low-Sugar Lassi (pure feed)
+export const NO_DEMAND = new Set([5, 39].map((i) => REG_ZSKUS[i].rz));
 const SCARCE = new Set([1, 4, 9, 17, 22, 26, 31, 36].map((i) => REG_ZSKUS[i].rz));
 export interface Demand { db: string; rz: string; soq: number; norm: number; dbStock: number }
 export const DEMAND: Demand[] = [];
@@ -203,7 +208,8 @@ DISTRIBUTORS.forEach((d, di) => {
     ? [...REG_ZSKUS.filter((z) => SCARCE.has(z.rz)), ...REG_ZSKUS.filter((z) => !SCARCE.has(z.rz)).slice(0, 1)]
     : [...REG_ZSKUS].sort(() => R.next() - 0.5).slice(0, n);
   for (const z of pool) {
-    const base = z.band === 'Band 1' ? R.int(30, 70) : z.band === 'Band 2' ? R.int(14, 40) : R.int(6, 22);
+    if (NO_DEMAND.has(z.rz)) continue;
+    const base = z.velocity === 1 ? R.int(30, 70) : z.velocity === 2 ? R.int(14, 40) : R.int(6, 22);
     const soq = Math.max(4, Math.round(base * scale * (small ? 0.55 : d.transship ? 0.62 : 1) * (isDrink(z.category) ? 0.8 : 1)));
     const norm = Math.round(soq * (1.15 + R.next() * 0.4));
     const dbStock = Math.max(0, Math.round(norm - soq - R.int(0, 6)));
@@ -214,7 +220,7 @@ DISTRIBUTORS.forEach((d, di) => {
 // CFA stock: ample for most (0.9–1.6× total SOQ), thin for SCARCE, zero for one
 for (const z of REG_ZSKUS) {
   const tot = DEMAND.filter((x) => x.rz === z.rz).reduce((s, x) => s + x.soq, 0);
-  z.cfaStock = SCARCE.has(z.rz) ? Math.round(tot * 0.28) : Math.round(Math.max(40, tot) * (0.95 + R.next() * 0.7));
+  z.cfaStock = SCARCE.has(z.rz) ? Math.round(tot * 0.28) : Math.round(Math.max(40, tot) * (0.95 + R.next() * 0.7) * (z.isFiller ? 1.8 : 1));
 }
 REG_ZSKUS[36].cfaStock = 0;   // one reg-zsku fully out of stock (shows "no stock" reasons)
 
@@ -345,11 +351,19 @@ function buildRun(run: RunDef, poolIn: Record<string, number>): RunResult {
   for (const lane of lanes) {
     let addonLeft = Math.floor(lane.lines.reduce((s, x) => s + x.soq, 0) * ADDON);
     for (const x of [...lane.lines].filter((l) => l.soq > l.orig).sort((a, b) => (b.soq - b.orig) - (a.soq - a.orig))) {
-      const cat = rzByCode.get(x.rz)!.category;
-      const cand = REG_ZSKUS.filter((z) => z.category === cat && z.rz !== x.rz && pool[z.rz] > 0)
+      const want = rzByCode.get(x.rz)!;
+      // the app's rule: a substitute matches the EXACT MRP price point AND the category of the demanded item
+      const cand = REG_ZSKUS.filter((z) => z.category === want.category && z.mrp === want.mrp && z.rz !== x.rz && pool[z.rz] > 0)
         .sort((a, b) => pool[b.rz] - pool[a.rz])[0];
       if (!cand || addonLeft <= 0) continue;
-      const take = Math.min(x.soq - x.orig, pool[cand.rz], addonLeft);
+      let room = Infinity;   // Retail (run 2) grants are also capped by the substitute line's 1.2×Norm room; Non-PACE has no cap
+      if (lane.db.channel === 'Retail') {
+        const sl = lane.lines.find((l) => l.rz === cand.rz);
+        const norm = sl && sl.norm ? sl.norm : Math.round(cand.unitsPerCase / 4 + 20);
+        const onhand = sl && sl.norm ? sl.dbStock : Math.round(norm * 0.4);
+        room = Math.max(0, Math.round(norm * NORM_X) - onhand - (sl?.orig ?? 0) - (sl?.sub ?? 0));
+      }
+      const take = Math.min(x.soq - x.orig, pool[cand.rz], addonLeft, room);
       if (take <= 0) continue;
       const s = lineOf(lane, cand.rz);
       s.sub += take; s.subFor = s.subFor ? `${s.subFor}, ${x.rz}:${take}` : `${x.rz}:${take}`;

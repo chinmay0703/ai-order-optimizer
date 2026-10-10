@@ -10,8 +10,8 @@ export interface AuthUser {
   can_access_run: boolean;
 }
 
-const TOKEN_KEY = 'aiden.token';
-const USER_KEY = 'aiden.user';
+const TOKEN_KEY = 'aoo.token';
+const USER_KEY = 'aoo.user';
 
 function readUser(): AuthUser | null {
   try { return JSON.parse(localStorage.getItem(USER_KEY) || 'null'); } catch { return null; }

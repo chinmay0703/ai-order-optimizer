@@ -9,25 +9,25 @@
 :root {
   /* ── Colors ────────────────────────────────────────────────── */
   --pdart-navy:        #2D2D2D;
-  --pdart-navy-dark:   #1A1A1A;
-  --pdart-gold:        #D04A02;
+  --pdart-navy-dark:   #303236;
+  --pdart-gold:        #C52B09;
   --pdart-gold-light:  #FFB600;
-  --pdart-cream:       #F6F6F6;
+  --pdart-cream:       #F5F7F8;
   --pdart-white:       #FFFFFF;
-  --pdart-canvas:      #F5F5F5;
+  --pdart-canvas:      #FFFFFF;
   --pdart-ink:         #2D2D2D;
-  --pdart-muted:       #6B6B6B;
+  --pdart-muted:       #5C616A;
   --pdart-success:     #1B7346;
   --pdart-success-light: #E7F3E7;
-  --pdart-warn-light:  #FBEBE1;
-  --pdart-warn-text:   #A33A02;   /* dark PwC orange on warn-light (5.7:1) */
-  --pdart-rule:        #DEDEDE;
-  --pdart-panel-bg:    #EDEDED;
-  --pdart-alert-red:   #C02A1A;
+  --pdart-warn-light:  #FFE8D4;
+  --pdart-warn-text:   #C52B09;   /* dark PwC orange on warn-light (5.7:1) */
+  --pdart-rule:        #DFE3E6;
+  --pdart-panel-bg:    #EEEFF1;
+  --pdart-alert-red:   #A32020;
 
   /* ── Typography ────────────────────────────────────────────── */
-  --pdart-font-sans:   'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --pdart-font-serif:  'Cambria', 'Georgia', 'Times New Roman', serif;
+  --pdart-font-sans:   'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --pdart-font-serif:  'ITC Charter', Charter, 'Bitstream Charter', Georgia, serif;
   --pdart-font-mono:   'Consolas', 'Monaco', 'Courier New', monospace;
 
   /* Type scale (rem, root assumed 16px) */

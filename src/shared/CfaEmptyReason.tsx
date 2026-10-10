@@ -9,7 +9,7 @@ import { EmptyState } from './LoadState';
    that had SOQ demand — INCLUDING ones fully dropped at the gate, 0 filtered
    SOQ) and explains WHY this CFA is empty:
      • had SOQ demand but 0 passed the demand gate → every distributor dropped,
-       nothing was input to AIDEN, so the engine produced no output for it;
+       nothing was input to the engine, so the engine produced no output for it;
      • not in the run at all                       → the pipeline hasn't run.
    `noun` names what's missing on the host page (stock reservation / allocation
    / channel map …). Drop it into any CFA-scoped page's empty branch.
@@ -38,14 +38,14 @@ export default function CfaEmptyReason({ cfa, date, noun = 'engine output' }: { 
   const soq = fun?.soq_dbs ?? 0;
   const filt = fun?.filtered_dbs ?? 0;
 
-  // ALL-DROPPED — had SOQ demand, but nothing survived the demand gate → nothing input to AIDEN, no engine output.
+  // ALL-DROPPED — had SOQ demand, but nothing survived the demand gate → nothing input to the engine, no engine output.
   if (fun && soq > 0 && filt === 0) {
     return (
       <EmptyState
         title={`CFA ${cfa} — every distributor dropped at the demand gate`}
         hint={<>
           <b>{soq.toLocaleString()}</b> distributor{soq === 1 ? '' : 's'} came in the SOQ for <b>{date}</b>, but <b>0</b> passed
-          the demand gate (PDP / below-threshold / ≥2-distributor cluster). So <b>nothing was input to AIDEN</b> for this CFA and
+          the demand gate (PDP / below-threshold / ≥2-distributor cluster). So <b>nothing was input to the engine</b> for this CFA and
           the engine produced no {noun}. This is not a run error — re-running won’t change it while this CFA has no qualifying demand.
         </>}
       />

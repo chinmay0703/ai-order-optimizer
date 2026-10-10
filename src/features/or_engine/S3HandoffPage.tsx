@@ -14,7 +14,7 @@ import { useRegZskuDesc } from '../../shared/RegZskuDesc';
 interface Payload { date: string; path: string | null; found: boolean; columns: string[]; count: number; rows: (string | number | boolean | null)[][]; dates: string[]; }
 
 const BOOL_COLS = new Set(['rlm_approved', 'zsku_substitution', 'zsku_filler']);
-const MONO_COLS = new Set(['aiden_order_id', 'reg_zsku_code', 'cfa_code', 'distributor_code', 'truck_description']);
+const MONO_COLS = new Set(['engine_order_id', 'reg_zsku_code', 'cfa_code', 'distributor_code', 'truck_description']);
 // reg-zsku code columns that get a Description injected right after them — the
 // primary line reg-zsku PLUS any substitute / filler reg-zsku code column.
 const RZ_COLS = new Set([
@@ -39,7 +39,7 @@ function BoolChip({ v }: { v: boolean }) {
   return (
     <span style={{
       fontSize: 10.5, fontWeight: 700, letterSpacing: '.03em', padding: '1px 8px', borderRadius: 999,
-      background: v ? '#E7F3E7' : '#F2F2F2', color: v ? C.green : C.muted, border: `1px solid ${v ? C.green : C.rule}`,
+      background: v ? '#E7F3E7' : '#F5F7F8', color: v ? C.green : C.muted, border: `1px solid ${v ? C.green : C.rule}`,
     }}>{v ? 'TRUE' : 'false'}</span>
   );
 }

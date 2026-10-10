@@ -131,7 +131,7 @@ export default function TruckFillPanel({ date, mode }: { date?: string; mode: Mo
         <TableCell key={key} sx={{ fontFamily: MONO, fontSize: 12.5, whiteSpace: 'nowrap' }} title={r.db_name}>
           {isTracked(r.db) ? TRACK_STAR + ' ' : ''}{r.db}
         </TableCell>);
-      case 'text': return <TableCell key={key} sx={{ fontSize: 12.5, color: C.slate }}>{v || <span style={{ color: C.rule }}>—</span>}</TableCell>;
+      case 'text': return <TableCell key={key} sx={{ fontSize: 12.5, color: C.slate }}>{v || <span style={{ color: C.grey700 }}>—</span>}</TableCell>;
       case 'mono': return <TableCell key={key} sx={{ fontFamily: MONO, fontSize: 12.5 }}>{v}</TableCell>;
       case 'num': return <TableCell key={key} sx={num}>{nf(v)}</TableCell>;
       case 'numStrong': return <TableCell key={key} sx={{ ...num, fontWeight: 700, color: C.navy }}>{nf(v)}</TableCell>;
@@ -148,7 +148,7 @@ export default function TruckFillPanel({ date, mode }: { date?: string; mode: Mo
         const barW = fill == null ? 0 : Math.min(100, fill);
         return (
           <TableCell key={key} sx={{ ...num, width: 190 }}>
-            {fill == null ? <span style={{ color: C.rule }}>—</span> : (
+            {fill == null ? <span style={{ color: C.grey700 }}>—</span> : (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, justifyContent: 'flex-end' }}>
                 <Box sx={{ position: 'relative', width: 96, height: 9, borderRadius: 999, bgcolor: C.grayP, overflow: 'hidden', flexShrink: 0 }}>
                   <Box sx={{ position: 'absolute', inset: 0, width: `${barW}%`, bgcolor: over ? C.warnText : C.success, borderRadius: 999 }} />
@@ -163,7 +163,7 @@ export default function TruckFillPanel({ date, mode }: { date?: string; mode: Mo
         // s1 = Step-1 ÷ SOQ (always ≤ tot, since Step-2 ≥ 0); the green segment is the Step-2 lift on top of navy.
         const s1 = r.fill_rate;               // Step-1 ÷ SOQ
         const tot = r.fill_rate_after;        // (Step-1 + Step-2) ÷ SOQ
-        if (tot == null) return <TableCell key={key} sx={{ ...num, width: 190 }}><span style={{ color: C.rule }}>—</span></TableCell>;
+        if (tot == null) return <TableCell key={key} sx={{ ...num, width: 190 }}><span style={{ color: C.grey700 }}>—</span></TableCell>;
         const over = tot >= 100;
         const totw = Math.min(100, tot);                      // total bar width (clipped at 100%)
         const s1w = Math.min(totw, Math.max(0, s1 ?? 0));     // navy segment (Step-1)

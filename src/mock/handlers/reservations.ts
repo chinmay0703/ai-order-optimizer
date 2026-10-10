@@ -172,8 +172,8 @@ function ptlPayload(date: string) {
     const base = sum(line_items, (x) => x.zsku_original_qty), fil = sum(line_items, (x) => x.zsku_filler_qty), sub = sum(line_items, (x) => x.zsku_substitution_qty);
     const aoq = base + fil + sub, cap = l.db.truckCap, pdp = pdpOf(l.db.code);
     return {
-      aiden_order_id: `PTL-${CFA}-${dbTail(l.db.code)}-${ymd(date)}`,
-      status: date === LATEST_DATE ? 'PENDING' : i % 2 === 0 ? 'APPROVED' : 'REJECTED',
+      engine_order_id: `PTL-${CFA}-${dbTail(l.db.code)}-${ymd(date)}`,
+      status: i % 2 === 0 ? 'APPROVED' : 'REJECTED',   // decided — matches the Run page's after-RLM rollup
       distributor_code: l.db.code, distributor_name: l.db.name, pdp_flag: pdp.due, pdp_frequency: pdp.freq || null,
       soq: l.soq, cfa_code: CFA, truck_type: l.db.truckType, truck_number: 1, total_trucks: Math.max(1, l.trucks),
       truck_load_capacity: cap, aoq_qty: aoq, truck_load_gap_qty: Math.max(0, cap - aoq), truck_load_utilization_pct: pctOf(aoq, cap),
@@ -218,8 +218,8 @@ function shiftPayload(date: string) {
     const soq = sum(lines, (x) => x.soq), fill = sum(lines, (x) => x.orig);
     const altQty = sum(line_items, (x) => x.zsku_alternate_cfa_qty);
     return {
-      aiden_order_id: `SHF-${CFA}-${dbTail(l.db.code)}-${ymd(date)}`,
-      status: date === LATEST_DATE ? 'PENDING' : i % 2 === 0 ? 'SHIFTED' : 'APPROVED',
+      engine_order_id: `SHF-${CFA}-${dbTail(l.db.code)}-${ymd(date)}`,
+      status: i % 2 === 0 ? 'SHIFTED' : 'APPROVED',   // decided — matches the Run page's after-RLM rollup
       distributor_code: l.db.code, distributor_name: l.db.name,
       preferred_cfa_code: CFA, preferred_cfa_name: CFA_NAME, preferred_cfa_fill_pct: pctOf(fill, soq),
       preferred_cfa_fill_qty: fill, preferred_cfa_shortfall_qty: soq - fill,
@@ -249,7 +249,7 @@ const LEDGER_ROWS = REG_ZSKUS.flatMap((z) => RUNS.map((run, i) => {
 const RESERVATION_DETAIL = REG_ZSKUS.flatMap((z) => RUNS.map((run, i) => {
   const c = cellOf(z.rz, i), soq = soqOfRz.get(z.rz) ?? 0;
   return {
-    cfa_id: CFA, channel: run.channel, reg_zsku: z.rz, zsku: z.zsku, aiden_category: z.category,
+    cfa_id: CFA, channel: run.channel, reg_zsku: z.rz, zsku: z.zsku, brand_category: z.category,
     role: soq > 0 ? 'Demanded (SOQ)' : 'Donor only', in_soq: soq > 0, soq_cases: soq,
     mrp: String(z.mrp), mrp_band: `Band ${bandOf(z)}`, reservation_pct: run.pct, mrp_note: '',
     physical_cases: z.cfaStock, reserved_cases: c.earmark, shipped: c.alloc,
@@ -288,7 +288,7 @@ const KEPT: Group[] = DISTRIBUTORS.map((db) => {
   const pdp = pdpOf(db.code).due || nBelow === 0;   // the gate needs PDP OR below — never leave a kept DB with neither
   const normPct = Math.round((soq / Math.max(1, norm)) * 100);
   const trig = pdp && nBelow ? `PDP-due + ${nBelow} below-threshold` : pdp ? 'PDP-due' : `${nBelow} below-threshold`;
-  const reason = `${trig} · combined ${normPct}% of norm > 65%`;
+  const reason = `${trig} · ${normPct}% of norm`;
   return {
     d: { db: db.code, cfa: CFA, pdp, has_below: nBelow > 0, combined: true, kept: true, combined_soq: soq, truck_cap: db.truckCap,
       truck_cap_src: capSrc(db, db.cluster), reason, cluster: db.cluster, cluster_reject: false },
@@ -298,16 +298,21 @@ const KEPT: Group[] = DISTRIBUTORS.map((db) => {
 });
 
 // CFA 9002 (satellite) — SOQ groups that fail the gate (or the cluster gate), so 9002 runs no demand of its own
-const DROP_SPECS: { tail: string; pdp: boolean; below: boolean; target: number; n: number; cluster?: string }[] = [
-  { tail: '02', pdp: false, below: false, target: 0.68, n: 9 },
-  { tail: '03', pdp: false, below: true, target: 0.42, n: 8 },
-  { tail: '05', pdp: true, below: false, target: 0.44, n: 11 },
-  { tail: '09', pdp: false, below: false, target: 0.36, n: 7 },
-  { tail: '08', pdp: true, below: true, target: 0.66, n: 8, cluster: 'CL-NSK-01' },   // passes the gate, alone in its cluster
+// `pick` = position in DISTRIBUTORS (-1 = a transshipment DB) — chosen by position, never by name or code
+const DROP_SPECS: { pick: number; pdp: boolean; below: boolean; target: number; n: number; cluster?: string }[] = [
+  { pick: 1, pdp: false, below: false, target: 0.68, n: 9 },
+  { pick: 2, pdp: false, below: true, target: 0.42, n: 8 },
+  { pick: 4, pdp: true, below: false, target: 0.44, n: 11 },
+  { pick: 8, pdp: false, below: false, target: 0.36, n: 7 },
+  { pick: -1, pdp: true, below: true, target: 0.66, n: 8, cluster: 'CL-NSK-01' },   // passes the gate, alone in its cluster
 ];
-const DROPPED: Group[] = DROP_SPECS.map((sp) => {
-  const db = DISTRIBUTORS.find((d) => d.code.endsWith(sp.tail))!;
-  const r = rng(9002 * 100 + Number(sp.tail));
+const dropDbs = new Set<string>();
+const DROPPED: Group[] = DROP_SPECS.flatMap((sp, si) => {
+  const db = sp.pick >= 0 ? DISTRIBUTORS[sp.pick % DISTRIBUTORS.length]
+    : DISTRIBUTORS.find((d) => d.transship && !dropDbs.has(d.code));
+  if (!db || dropDbs.has(db.code)) return [];
+  dropDbs.add(db.code);
+  const r = rng(9002 * 100 + si * 13 + 1);
   const picks = [...REG_ZSKUS].sort(() => r.next() - 0.5).slice(0, sp.n).sort((a, b) => a.rz.localeCompare(b.rz));
   const rows: DropRow[] = picks.map((z, i) => {
     const norm = (bandOf(z) === 1 ? r.int(20, 48) : bandOf(z) === 2 ? r.int(14, 36) : r.int(8, 22));
@@ -331,12 +336,12 @@ const DROPPED: Group[] = DROP_SPECS.map((sp) => {
     : !trigger ? `No PDP / below-threshold trigger (combined ${normPct}% of norm passes)`
       : !combined ? `${sp.pdp ? 'PDP-due' : `${nBelow} below-threshold`} · combined ${normPct}% of norm ≤ 65%`
         : `Passed the demand gate · cluster ${sp.cluster} has only 1 distributor in the run (needs ≥2 to consolidate a primary truck)`;
-  const cluster = sp.cluster ?? (db.transship ? db.cluster : null);
-  return {
+  const cluster = sp.cluster ?? null;   // satellite groups never join the hub's transshipment cluster
+  return [{
     d: { db: db.code, cfa: ALT_CFA, pdp: sp.pdp, has_below: nBelow > 0, combined, kept: gateOk, combined_soq: soq,
       truck_cap: db.truckCap, truck_cap_src: capSrc(db, cluster), reason: why, cluster, cluster_reject: gateOk && !!sp.cluster },
     rows, normPct, nBelow,
-  };
+  }];
 });
 const GROUPS: Group[] = [...KEPT, ...DROPPED];
 /** the CFA scope of the gate views: CFA 9001's view includes its satellite 9002 (which has no own demand) */
@@ -430,7 +435,7 @@ function prefilterPayload(date: string) {
     return { channel: run.channel, dbs, run: run.run, b1: run.pct, b2: run.pct, b3: run.pct, combined: run.pct };
   });
   const db_channel_map = {
-    cols: ['DB ID', 'CFA', 'DB Name', 'City', 'Customer Type', 'SAP Channel', 'Sub-Channel', 'AIDEN Channel'],
+    cols: ['DB ID', 'CFA', 'DB Name', 'City', 'Customer Type', 'SAP Channel', 'Sub-Channel', 'Allocation Channel'],
     rows: DISTRIBUTORS.map((d) => {
       const m = CHANNEL_MAP[d.channel] ?? { cust: 'Distributor', sap: '—', sub: '—' };
       return [d.code, CFA, d.name, d.city, m.cust, m.sap, d.transship ? `${m.sub} (transshipment)` : m.sub, d.channel];

@@ -76,7 +76,7 @@ export default function ClusterPrimaryTrucks({ date, cfa }: { date?: string; cfa
               <Box sx={{ fontFamily: MONO, fontSize: 12, color: C.muted }}>CFA {c.cfa} · {c.n_dbs} DB{c.n_dbs !== 1 ? 's' : ''}</Box>
               {c.channels.length > 0 && (
                 <Box component="span" title="Channel runs this cluster's DBs came from — combined across runs onto one primary truck"
-                  sx={{ px: 0.8, py: 0.2, borderRadius: 1, fontSize: 11, fontWeight: 700, bgcolor: '#F6F6F6', color: C.navy }}>
+                  sx={{ px: 0.8, py: 0.2, borderRadius: 1, fontSize: 11, fontWeight: 700, bgcolor: '#F5F7F8', color: C.navy }}>
                   {c.channels.join(' + ')}{c.channels.length > 1 ? ' · cross-run' : ''}
                 </Box>
               )}

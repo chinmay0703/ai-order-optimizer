@@ -237,7 +237,7 @@ export default function FilteredSoqPage({ date, cfa }: { date?: string; cfa?: st
 
       {/* Per-(DB, CFA) decision — collapsible card, closed by default */}
       <Box onClick={() => toggle('decision')} sx={{ display: 'flex', alignItems: 'center', gap: 0.6, cursor: 'pointer', userSelect: 'none', mt: 2.5, mb: 1,
-        p: 1.5, border: `1px solid ${C.rule}`, borderLeft: `3px solid ${C.navy}`, borderRadius: `${RADIUS.md}px`, bgcolor: '#F5F5F5', boxShadow: SHADOW.sm }}>
+        p: 1.5, border: `1px solid ${C.rule}`, borderLeft: `3px solid ${C.navy}`, borderRadius: `${RADIUS.md}px`, bgcolor: '#F5F7F8', boxShadow: SHADOW.sm }}>
         <ChevronRightIcon sx={{ fontSize: 20, color: C.navy, transition: 'transform .15s', transform: (openSec['decision'] ?? false) ? 'rotate(90deg)' : 'none' }} />
         <Box component="h2" sx={{ fontFamily: SERIF, fontWeight: 700, color: C.navy, fontSize: 19, m: 0 }}>Per-(DB, CFA) decision</Box>
         <Box component="span" sx={{ fontSize: 12.5, color: C.muted }}>· kept <b style={{ color: C.green }}>{s.groups_kept ?? 0}</b> · dropped <b style={{ color: C.red }}>{s.groups_dropped ?? 0}</b></Box>
