@@ -23,9 +23,9 @@ export default function MobileNav({ page, onNav, user }: {
       sx={{
         position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 1200,
         height: `${MOBILE_NAV_H}px`, display: { xs: 'flex', md: 'none' }, alignItems: 'stretch',
-        background: '#FFFFFF',
-        borderTop: '1px solid #DFE3E6',
-        boxShadow: '0 -6px 20px -10px rgba(0,0,0,0.25)',
+        background: 'linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 55%, #404246 100%)',   // matches the sidebar
+        borderTop: '1px solid rgba(0,0,0,0.35)',
+        boxShadow: '0 -6px 20px -8px rgba(0,0,0,0.5)',
         overflowX: 'auto', overflowY: 'hidden',
         // the bar sits above the iOS home indicator
         pb: 'env(safe-area-inset-bottom)',
@@ -47,9 +47,9 @@ export default function MobileNav({ page, onNav, user }: {
               flex: '0 0 auto', minWidth: 76, minHeight: 44, px: 1.25, py: 0.75, scrollSnapAlign: 'start',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0.25,
               cursor: locked ? 'not-allowed' : 'pointer', opacity: locked ? 0.42 : 1,
-              color: active ? '#C52B09' : '#4C5056',
+              color: active ? '#FFAA72' : 'rgba(255,255,255,0.8)',
               borderTop: active ? '3px solid #FD5108' : '3px solid transparent',
-              bgcolor: active ? '#FFF5ED' : 'transparent',
+              bgcolor: active ? 'rgba(253,81,8,0.18)' : 'transparent',
               '&:focus-visible': { outline: '2px solid #FD5108', outlineOffset: '-2px' },
               '& svg': { fontSize: 20 },
             }}>
