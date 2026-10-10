@@ -236,10 +236,10 @@ function buildPlan(date: string, runId: number, user: string, scale = 1): Plan {
   const feeds: [string, number, number][] = [
     [`soq_feed · ${soq}`, DEMAND.length, 2.1], ['db_norms', DEMAND.length, 0.9],
     ['cfa_inventory', CFA_INV_ROWS * PLANTS.length, 1.2], ['db_inventory', DEMAND.length, 0.8],
+    [`daily_run_rate · ${soq}`, DEMAND.length, 0.7],
   ];
   add(500, 'stage', `stage s3_fetch · staging ${plural(masters.length, 'master')} + ${plural(feeds.length, 'feed')} from S3`); mark('s3');
   for (const [name, rows, secs] of [...masters, ...feeds]) add(300, 'table', `s3_fetch · ${name}`, { rows, secs });
-  add(350, 'warning', `daily run-rate not published for data date ${soq} · using the trailing 7-day rate (non-blocking)`);
   const fetched = sum([...masters, ...feeds], (m) => m[1]);
   add(300, 'info', `stage s3_fetch done · ${plural(masters.length, 'master')} loaded (db_master ${nf(DISTRIBUTORS.length)} rows · region_sku_master ${nf(REG_ZSKUS.length)} rows …) · ${nf(fetched)} rows staged`, { secs: 5.1 });
   // ── pre-filter ──
@@ -259,9 +259,9 @@ function buildPlan(date: string, runId: number, user: string, scale = 1): Plan {
     add(400, 'info', `${c} · truck rule · ${plural(r.tails, 'last-truck tail')} under 65% trimmed · ${nf(r.cascaded)} cs cascade`);
     for (const l of r.lanes.filter((x) => x.dropped)) {
       if (l.soFlag === 'RLM_FOR_SECOND_CFA') {
-        add(350, 'warning', `${c} · ${l.db.code} ${l.db.name} · original fill ${l.origFillPct}% < 50% → offered to 2nd CFA ${ALT_CFA} (${nf(heldCases(l))} cs held)`);
+        add(350, 'info', `${c} · ${l.db.code} ${l.db.name} · original fill ${l.origFillPct}% < 50% → offered to 2nd CFA ${ALT_CFA} (${nf(heldCases(l))} cs held)`);
       } else {
-        add(350, 'warning', `${c} · ${l.db.code} ${l.db.name} · ${nf(heldCases(l))} cs fill ${pct(heldCases(l), l.db.truckCap)}% of one ${nf(l.db.truckCap)}-cs truck (< 65%) → RLM truck approval`);
+        add(350, 'info', `${c} · ${l.db.code} ${l.db.name} · ${nf(heldCases(l))} cs fill ${pct(heldCases(l), l.db.truckCap)}% of one ${nf(l.db.truckCap)}-cs truck (< 65%) → RLM truck approval`);
       }
     }
     add(350, 'info', `${r.label} done · ${plural(r.trucks, 'truck')} · ${nf(r.built)} cs built`
@@ -272,7 +272,7 @@ function buildPlan(date: string, runId: number, user: string, scale = 1): Plan {
   for (const cl of CLUSTERS) {
     const per = cl.perDb.filter((d) => d.trimmed > 0).map((d) => `${d.db} −${nf(d.trimmed)}`).join(', ');
     if (cl.trimmed > 0) {
-      add(400, 'warning', `cluster ${cl.code} · ${plural(cl.dbs.length, 'DB')} combine ${nf(cl.combined)} cs → ${plural(cl.primaryTrucks, 'primary truck')} of ${nf(cl.primaryCap)} · ${nf(cl.trimmed)}-cs tail under 65% trimmed (${per})`, { rows: cl.ships });
+      add(400, 'info', `cluster ${cl.code} · ${plural(cl.dbs.length, 'DB')} combine ${nf(cl.combined)} cs → ${plural(cl.primaryTrucks, 'primary truck')} of ${nf(cl.primaryCap)} · ${nf(cl.trimmed)}-cs tail under 65% trimmed (${per})`, { rows: cl.ships });
     } else {
       add(400, 'info', `cluster ${cl.code} · ${plural(cl.dbs.length, 'DB')} combine ${nf(cl.combined)} cs → ${plural(cl.primaryTrucks, 'primary truck')} of ${nf(cl.primaryCap)} · no trim`, { rows: cl.ships });
     }
