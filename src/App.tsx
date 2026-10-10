@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, lazy, Suspense } from 'react';
 import { Box, LinearProgress, Tooltip } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import StorageIcon from '@mui/icons-material/Storage';
 import { api } from './api';
@@ -71,31 +72,39 @@ const normalisePage = (k: string | null | undefined): Page | null => {
   return (k in PAGE_LABEL ? k : null) as Page | null;
 };
 const pageFromHash = (): Page | null => normalisePage(/^#\/([a-z0-9]+)$/i.exec(window.location.hash)?.[1]);
-interface NavState { aooPage: Page; aooIdx: number; aooPrev?: Page }
-const navStateOf = (): NavState | null => {
-  const st = window.history.state as NavState | null;
-  return st && typeof st.aooIdx === 'number' && st.aooPage ? st : null;
-};
+interface NavState { aooPage: Page; aooIdx: number; aooPrev?: Page; aooSid: string }
+// one id per page LOAD: a refresh starts a fresh back-trail, so the in-app Back never jumps to pages from before it
+const LOAD_SID = Math.random().toString(36).slice(2);
 
-/** The in-app Back button — steps back through the browser history (same as the browser's own Back). */
-function BackButton({ onClick, to }: { onClick: () => void; to?: string }) {
-  const label = to ? `Back to ${to}` : 'Back';
+/** A professional outlined nav button (icon + label) for the run-context bar — used for Back and Home. */
+function NavButton({ icon, text, label, onClick, disabled = false }:
+  { icon: React.ReactNode; text: string; label: string; onClick: () => void; disabled?: boolean }) {
   return (
     <Tooltip title={label} arrow>
-      <Box component="button" type="button" onClick={onClick} aria-label={label}
+      <Box component="button" type="button" onClick={disabled ? undefined : onClick} aria-label={label} aria-disabled={disabled || undefined}
         sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 0.6, flexShrink: 0,
           height: { xs: 40, sm: 32 }, minWidth: { xs: 40, sm: 0 }, px: { xs: 1, sm: 1.25 }, pr: { sm: 1.5 },
-          fontFamily: 'inherit', fontSize: 13, fontWeight: 700, color: '#000', cursor: 'pointer',
-          bgcolor: '#FFFFFF', border: '1px solid #CBD1D6', borderRadius: '8px', boxShadow: '0 1px 2px rgba(0,0,0,0.06)',
+          fontFamily: 'inherit', fontSize: 13, fontWeight: 700, color: disabled ? '#A1A8B3' : '#000', cursor: disabled ? 'default' : 'pointer',
+          bgcolor: disabled ? '#F5F7F8' : '#FFFFFF', border: `1px solid ${disabled ? '#DFE3E6' : '#CBD1D6'}`, borderRadius: '8px',
+          boxShadow: disabled ? 'none' : '0 1px 2px rgba(0,0,0,0.06)',
           transition: 'background-color .15s, border-color .15s',
-          '&:hover': { bgcolor: '#FFF5ED', borderColor: '#E8652C' },
-          '&:active': { bgcolor: '#FFE8D4' },
-          '&:focus-visible': { outline: '2px solid #E8652C', outlineOffset: '2px' } }}>
-        <ArrowBackIcon sx={{ fontSize: 17 }} />
-        <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Back</Box>
+          ...(disabled ? {} : { '&:hover': { bgcolor: '#FFF5ED', borderColor: '#E8652C' }, '&:active': { bgcolor: '#FFE8D4' } }),
+          '&:focus-visible': { outline: '2px solid #E8652C', outlineOffset: '2px' },
+          '& svg': { fontSize: 17 } }}>
+        {icon}
+        <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>{text}</Box>
       </Box>
     </Tooltip>
   );
+}
+/** Back: steps back through the pages visited since this page load (disabled when there are none). */
+function BackButton({ onClick, to, disabled = false }: { onClick: () => void; to?: string; disabled?: boolean }) {
+  return <NavButton icon={<ArrowBackIcon />} text="Back" onClick={onClick} disabled={disabled}
+    label={disabled ? 'No previous page' : to ? `Back to ${to}` : 'Back'} />;
+}
+/** Home: jumps straight to the Home page from anywhere. */
+function HomeButton({ onClick }: { onClick: () => void }) {
+  return <NavButton icon={<HomeOutlinedIcon />} text="Home" onClick={onClick} label="Go to Home — every page, in run order" />;
 }
 
 // Every view reads its data through api.ts (answered in-browser from the sample dataset).
@@ -110,26 +119,19 @@ function AuthedApp({ user }: { user: AuthUser }) {
     return pageFromHash() ?? normalisePage(localStorage.getItem('aoo.page')) ?? 'home';
   });
   useEffect(() => { localStorage.setItem('aoo.page', page); }, [page]);
-  // history depth + the page we came from (for the Back button's label); survives a refresh via history.state
+  // back-trail depth for THIS page load + the page we came from (for the Back button's label). A refresh starts at 0.
   const pageRef = useRef(page);
-  const navRef = useRef<{ idx: number; prev?: Page }>((() => {
-    const st = navStateOf();
-    return st && st.aooPage === page ? { idx: st.aooIdx, prev: st.aooPrev } : { idx: 0 };
-  })());
+  const navRef = useRef<{ idx: number; prev?: Page }>({ idx: 0 });
   const [nav, setNav] = useState(navRef.current);
-  useEffect(() => {   // make the current entry carry the page (first load / refresh) so Back can return to it
-    const st = navStateOf();
-    if (!st || st.aooPage !== pageRef.current || window.location.hash !== `#/${pageRef.current}`) {
-      window.history.replaceState({ aooPage: pageRef.current, aooIdx: navRef.current.idx, aooPrev: navRef.current.prev } as NavState,
-        '', `#/${pageRef.current}`);
-    }
+  useEffect(() => {   // stamp the landing entry with this load's id so Back stops here
+    window.history.replaceState({ aooPage: pageRef.current, aooIdx: 0, aooSid: LOAD_SID } as NavState, '', `#/${pageRef.current}`);
   }, []);
   /** Navigate to a page → a NEW browser-history entry (so the browser's Back returns here). */
   const setPage = useCallback((p: Page) => {
     const cur = pageRef.current;
     if (cur === p) return;
     const next = { idx: navRef.current.idx + 1, prev: cur };
-    window.history.pushState({ aooPage: p, aooIdx: next.idx, aooPrev: cur } as NavState, '', `#/${p}`);
+    window.history.pushState({ aooPage: p, aooIdx: next.idx, aooPrev: cur, aooSid: LOAD_SID } as NavState, '', `#/${p}`);
     pageRef.current = p; navRef.current = next;
     setNav(next); setPageState(p);
   }, []);
@@ -137,18 +139,19 @@ function AuthedApp({ user }: { user: AuthUser }) {
   useEffect(() => {
     const onPop = (e: PopStateEvent) => {
       const st = (e.state as NavState | null);
-      const p = (st && st.aooPage) || pageFromHash() || 'home';
-      const next = { idx: st && typeof st.aooIdx === 'number' ? st.aooIdx : 0, prev: st?.aooPrev };
+      const p = normalisePage(st?.aooPage) || pageFromHash() || 'home';
+      // an entry from BEFORE the last refresh (other load id) starts a fresh trail — the in-app Back stays disabled there
+      const sameLoad = !!st && st.aooSid === LOAD_SID && typeof st.aooIdx === 'number';
+      const next = sameLoad ? { idx: st!.aooIdx, prev: st!.aooPrev } : { idx: 0 };
       pageRef.current = p; navRef.current = next;
       setNav(next); setPageState(p);
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
-  const goBack = useCallback(() => {
-    if (navRef.current.idx > 0) window.history.back(); else setPage('home');
-  }, [setPage]);
-  const backTo = nav.idx > 0 && nav.prev ? PAGE_LABEL[nav.prev] : 'Home';
+  const goBack = useCallback(() => { if (navRef.current.idx > 0) window.history.back(); }, []);
+  const canGoBack = nav.idx > 0;
+  const backTo = canGoBack && nav.prev ? PAGE_LABEL[nav.prev] : undefined;
   // left sidebar collapse — remembered across refresh; the hamburger in the header toggles it (frees width for wide pages / drawers)
   const isMobile = useIsMobile();
   // Desktop remembers the collapse preference; mobile always starts with the Drawer shut so the page owns the screen.
@@ -228,7 +231,8 @@ function AuthedApp({ user }: { user: AuthUser }) {
         <Box sx={{ position: 'sticky', top: 0, zIndex: 20, background: '#FFF5ED', color: '#2D2D2D',
           px: { xs: 1, sm: 2.5 }, py: { xs: 0.5, sm: 0.9 }, display: 'flex', gap: { xs: 0.6, sm: 1.25 }, alignItems: 'center', flexWrap: 'wrap',
           borderBottom: '1px solid #FFCDA8', boxShadow: '0 2px 8px -6px rgba(0,0,0,0.25)' }}>
-          <BackButton onClick={goBack} to={backTo} />
+          <BackButton onClick={goBack} to={backTo} disabled={!canGoBack} />
+          <HomeButton onClick={() => setPage('home')} />
           <Box aria-hidden sx={{ width: '1px', height: 22, bgcolor: '#FFCDA8', mx: { xs: 0.25, sm: 0.5 }, display: { xs: 'none', sm: 'block' } }} />
           <Box component="span" sx={{ fontWeight: 800, fontSize: 11, letterSpacing: '.09em', textTransform: 'uppercase',
             color: '#000', display: { xs: 'none', sm: 'inline' } }}><span style={{ color: '#E8652C' }}>▶</span>&nbsp;Run&nbsp;context</Box>
@@ -255,7 +259,7 @@ function AuthedApp({ user }: { user: AuthUser }) {
         )}
         {/* Home + Run stay OUTSIDE the refresh key. Home has no date; Run must NOT remount on the date its own onRan
             just set (that would wipe the just-finished run's results). Both are wrapped in KeepAlive like everything else. */}
-        {page === 'home' && nav.idx > 0 && (
+        {page === 'home' && canGoBack && (
           <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2.5, md: 4 }, pt: 2.5, mb: -1.5 }}>
             <BackButton onClick={goBack} to={backTo} />
           </Box>
